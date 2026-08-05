@@ -1,12 +1,17 @@
 name: Release
 
 on:
+  # Forks can miss the first tag event while GitHub is registering inherited
+  # workflows. Keep the upstream tag trigger and provide an explicit, auditable
+  # retry path that can only run against a version tag.
+  workflow_dispatch:
   push:
     tags:
       - 'v*'
 
 jobs:
   build-tauri:
+    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: read
     strategy:

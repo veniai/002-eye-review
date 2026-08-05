@@ -27,6 +27,13 @@ test('Release workflow 应在构建前执行测试并使用 npm ci', () => {
   assert.ok(rustIndex < buildIndex, 'Rust 测试必须先于构建执行');
 });
 
+test('Release workflow 应支持对版本标签手动重试且拒绝普通分支发布', () => {
+  const source = readFileSync(new URL('./.github/workflows/release.yml', import.meta.url), 'utf8');
+
+  assert.match(source, /workflow_dispatch:/);
+  assert.match(source, /build-tauri:\s+if: startsWith\(github\.ref, 'refs\/tags\/v'\)/);
+});
+
 test('macOS release 应保持 ad-hoc 签名且不导入自签证书', () => {
   const source = readFileSync(new URL('./.github/workflows/release.yml', import.meta.url), 'utf8');
 
