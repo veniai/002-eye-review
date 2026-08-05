@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-08-05
+
+### 新增
+- **独立护眼计时器**：默认工作 40 分钟、强制休息 3 分钟、自然休息阈值 5 分钟，并提前 30 秒预告；所有时长均可在设置中调整。
+- **多显示器强制休息层**：每块显示器同步显示休息层，提供倒计时、进度、外围变暗、窗口 watchdog 和隐藏故障出口。
+- **本轮工作回顾**：休息结束并检测到首次有效输入后，复用现有本地活动数据库和隐私规则生成本轮摘要。
+
+### 调整
+- **移除桌宠功能**：删除桌宠窗口、素材、专属设置、气泡与主动提醒、点击穿透及桌宠输入扩展；活动记录、截图/OCR、时间线、日报、导出、工作助手、隐私、存储、本地 API、Bot、更新和开机启动等能力保持不变。
+- **护眼计时独立运行**：不依赖活动录制、截图、OCR、AI、网络或墙上时间；对锁屏、睡眠、自然离开、程序重启和系统时间变化采用保守状态恢复。
+- **旧配置迁移**：旧 `break_reminder_*` 设置确定性迁移到新的护眼配置，旧桌宠字段不再影响启动。
+
+### 发布说明
+- Windows 首发行为已完成自动化测试和 Windows 目标交叉编译检查；锁屏、睡眠、多屏、混合 DPI 与热插拔仍需按 `docs/eye-care/WINDOWS-VALIDATION.md` 在实机验证。
+
 ## [1.1.0] - 2026-07-31
 
 ### 新增
