@@ -56,7 +56,7 @@ Work Review 面向个人工作复盘，适合用来回答这些问题：
 - **本地记录问答** — 用基础模板或你配置的模型回答“今天做了什么”“某个任务花了多久”“最近在推进什么”等问题
 - **日报生成与导出** — 生成结构化日报，支持 Markdown 导出、自动导出、段落编辑、钉选/隐藏和 AI 编排顺序
 - **隐私优先，本地可控** — 数据默认保存在本地 SQLite；AI 可不启用，模型调用使用你自己的 API Key，不经第三方中转
-- **桌面化身 Beta** — 用桌面化身反馈工作状态，并逐步扩展到主动提醒和上下文辅助
+- **护眼休息** — 默认估算有效使用 40 分钟后强制休息 3 分钟，可配置自然离开阈值，并覆盖每块显示器
 - **多语言界面** — 支持简体中文、English、繁體中文、العربية（阿拉伯语，RTL 布局）
 
 ---
@@ -124,10 +124,6 @@ Work Review 面向个人工作复盘，适合用来回答这些问题：
   <img src="docs/Introduction_zh/设置-AI模型.png" alt="AI 模型设置" width="720" />
 </p>
 
-<p align="center"><strong>桌面化身</strong></p>
-<p align="center">
-  <img src="docs/Introduction_zh/设置-桌面化身.png" alt="桌面化身设置" width="720" />
-</p>
 
 <p align="center"><strong>隐私设置</strong></p>
 <p align="center">
@@ -218,7 +214,7 @@ Work Review 的核心始终是**本地记录**。AI 的作用是让记录更容�
 | Linux x86_64 (X11 / Wayland) | `.deb` / `.rpm` / `.AppImage` |
 | Linux ARM64 (aarch64) | `.deb` |
 
-**macOS：** 截图需「屏幕录制」权限，桌宠联动需「辅助功能 + 输入监控」。首次提示"已损坏"时：`sudo xattr -rd com.apple.quarantine "/Applications/Work Review.app"`
+**macOS：** 截图需「屏幕录制」，活动识别需「辅助功能」，护眼空闲检测可能需「输入监控」。首次提示"已损坏"时：`sudo xattr -rd com.apple.quarantine "/Applications/Work Review.app"`
 
 **Windows：** 依赖 Microsoft Edge WebView2 Runtime。
 
@@ -267,13 +263,9 @@ GDK_BACKEND=x11 ./Work_Review
 ## 扩展能力（Beta）
 
 <details>
-<summary>桌面化身</summary>
+<summary>护眼休息</summary>
 
-用独立桌宠窗口反馈待机/办公/阅读/会议/音乐/视频等状态。
-
-<img src="docs/桌宠.png" alt="桌面化身" width="220" />
-
-当前仍在持续完善中，会继续改进交互联动、状态表达和预设细节。
+使用独立计时器，默认 40 分钟工作 / 3 分钟强制休息；支持提前预告、自然离开重置、每块显示器同步遮挡，以及回来后的本轮回顾。
 
 </details>
 
@@ -403,7 +395,6 @@ npm run tauri:build  # 构建
 ## 致谢
 
 - 感谢 [linux.do](https://linux.do/) 社区的交流与讨论支持
-- 桌面化身 BongoCat 资源改编自 [ayangweb/BongoCat](https://github.com/ayangweb/BongoCat) (MIT License)，详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 
 ## License
 

@@ -47,7 +47,7 @@ test('Linux 发行包应同时生成 RPM 并在 README 中说明', async () => {
   assert.match(tw, /sudo dnf install/);
 });
 
-test('README 应说明 mac 输入监控权限与三端桌宠联动条件', async () => {
+test('README 应说明 mac 护眼输入监控权限与三端支持条件', async () => {
   const zh = await readFile(new URL('../README.zh.md', import.meta.url), 'utf8');
   const en = await readFile(new URL('../README.md', import.meta.url), 'utf8');
   const tw = await readFile(new URL('../README.tw.md', import.meta.url), 'utf8');

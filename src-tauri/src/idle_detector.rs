@@ -107,7 +107,7 @@ fn hash_similarity(hash1: u64, hash2: u64) -> u32 {
 // ============== Windows 实现 ==============
 
 #[cfg(target_os = "windows")]
-fn get_idle_seconds() -> u64 {
+pub(crate) fn try_get_idle_seconds() -> Option<u64> {
     use std::mem::size_of;
     use winapi::um::sysinfoapi::GetTickCount;
     use winapi::um::winuser::{GetLastInputInfo, LASTINPUTINFO};
@@ -125,9 +125,9 @@ fn get_idle_seconds() -> u64 {
             } else {
                 (u32::MAX - lii.dwTime) + current_tick + 1
             };
-            (idle_ms / 1000) as u64
+            Some((idle_ms / 1000) as u64)
         } else {
-            0
+            None
         }
     }
 }
@@ -135,7 +135,7 @@ fn get_idle_seconds() -> u64 {
 // ============== macOS 实现 ==============
 
 #[cfg(target_os = "macos")]
-fn get_idle_seconds() -> u64 {
+pub(crate) fn try_get_idle_seconds() -> Option<u64> {
     // 使用 FFI 直接调用 CGEventSourceSecondsSinceLastEventType
     // 因为 core-graphics crate 不直接暴露这个函数
     use core_graphics::event_source::CGEventSourceStateID;
@@ -159,16 +159,16 @@ fn get_idle_seconds() -> u64 {
     };
 
     if idle_time >= 0.0 {
-        idle_time as u64
+        Some(idle_time as u64)
     } else {
-        0
+        None
     }
 }
 
 // ============== Linux 实现 ==============
 
 #[cfg(target_os = "linux")]
-fn get_idle_seconds() -> u64 {
+pub(crate) fn try_get_idle_seconds() -> Option<u64> {
     use std::process::Command;
 
     if matches!(
@@ -197,7 +197,7 @@ fn get_idle_seconds() -> u64 {
                         _ => None,
                     })
                 {
-                    return idle_ms / 1000;
+                    return Some(idle_ms / 1000);
                 }
             }
         }
@@ -208,18 +208,21 @@ fn get_idle_seconds() -> u64 {
     match output {
         Ok(result) if result.status.success() => {
             let stdout = String::from_utf8_lossy(&result.stdout);
-            let idle_ms: u64 = stdout.trim().parse().unwrap_or(0);
-            idle_ms / 1000
+            stdout.trim().parse::<u64>().ok().map(|idle_ms| idle_ms / 1000)
         }
-        _ => 0,
+        _ => None,
     }
 }
 
 // ============== 其他平台 ==============
 
 #[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "linux")))]
-fn get_idle_seconds() -> u64 {
-    0
+pub(crate) fn try_get_idle_seconds() -> Option<u64> {
+    None
+}
+
+pub(crate) fn get_idle_seconds() -> u64 {
+    try_get_idle_seconds().unwrap_or(0)
 }
 
 #[cfg(test)]

@@ -174,7 +174,7 @@ pub type CurrentContextFn = Arc<dyn Fn() -> String + Send + Sync>;
 #[derive(Default, Clone)]
 pub struct AssistantRuntime {
     /// 手动待办快照（extract_todos 合并用）。
-    pub avatar_followups: Vec<work_review_core::config::AvatarFollowupItem>,
+    pub assistant_todos: Vec<work_review_core::config::AssistantTodoItem>,
     /// 写操作桥；None = 不注册行动工具。
     pub actions: Option<ActionBridge>,
     /// 确认桥；行动工具存在时必须提供，否则行动工具一律拒绝执行。
@@ -1571,9 +1571,9 @@ fn extract_todos_execute(ctx: &ToolContext, args: Value) -> Result<String, Strin
     let activities = ctx.filter_activities(activities);
 
     let extracted = work_intelligence::extract_todos(&activities);
-    let merged = crate::commands::merge_manual_followups_into_todos(
+    let merged = crate::commands::merge_assistant_todos(
         extracted,
-        &ctx.runtime.avatar_followups,
+        &ctx.runtime.assistant_todos,
         date_from,
         date_to,
     );

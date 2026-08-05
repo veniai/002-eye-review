@@ -143,43 +143,6 @@ pub(crate) async fn generate_report_inner(
         )
     };
 
-    let avatar_start_state = {
-        let mut state = state.lock().map_err(|e| AppError::Unknown(e.to_string()))?;
-        state.avatar_generating_report = true;
-        let avatar_state = crate::avatar_engine::apply_avatar_visual_settings(
-            crate::avatar_engine::derive_avatar_state(
-                &state.avatar_state.app_name,
-                "",
-                None,
-                state.avatar_state.is_idle,
-                true,
-            ),
-            state.config.avatar_opacity,
-            &state.config.avatar_preset,
-            &state.config.avatar_persona,
-            state.config.avatar_body_hidden,
-        );
-        state.avatar_state = avatar_state.clone();
-        if state.config.avatar_enabled {
-            Some(avatar_state)
-        } else {
-            None
-        }
-    };
-
-    if let Some(avatar_state) = avatar_start_state.as_ref() {
-        crate::avatar_engine::emit_avatar_state(app, avatar_state);
-        crate::avatar_engine::emit_avatar_bubble(
-            app,
-            &crate::avatar_engine::AvatarBubblePayload::info(match report_locale {
-                AppLocale::ZhCn => "开始整理日报，稍等我一下。",
-                AppLocale::ZhTw => "開始整理日報，稍等我一下。",
-                AppLocale::En => "I'm preparing your daily report. Give me a moment.",
-                AppLocale::Ar => "أقوم بإعداد تقريرك اليومي. لحظة من فضلك.",
-            }),
-        );
-    }
-
     // 创建分析器（使用 text_model 配置）
     let analyzer = crate::analysis::create_analyzer(
         config.ai_mode,
@@ -254,50 +217,6 @@ pub(crate) async fn generate_report_inner(
                 },
             )),
         };
-
-    let avatar_finish_state = {
-        let mut state = state.lock().map_err(|e| AppError::Unknown(e.to_string()))?;
-        state.avatar_generating_report = false;
-        let avatar_state = crate::avatar_engine::apply_avatar_visual_settings(
-            crate::avatar_engine::derive_avatar_state(
-                &state.avatar_state.app_name,
-                "",
-                None,
-                state.avatar_state.is_idle,
-                false,
-            ),
-            state.config.avatar_opacity,
-            &state.config.avatar_preset,
-            &state.config.avatar_persona,
-            state.config.avatar_body_hidden,
-        );
-        state.avatar_state = avatar_state.clone();
-        if state.config.avatar_enabled {
-            Some(avatar_state)
-        } else {
-            None
-        }
-    };
-
-    if let Some(avatar_state) = avatar_finish_state.as_ref() {
-        crate::avatar_engine::emit_avatar_state(app, avatar_state);
-        let bubble = if report_result.is_ok() {
-            crate::avatar_engine::AvatarBubblePayload::success(match report_locale {
-                AppLocale::ZhCn => "日报整理好了，可以回来看看。",
-                AppLocale::ZhTw => "日報整理好了，可以回來看看。",
-                AppLocale::En => "Your daily report is ready. You can check it now.",
-                AppLocale::Ar => "تقريرك اليومي جاهز. يمكنك التحقق منه الآن.",
-            })
-        } else {
-            crate::avatar_engine::AvatarBubblePayload::info(match report_locale {
-                AppLocale::ZhCn => "这次日报整理失败了，稍后可以再试。",
-                AppLocale::ZhTw => "這次日報整理失敗了，稍後可以再試。",
-                AppLocale::En => "This report run failed. Please try again later.",
-                AppLocale::Ar => "فشل تشغيل هذا التقرير. يرجى المحاولة مرة أخرى لاحقاً.",
-            })
-        };
-        crate::avatar_engine::emit_avatar_bubble(app, &bubble);
-    }
 
     let generated_report = report_result?;
     let report = generated_report.content.clone();

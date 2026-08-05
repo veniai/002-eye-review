@@ -5,6 +5,7 @@
   import Sidebar from './lib/components/Sidebar.svelte';
   import Toast from './lib/components/Toast.svelte';
   import ConfirmDialog from './lib/components/ConfirmDialog.svelte';
+  import EyeCareRecap from './lib/components/EyeCareRecap.svelte';
   import { invoke } from '@tauri-apps/api/core';
   import { listen } from '@tauri-apps/api/event';
   import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
@@ -53,12 +54,19 @@
 
   const appWindow = getSafeCurrentWebviewWindow();
   const currentWindowLabel = appWindow.label;
-  const isAvatarWindow = currentWindowLabel === 'avatar';
-  let AvatarWindowComponent = null;
+  const isEyeCareOverlay = currentWindowLabel.startsWith('eye-care-overlay-');
+  const isEyeCarePreBreak = currentWindowLabel === 'eye-care-pre-break';
+  let EyeCareOverlayComponent = null;
+  let EyeCarePreBreakComponent = null;
 
-  if (isAvatarWindow) {
-    import('./routes/avatar/AvatarWindow.svelte').then((module) => {
-      AvatarWindowComponent = module.default;
+  if (isEyeCareOverlay) {
+    import('./routes/eye-care/EyeCareOverlay.svelte').then((module) => {
+      EyeCareOverlayComponent = module.default;
+    });
+  }
+  if (isEyeCarePreBreak) {
+    import('./routes/eye-care/EyeCarePreBreak.svelte').then((module) => {
+      EyeCarePreBreakComponent = module.default;
     });
   }
 
@@ -165,6 +173,8 @@
   let backgroundBlur = 1;
   let runtimeConfig = null;
   let uiVisualStyle = 'c';
+  let eyeCareStatus = null;
+  let eyeCareRecap = null;
   let unsubscribeLocale = () => {};
   $: currentLocale = $locale;
 
@@ -294,7 +304,7 @@
     window.addEventListener('drop', preventFileDrop);
     window.addEventListener('contextmenu', preventNativeContextMenu);
 
-    if (isAvatarWindow) {
+    if (isEyeCareOverlay || isEyeCarePreBreak) {
       return () => {
         window.removeEventListener('dragover', preventFileDrop);
         window.removeEventListener('drop', preventFileDrop);
@@ -412,7 +422,7 @@
       if (disposed) { try { if (unlistenConfigChanged) unlistenConfigChanged(); } catch {} return; }
       pendingCleanup.push(unlistenConfigChanged);
 
-      const unlistenAvatarTimeline = await safeListen('avatar-open-timeline', async (event) => {
+      const unlistenAssistantTimeline = await safeListen('assistant-open-timeline', async (event) => {
         const payload = event.payload ?? {};
         const nextDate = typeof payload.date === 'string' ? payload.date.trim() : '';
 
@@ -428,11 +438,29 @@
           await tick();
           window.dispatchEvent(new CustomEvent('timeline-focus-date', { detail: payload }));
         } catch (e) {
-          console.error('桌宠跳转时间线失败:', e);
+          console.error('工作助手跳转时间线失败:', e);
         }
       });
-      if (disposed) { try { if (unlistenAvatarTimeline) unlistenAvatarTimeline(); } catch {} return; }
-      pendingCleanup.push(unlistenAvatarTimeline);
+      if (disposed) { try { if (unlistenAssistantTimeline) unlistenAssistantTimeline(); } catch {} return; }
+      pendingCleanup.push(unlistenAssistantTimeline);
+
+      try {
+        eyeCareStatus = await invoke('get_eye_care_status');
+        eyeCareRecap = await invoke('get_pending_eye_care_recap');
+      } catch (e) {
+        console.warn('读取护眼状态失败:', e);
+      }
+      const unlistenEyeCareStatus = await safeListen('eye-care-status-changed', (event) => {
+        eyeCareStatus = event.payload;
+        if (event.payload?.phase === 'RESTING') eyeCareRecap = null;
+      });
+      if (disposed) { try { if (unlistenEyeCareStatus) unlistenEyeCareStatus(); } catch {} return; }
+      pendingCleanup.push(unlistenEyeCareStatus);
+      const unlistenEyeCareRecap = await safeListen('eye-care-recap-ready', (event) => {
+        eyeCareRecap = event.payload;
+      });
+      if (disposed) { try { if (unlistenEyeCareRecap) unlistenEyeCareRecap(); } catch {} return; }
+      pendingCleanup.push(unlistenEyeCareRecap);
 
       // 监听背景图更新事件（来自设置页，实时预览）
       const handleBgChange = (e) => handleBackgroundChanged(e);
@@ -560,12 +588,16 @@
   });
 </script>
 
-{#if isAvatarWindow}
-  {#if AvatarWindowComponent}
-    <svelte:component this={AvatarWindowComponent} />
+{#if isEyeCareOverlay}
+  {#if EyeCareOverlayComponent}
+    <svelte:component this={EyeCareOverlayComponent} />
+  {/if}
+{:else if isEyeCarePreBreak}
+  {#if EyeCarePreBreakComponent}
+    <svelte:component this={EyeCarePreBreakComponent} />
   {/if}
 {:else}
-<div class="app-shell ui-style-{uiVisualStyle} flex h-screen overflow-hidden relative">
+<div class="app-shell ui-style-{uiVisualStyle} flex h-screen overflow-hidden relative" data-eye-care-phase={eyeCareStatus?.phase || 'UNKNOWN'}>
   <div class="app-shell-ambient pointer-events-none absolute inset-0 z-0 opacity-80">
     <div class="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.14),transparent_62%)] dark:bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.18),transparent_62%)]"></div>
     <div class="absolute -right-16 top-24 h-48 w-48 rounded-full bg-indigo-200/20 blur-3xl dark:bg-indigo-500/12"></div>
@@ -656,6 +688,7 @@
         </main>
         <Toast />
         <ConfirmDialog />
+        <EyeCareRecap recap={eyeCareRecap} on:close={() => { eyeCareRecap = null; }} />
       </div>
     </section>
   </div>

@@ -1,6 +1,6 @@
 //! Auto-extracted from the historical `commands.rs`. Behavior unchanged.
 
-use crate::config::{AppConfig, AvatarFollowupItem, PrivacyConfig};
+use crate::config::{AppConfig, AssistantTodoItem, PrivacyConfig};
 use crate::database::Activity;
 use crate::error::AppError;
 use crate::work_intelligence::TodoExtractionResult;
@@ -206,11 +206,11 @@ pub(crate) fn load_filtered_activities_in_range(
     ))
 }
 
-fn manual_followups_in_range(
-    items: &[AvatarFollowupItem],
+fn assistant_todos_in_range(
+    items: &[AssistantTodoItem],
     date_from: Option<&str>,
     date_to: Option<&str>,
-) -> Vec<AvatarFollowupItem> {
+) -> Vec<AssistantTodoItem> {
     items
         .iter()
         .filter(|item| item.status == "open")
@@ -224,14 +224,14 @@ fn manual_followups_in_range(
         .collect()
 }
 
-pub(crate) fn merge_manual_followups_into_todos(
+pub(crate) fn merge_assistant_todos(
     mut extracted: TodoExtractionResult,
-    manual_items: &[AvatarFollowupItem],
+    assistant_items: &[AssistantTodoItem],
     date_from: Option<&str>,
     date_to: Option<&str>,
 ) -> TodoExtractionResult {
-    let manual_items = manual_followups_in_range(manual_items, date_from, date_to);
-    if manual_items.is_empty() {
+    let assistant_items = assistant_todos_in_range(assistant_items, date_from, date_to);
+    if assistant_items.is_empty() {
         return extracted;
     }
 
@@ -240,7 +240,7 @@ pub(crate) fn merge_manual_followups_into_todos(
         seen.insert(item.title.trim().to_lowercase());
     }
 
-    for item in manual_items {
+    for item in assistant_items {
         let normalized = item.title.trim().to_lowercase();
         if normalized.is_empty() || !seen.insert(normalized) {
             continue;
@@ -252,7 +252,7 @@ pub(crate) fn merge_manual_followups_into_todos(
             source_title: item.source_title.clone(),
             source_app: item.source_app.clone(),
             confidence: 96,
-            reason: "桌宠手动加入待跟进".to_string(),
+            reason: "工作助手创建的本地待办".to_string(),
         });
     }
 
@@ -264,7 +264,7 @@ pub(crate) fn merge_manual_followups_into_todos(
     });
     extracted.items.truncate(20);
     extracted.summary = format!(
-        "共整理出 {} 条待跟进项（含桌宠手动加入）。",
+        "共整理出 {} 条待跟进项（含工作助手本地待办）。",
         extracted.items.len()
     );
     extracted
@@ -276,157 +276,30 @@ pub(crate) fn persist_app_config(
     state: &Arc<Mutex<AppState>>,
 ) -> Result<(), AppError> {
     config.normalize();
-    let (
-        previous_avatar_enabled,
-        previous_avatar_scale,
-        previous_avatar_opacity,
-        previous_avatar_preset,
-        previous_avatar_click_through,
-        previous_avatar_body_hidden,
-        previous_avatar_x,
-        previous_avatar_y,
-        previous_hide_dock_icon,
-        previous_lightweight_mode,
-        avatar_state,
-    ) = {
+    let dock_visibility_changed = {
         let mut state = state.lock().map_err(|e| AppError::Unknown(e.to_string()))?;
-        let previous_config = state.config.clone();
+        let previous_hide_dock_icon = state.config.hide_dock_icon;
+        let previous_lightweight_mode = state.config.lightweight_mode;
 
-        // 更新配置
         state.config = config.clone();
         state.storage_manager.update_config(config.storage.clone());
         state.screenshot_service.update_config(&config.storage);
-
-        // 保存到文件
-        let config_path = state.config_path.clone();
-        config.save(&config_path)?;
-
-        // 更新隐私过滤器
+        config.save(&state.config_path)?;
         state.privacy_filter.update_config(&config.privacy);
-        state.avatar_state = crate::avatar_engine::apply_avatar_visual_settings(
-            state.avatar_state.clone(),
-            config.avatar_opacity,
-            &config.avatar_preset,
-            &config.avatar_persona,
-            config.avatar_body_hidden,
-        );
-        (
-            previous_config.avatar_enabled,
-            previous_config.avatar_scale,
-            previous_config.avatar_opacity,
-            previous_config.avatar_preset,
-            previous_config.avatar_click_through,
-            previous_config.avatar_body_hidden,
-            previous_config.avatar_x,
-            previous_config.avatar_y,
-            previous_config.hide_dock_icon,
-            previous_config.lightweight_mode,
-            state.avatar_state.clone(),
-        )
+
+        previous_hide_dock_icon != config.hide_dock_icon
+            || previous_lightweight_mode != config.lightweight_mode
     };
-
-    let avatar_window_changed = previous_avatar_enabled != config.avatar_enabled
-        || previous_avatar_scale != config.avatar_scale
-        || previous_avatar_body_hidden != config.avatar_body_hidden
-        || previous_avatar_x != config.avatar_x
-        || previous_avatar_y != config.avatar_y;
-    let avatar_click_through_changed = previous_avatar_click_through != config.avatar_click_through;
-    let avatar_visual_changed = previous_avatar_opacity != config.avatar_opacity
-        || previous_avatar_preset != config.avatar_preset;
-    // 隐藏本体既是窗口尺寸变化也是视觉变化（前端需重新渲染 canvas 显隐）
-    let avatar_body_hidden_changed = previous_avatar_body_hidden != config.avatar_body_hidden;
-    let dock_visibility_changed = previous_hide_dock_icon != config.hide_dock_icon
-        || previous_lightweight_mode != config.lightweight_mode;
-
-    if avatar_window_changed {
-        crate::avatar_engine::sync_avatar_window(
-            &app,
-            config.avatar_enabled,
-            config.avatar_scale,
-            config.avatar_x.zip(config.avatar_y),
-            false,
-            config.avatar_body_hidden,
-        )
-        .map_err(|e| AppError::Unknown(format!("同步桌宠窗口失败: {e}")))?;
-
-        // 窗口创建/显示后应用鼠标穿透设置
-        if config.avatar_enabled && config.avatar_click_through {
-            crate::avatar_engine::set_avatar_click_through(&app, true);
-        }
-    }
-
-    if config.avatar_enabled
-        && (avatar_window_changed || avatar_visual_changed || avatar_body_hidden_changed)
-        && !refresh_avatar_state_for_current_window(&app, state)
-    {
-        crate::avatar_engine::emit_avatar_state(&app, &avatar_state);
-    }
-
-    if avatar_click_through_changed && config.avatar_enabled {
-        crate::avatar_engine::set_avatar_click_through(&app, config.avatar_click_through);
-    }
-
-    // 同步智能穿透运行时 flag（供 spawn_avatar_input_bridge 轮询无锁读）
-    crate::avatar_input::set_avatar_enabled_flag(config.avatar_enabled);
-    crate::avatar_input::set_avatar_click_through_flag(config.avatar_click_through);
-    if avatar_window_changed || avatar_click_through_changed {
-        crate::avatar_input::force_resync_click_through();
-    }
 
     if dock_visibility_changed {
         crate::sync_effective_dock_visibility(&app);
     }
-
     crate::localhost_api::sync_localhost_api_runtime(&app, state)?;
     crate::telegram_bot::sync_telegram_bot_runtime(state)?;
     crate::emit_config_changed(&app, &config);
-
     log::info!("配置已保存");
     Ok(())
 }
-
-fn refresh_avatar_state_for_current_window(app: &AppHandle, state: &Arc<Mutex<AppState>>) -> bool {
-    let active_window = match crate::monitor::get_active_window_fast() {
-        Ok(window) => window,
-        Err(_) => return false,
-    };
-
-    let next_avatar_state = {
-        let mut state_guard = match state.lock() {
-            Ok(guard) => guard,
-            Err(e) => {
-                log::warn!("刷新桌宠状态时获取状态锁失败: {e}");
-                return false;
-            }
-        };
-
-        if !state_guard.config.avatar_enabled {
-            return false;
-        }
-
-        let next_state = crate::avatar_engine::apply_avatar_visual_settings(
-            crate::avatar_engine::derive_avatar_state_with_rules(
-                &state_guard.config.app_category_rules,
-                &state_guard.config.custom_categories,
-                &active_window.app_name,
-                &active_window.window_title,
-                active_window.browser_url.as_deref(),
-                state_guard.avatar_state.is_idle,
-                state_guard.avatar_generating_report,
-            ),
-            state_guard.config.avatar_opacity,
-            &state_guard.config.avatar_preset,
-            &state_guard.config.avatar_persona,
-            state_guard.config.avatar_body_hidden,
-        );
-        state_guard.avatar_state = next_state.clone();
-        next_state
-    };
-
-    crate::avatar_engine::emit_avatar_state(app, &next_avatar_state);
-    true
-}
-
 
 
 #[cfg(test)]

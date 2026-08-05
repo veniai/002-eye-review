@@ -1,7 +1,7 @@
 # 设置页设计探索
 
 > 基准:`/home/user/out/overview-redesign-mockup.html` 五原则。
-> 现状源码:`src/routes/settings/Settings.svelte`(436 行)+ `components/` 下 SettingsGeneral(472 行)/ SettingsPrivacy(436)/ SettingsStorage(966)/ SettingsSystem(837);Settings.svelte L10–13 还引用了 SettingsAppearance / SettingsAI / SettingsAvatar / SettingsNodeGateway(未随包提供,按引用与 tab 定义推断);样式在 `src/app.css` L2221–2349。
+> 现状源码:`src/routes/settings/Settings.svelte` + `components/` 下 SettingsGeneral / SettingsAppearance / SettingsEyeCare / SettingsAI / SettingsPrivacy / SettingsStorage / SettingsSystem / SettingsNodeGateway；样式在 `src/app.css`。
 > Mockup:`assets/settings-mockup.html`(代表性屏:左侧分组导航 + 右侧「通用 · 时间与记录」重构示例 + 底部未保存更改条)。
 
 ## 一、现状盘点
@@ -10,7 +10,7 @@
 
 - **页头**:标题+副标题+右上唯一「保存」按钮(Settings.svelte L306–339);sticky+毛玻璃(app.css L2226–2237)。
 - **macOS 权限卡**:`settingsRuntimePlatform === 'macos'` 时 SettingsSystem 整卡永远置顶(L355–359),组件本身 837 行(权限检测/引导弹窗,SettingsSystem.svelte L423 权限设置标题)。
-- **左侧 tab 栏**:7 个入口 general / appearance / ai / avatar(Beta)/ privacy / storage / node(Beta)(L36–44),12.5rem 宽 rail(app.css L2255–2260),Beta 徽章内联 hardcode(L387–391),激活态 indigo 渐变(app.css L2301–2308)。
+- **左侧 tab 栏**:7 个入口 general / appearance / eyeCare / ai / privacy / storage / node(Beta),12.5rem 宽 rail(app.css L2255–2260),Beta 徽章内联 hardcode,激活态 indigo 渐变(app.css L2301–2308)。
 - **右侧 stage**:按 activeTab 条件渲染子组件(L397–431)。
 - **tab 内部再分层**(以随包组件为证):
   - General:工作时段(L215–287)+ 折叠「高级工时」(L290–339)+ 折叠「工作目标」(L343–370)+ 折叠「AI 工作记忆」(L373–381)+ 日报自动生成时间(L382–410)+ 系统行为 4 开关(L413–469)。
@@ -46,7 +46,7 @@
 ├ 左导航(240px,分组 + 搜索)
 │   搜索框(索引到「项」级,含折叠段内条目)
 │   记录:通用(时间与记录)· 隐私
-│   智能:AI 模型 · 数字形象 Beta
+│   智能:AI 模型 · 护眼休息
 │   数据:存储与截图 · 导出与备份
 │   接入:节点网关 Beta · 消息机器人
 │   系统:权限状态(状态点:1 项待授权)· 外观

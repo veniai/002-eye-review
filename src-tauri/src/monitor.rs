@@ -4258,7 +4258,7 @@ pub fn get_overlay_windows(frontmost_app: &str) -> Vec<ActiveWindow> {
                 continue;
             }
 
-            // 桌宠、通知气泡等当前进程的置顶窗口不代表用户正在使用 Work Review，
+            // 护眼休息层等当前进程的置顶窗口不代表用户正在使用 Work Review，
             // 使用窗口所有者 PID 精确排除，避免应用名称变化或同名程序造成误判。
             let owner_pid = get_cf_dict_number(dict, "kCGWindowOwnerPID");
             if is_current_process_owner(owner_pid, current_process_id) {

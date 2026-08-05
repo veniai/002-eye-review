@@ -15,6 +15,7 @@ use regex::Regex;
 use std::io::Cursor;
 use std::path::{Path, PathBuf};
 #[cfg(any(target_os = "macos", target_os = "windows", target_os = "linux"))]
+#[cfg(any(target_os = "macos", target_os = "linux"))]
 use std::process::Command;
 #[cfg(any(target_os = "macos", target_os = "windows", target_os = "linux", test))]
 use std::{
@@ -102,7 +103,7 @@ pub fn has_accessibility_permission(prompt: bool) -> bool {
 }
 
 /// 检查 macOS 输入监控（Input Monitoring）权限
-/// 桌宠全局键盘鼠标联动需要此权限
+/// 护眼空闲检测在 macOS 上可能需要此权限
 #[cfg(target_os = "macos")]
 pub fn has_input_monitoring_permission() -> bool {
     extern "C" {

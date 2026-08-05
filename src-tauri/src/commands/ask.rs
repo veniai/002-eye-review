@@ -868,7 +868,7 @@ async fn execute_assistant_action(
             let next_config = {
                 let s = state_arc.lock().map_err(|e| e.to_string())?;
                 let mut next = s.config.clone();
-                next.avatar_followups.push(crate::config::AvatarFollowupItem {
+                next.assistant_todos.push(crate::config::AssistantTodoItem {
                     id: uuid::Uuid::new_v4().to_string(),
                     title: text.clone(),
                     date: today,
@@ -930,7 +930,7 @@ async fn execute_assistant_action(
             } else {
                 date
             };
-            app.emit("avatar-open-timeline", serde_json::json!({ "date": date }))
+            app.emit("assistant-open-timeline", serde_json::json!({ "date": date }))
                 .map_err(|e| format!("打开时间线失败: {e}"))?;
             Ok(format!("已打开 {date} 的时间线"))
         }
@@ -1024,7 +1024,7 @@ pub async fn chat_work_assistant(
         .collect();
 
     // 从 AppState 中 clone Database + 收集隐私过滤器（Arc 引用计数 +1，可跨 await）
-    let (database, ignored_apps, excluded_domains, web_tools, avatar_followups) = {
+    let (database, ignored_apps, excluded_domains, web_tools, assistant_todos) = {
         let s = state.lock().map_err(|e| AppError::Unknown(e.to_string()))?;
         let (ignored_apps, excluded_domains) = collect_privacy_filters(&s);
         // 联网工具配置：仅在用户显式开启时传入（隐私默认关）
@@ -1041,7 +1041,7 @@ pub async fn chat_work_assistant(
             ignored_apps,
             excluded_domains,
             web_tools,
-            s.config.avatar_followups.clone(),
+            s.config.assistant_todos.clone(),
         )
     };
 
@@ -1100,7 +1100,7 @@ pub async fn chat_work_assistant(
         None
     };
     let runtime = crate::agent::AssistantRuntime {
-        avatar_followups,
+        assistant_todos,
         actions: Some(build_action_bridge(
             app.clone(),
             state_arc.clone(),

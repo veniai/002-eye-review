@@ -56,7 +56,7 @@ The focus is not "monitoring". It is helping you **recall, organize, and review*
 - **Questions over local records** — Use the basic template or your configured model to answer "What did I do today?", "How long did this task take?", and "What have I been focused on?"
 - **Daily report generation and export** — Generate structured daily reports with Markdown export, auto-export, paragraph editing, pin/hide controls, and cached AI section ordering
 - **Privacy-first and locally controllable** — Data is stored in local SQLite by default; AI is optional, and model calls use your own API key without third-party relay
-- **Desktop Avatar Beta** — Shows work status through a desktop avatar and is gradually expanding toward proactive reminders and context assistance
+- **Eye care breaks** — Defaults to 40 minutes of estimated active screen use followed by a 3-minute forced break, configurable with natural-away detection and every-display overlays
 - **Multilingual UI** — Available in Simplified Chinese, English, Traditional Chinese, and Arabic (with RTL layout)
 
 ---
@@ -124,10 +124,6 @@ The screenshots below are captured from the running desktop app with localized U
   <img src="docs/Introduction_en/设置-AI模型.png" alt="AI Model Settings" width="720" />
 </p>
 
-<p align="center"><strong>Desktop Avatar</strong></p>
-<p align="center">
-  <img src="docs/Introduction_en/设置-桌面化身.png" alt="Desktop Avatar Settings" width="720" />
-</p>
 
 <p align="center"><strong>Privacy</strong></p>
 <p align="center">
@@ -218,7 +214,7 @@ Supported providers: Ollama (local) / LM Studio (local) / OpenAI compatible / De
 | Linux x86_64 (X11 / Wayland) | `.deb` / `.rpm` / `.AppImage` |
 | Linux ARM64 (aarch64) | `.deb` |
 
-**macOS:** Screenshots require the "Screen Recording" permission, and avatar linkage requires "Accessibility + Input Monitoring". If you see a "damaged" warning on first launch: `sudo xattr -rd com.apple.quarantine "/Applications/Work Review.app"`
+**macOS:** Screenshots require "Screen Recording"; activity recognition uses "Accessibility", and eye-care idle detection may require "Input Monitoring". If you see a "damaged" warning on first launch: `sudo xattr -rd com.apple.quarantine "/Applications/Work Review.app"`
 
 **Windows:** Depends on Microsoft Edge WebView2 Runtime.
 
@@ -267,13 +263,9 @@ GDK_BACKEND=x11 ./Work_Review
 ## Extended Capabilities (Beta)
 
 <details>
-<summary>Desktop Avatar</summary>
+<summary>Eye Care Breaks</summary>
 
-Uses a standalone desktop pet window to reflect idle / working / reading / meeting / music / video states.
-
-<img src="docs/桌宠.png" alt="Desktop Avatar" width="220" />
-
-Still being actively refined — interaction linkage, state expression, and preset details will continue to improve.
+Uses an independent timer with configurable 40/3 defaults, advance notice, natural-away reset, forced overlays on every display, and a cycle recap after you return.
 
 </details>
 
@@ -403,7 +395,6 @@ Requires: Node.js 18+ / Rust stable / Tauri 2 CLI · Tech stack: Tauri 2 + Rust 
 ## Acknowledgements
 
 - Thanks to the [linux.do](https://linux.do/) community for discussion and feedback
-- Desktop Avatar BongoCat resources adapted from [ayangweb/BongoCat](https://github.com/ayangweb/BongoCat) (MIT License), see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 
 ## License
 

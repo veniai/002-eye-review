@@ -10,7 +10,6 @@
   let permissionStatus = null;
   let linuxSessionSupport = null;
   let refreshing = false;
-  let gnomeExtensionInstalling = false;
   let pendingPermissionItem = null;
   let permissionDetailsExpanded = false;
   let permissionDetailsTouched = false;
@@ -25,7 +24,6 @@
       accessibility: Boolean(rawStatus.accessibility),
       inputMonitoring: Boolean(rawStatus.input_monitoring),
       screenshotSupported: Boolean(rawStatus.screenshot_supported),
-      avatarInputSupported: Boolean(rawStatus.avatar_input_supported),
       allGranted: Boolean(rawStatus.all_granted),
     };
   }
@@ -42,29 +40,25 @@
     }
 
     if (platform === 'windows' && rawPermissionStatus) {
-      const ready = Number(rawPermissionStatus.screenshotSupported) + Number(rawPermissionStatus.avatarInputSupported);
+      const ready = Number(rawPermissionStatus.screenshotSupported);
       return {
         ready,
-        total: 2,
-        pending: Math.max(0, 2 - ready),
-        attention: ready < 2,
+        total: 1,
+        pending: Math.max(0, 1 - ready),
+        attention: ready < 1,
         platformLabel: 'Windows',
       };
     }
 
     if (platform === 'linux' && support) {
-      const hasGnomeExtensionRow = support.desktopEnvironment === 'gnome';
-      const total = hasGnomeExtensionRow ? 3 : 2;
-      const ready =
-        Number(support.screenshotSupported) +
-        Number(support.avatarInputSupportLevel !== 'none') +
-        Number(hasGnomeExtensionRow && support.gnomeAvatarExtensionEnabled);
+      const total = 2;
+      const ready = Number(support.screenshotSupported) + Number(support.activeWindowSupported);
 
       return {
         ready,
         total,
         pending: Math.max(0, total - ready),
-        attention: ready < total || Boolean(support.gnomeAvatarExtensionNeedsRelogin),
+        attention: ready < total,
         platformLabel: 'Linux',
       };
     }
@@ -82,31 +76,26 @@
     ? [
         {
           id: 'screen_capture',
-          labelKey: 'settingsAppearance.avatarScreenCapturePermission',
-          descriptionKey: 'settingsAppearance.avatarScreenCapturePermissionHint',
+          labelKey: 'systemPermissions.screenCapture',
+          descriptionKey: 'systemPermissions.screenCaptureHint',
           granted: permissionStatus.screenCapture,
         },
         {
           id: 'accessibility',
-          labelKey: 'settingsAppearance.avatarAccessibilityPermission',
-          descriptionKey: 'settingsAppearance.avatarAccessibilityPermissionHint',
+          labelKey: 'systemPermissions.accessibility',
+          descriptionKey: 'systemPermissions.accessibilityHint',
           granted: permissionStatus.accessibility,
         },
         {
           id: 'input_monitoring',
-          labelKey: 'settingsAppearance.avatarInputMonitoringPermission',
-          descriptionKey: 'settingsAppearance.avatarInputMonitoringPermissionHint',
+          labelKey: 'systemPermissions.inputMonitoring',
+          descriptionKey: 'systemPermissions.inputMonitoringHint',
           granted: permissionStatus.inputMonitoring,
         },
       ]
     : [];
 
   $: macReadyCount = macPermissionItems.filter((item) => item.granted).length;
-  $: linuxInputSupportLabelKey = linuxSessionSupport?.avatarInputSupportLevel === 'full'
-    ? 'settingsAppearance.avatarInputFull'
-    : linuxSessionSupport?.avatarInputSupportLevel === 'mouse-only'
-      ? 'settingsAppearance.avatarInputMouseOnly'
-      : 'settingsAppearance.avatarInputUnavailable';
   $: permissionSummary = buildPermissionSummary(
     runtimePlatform,
     permissionStatus,
@@ -185,27 +174,6 @@
     }
 
     await openPermissionSettings(permission);
-  }
-
-  async function installGnomeAvatarExtension() {
-    if (gnomeExtensionInstalling) {
-      return;
-    }
-
-    gnomeExtensionInstalling = true;
-    try {
-      const result = await invoke('install_gnome_avatar_extension');
-      showToast(
-        result.message,
-        result.requiresRelogin ? 'warning' : result.enabled ? 'success' : 'info'
-      );
-      await refreshPlatformSupport();
-    } catch (error) {
-      console.error('自动安装 GNOME 桌宠扩展失败:', error);
-      showToast(t('settingsAppearance.avatarGnomeExtensionInstallFailed', { error }), 'error');
-    } finally {
-      gnomeExtensionInstalling = false;
-    }
   }
 
   function permissionSetupMessageKey(permissionId) {
@@ -306,7 +274,7 @@
             <div class="permission-item-leading">
               <span class={`permission-item-marker ${permissionStatus.screenshotSupported ? 'permission-item-marker-ready' : 'permission-item-marker-action'}`}></span>
               <div class="min-w-0 flex-1">
-                <div class="permission-item-title">{t('settingsAppearance.avatarScreenshotSupportTitle')}</div>
+                <div class="permission-item-title">{t('systemPermissions.screenCapture')}</div>
                 <div class="permission-item-copy">{t('settingsGeneral.permissionsWindowsScreenshotHint')}</div>
               </div>
             </div>
@@ -318,29 +286,13 @@
           </div>
         </div>
 
-        <div class={`permission-item-card ${permissionStatus.avatarInputSupported ? 'permission-item-card-ready' : 'permission-item-card-action'}`}>
-          <div class="permission-item-main">
-            <div class="permission-item-leading">
-              <span class={`permission-item-marker ${permissionStatus.avatarInputSupported ? 'permission-item-marker-ready' : 'permission-item-marker-action'}`}></span>
-              <div class="min-w-0 flex-1">
-                <div class="permission-item-title">{t('settingsAppearance.avatarInputSupportTitle')}</div>
-                <div class="permission-item-copy">{t('settingsGeneral.permissionsWindowsInputHint')}</div>
-              </div>
-            </div>
-            <div class={`permission-status-pill ${permissionStatus.avatarInputSupported ? 'permission-status-pill-ready' : 'permission-status-pill-warn'}`}>
-              {permissionStatus.avatarInputSupported
-                ? t('settingsGeneral.permissionGranted')
-                : t('settingsGeneral.permissionMissing')}
-            </div>
-          </div>
-        </div>
       {:else if runtimePlatform === 'linux' && linuxSessionSupport}
         <div class={`permission-item-card ${linuxSessionSupport.screenshotSupported ? 'permission-item-card-ready' : 'permission-item-card-action'}`}>
           <div class="permission-item-main">
             <div class="permission-item-leading">
               <span class={`permission-item-marker ${linuxSessionSupport.screenshotSupported ? 'permission-item-marker-ready' : 'permission-item-marker-action'}`}></span>
               <div class="min-w-0 flex-1">
-                <div class="permission-item-title">{t('settingsAppearance.avatarScreenshotSupportTitle')}</div>
+                <div class="permission-item-title">{t('systemPermissions.screenCapture')}</div>
                 <div class="permission-item-copy">{t('settingsGeneral.permissionsLinuxScreenshotHint')}</div>
               </div>
             </div>
@@ -352,60 +304,27 @@
           </div>
         </div>
 
-        <div class={`permission-item-card ${linuxSessionSupport.avatarInputSupportLevel === 'none' ? 'permission-item-card-action' : 'permission-item-card-ready'}`}>
+        <div class={`permission-item-card ${linuxSessionSupport.activeWindowSupported ? 'permission-item-card-ready' : 'permission-item-card-action'}`}>
           <div class="permission-item-main">
             <div class="permission-item-leading">
-              <span class={`permission-item-marker ${linuxSessionSupport.avatarInputSupportLevel === 'none' ? 'permission-item-marker-action' : 'permission-item-marker-ready'}`}></span>
+              <span class={`permission-item-marker ${linuxSessionSupport.activeWindowSupported ? 'permission-item-marker-ready' : 'permission-item-marker-action'}`}></span>
               <div class="min-w-0 flex-1">
-                <div class="permission-item-title">{t('settingsAppearance.avatarInputSupportTitle')}</div>
+                <div class="permission-item-title">{t('systemPermissions.activityRecognition')}</div>
                 <div class="permission-item-copy">
-                  {t('settingsGeneral.permissionsLinuxInputHint')}
+                  {t('systemPermissions.activityRecognitionHint')}
                   <span class="permission-inline-meta">
-                    {linuxSessionSupport.sessionType} / {linuxSessionSupport.desktopEnvironment}
+                    {linuxSessionSupport.sessionType} / {linuxSessionSupport.desktopEnvironment} / {linuxSessionSupport.activeWindowProvider}
                   </span>
                 </div>
               </div>
             </div>
-            <div class={`permission-status-pill ${linuxSessionSupport.avatarInputSupportLevel === 'none' ? 'permission-status-pill-warn' : 'permission-status-pill-ready'}`}>
-              {t(linuxInputSupportLabelKey)}
+            <div class={`permission-status-pill ${linuxSessionSupport.activeWindowSupported ? 'permission-status-pill-ready' : 'permission-status-pill-warn'}`}>
+              {linuxSessionSupport.activeWindowSupported
+                ? t('settingsGeneral.permissionGranted')
+                : t('settingsGeneral.permissionMissing')}
             </div>
           </div>
         </div>
-
-        {#if linuxSessionSupport.desktopEnvironment === 'gnome'}
-          <div class={`permission-item-card ${(linuxSessionSupport.gnomeAvatarExtensionEnabled || linuxSessionSupport.gnomeAvatarExtensionNeedsRelogin) ? 'permission-item-card-ready' : 'permission-item-card-action'}`}>
-            <div class="permission-item-main">
-              <div class="permission-item-leading">
-                <span class={`permission-item-marker ${(linuxSessionSupport.gnomeAvatarExtensionEnabled || linuxSessionSupport.gnomeAvatarExtensionNeedsRelogin) ? 'permission-item-marker-ready' : 'permission-item-marker-action'}`}></span>
-                <div class="min-w-0 flex-1">
-                  <div class="permission-item-title">{t('settingsAppearance.avatarGnomeExtensionTitle')}</div>
-                  <div class="permission-item-copy">{t('settingsGeneral.permissionsGnomeExtensionHint')}</div>
-                </div>
-              </div>
-
-              {#if linuxSessionSupport.gnomeAvatarExtensionEnabled}
-                <div class="permission-status-pill permission-status-pill-ready">
-                  {t('settingsAppearance.avatarGnomeExtensionReady')}
-                </div>
-              {:else if linuxSessionSupport.gnomeAvatarExtensionNeedsRelogin}
-                <div class="permission-status-pill permission-status-pill-warn">
-                  {t('settingsAppearance.avatarGnomeExtensionRelogin')}
-                </div>
-              {:else}
-                <button
-                  type="button"
-                  class="permission-status-pill permission-status-pill-action"
-                  on:click={installGnomeAvatarExtension}
-                  disabled={gnomeExtensionInstalling}
-                >
-                  {gnomeExtensionInstalling
-                    ? t('settingsAppearance.avatarGnomeExtensionInstalling')
-                    : t('settingsAppearance.avatarGnomeExtensionInstall')}
-                </button>
-              {/if}
-            </div>
-          </div>
-        {/if}
       {/if}
     </div>
   {/if}

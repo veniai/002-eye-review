@@ -19,6 +19,8 @@ const MANAGED_DATA_ENTRIES: &[&str] = &[
     "screenshots",
     "ocr_logs",
     "background.jpg",
+    "eye-care-state.json",
+    "eye-care-emergency.log",
     "update_settings.json",
 ];
 
@@ -410,4 +412,3 @@ pub async fn open_data_dir(state: State<'_, Arc<Mutex<AppState>>>) -> Result<(),
 
     Ok(())
 }
-

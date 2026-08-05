@@ -35,7 +35,6 @@ npm-debug.log*
 # Live2D SDK / local experiment files (not shipped in release)
 # 注意：用 `/lib/` 锚定到仓库根目录，避免误伤 `src/lib/`（前端核心代码所在地）。
 /lib/
-src/lib/components/Avatar/AvatarCanvasLive2D.svelte
 
 # Tauri
 src-tauri/target/

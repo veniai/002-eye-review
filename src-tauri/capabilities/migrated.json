@@ -4,7 +4,8 @@
   "local": true,
   "windows": [
     "main",
-    "avatar"
+    "eye-care-pre-break",
+    "eye-care-overlay-*"
   ],
   "permissions": [
     "core:default",

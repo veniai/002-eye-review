@@ -397,10 +397,6 @@
           <span class="text-xs text-slate-500 dark:text-[#7d8590]">{t('settingsGeneral.hours')}</span>
         </div>
       </div>
-      <label class="flex items-center justify-between mt-3 cursor-pointer">
-        <span class="settings-text text-sm">{t('settingsGeneral.workGoalNotifications')}</span>
-        <input type="checkbox" bind:checked={config.goal_notifications} on:change={handleChange} class="accent-primary-500" />
-      </label>
     </CollapsibleSection>
 
     <!-- AI 工作记忆 -->

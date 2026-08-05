@@ -238,7 +238,7 @@ pub struct TextModelProfile {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct AvatarFollowupItem {
+pub struct AssistantTodoItem {
     pub id: String,
     pub title: String,
     pub date: String,
@@ -246,11 +246,11 @@ pub struct AvatarFollowupItem {
     pub source_title: String,
     pub project_key: String,
     pub created_at: i64,
-    #[serde(default = "default_avatar_followup_status")]
+    #[serde(default = "default_assistant_todo_status")]
     pub status: String,
 }
 
-fn default_avatar_followup_status() -> String {
+fn default_assistant_todo_status() -> String {
     "open".to_string()
 }
 
@@ -1081,18 +1081,30 @@ pub struct AppConfig {
     /// 轻量模式：关闭主界面时释放主 Webview，仅保留后台录制与托盘
     #[serde(default)]
     pub lightweight_mode: bool,
-    /// 是否启用休息提醒
+    /// 是否启用独立护眼计时。旧桌宠休息提醒开关会迁移到这里。
+    #[serde(default = "default_true", alias = "break_reminder_enabled")]
+    pub eye_care_enabled: bool,
+    /// 累计多少分钟有效使用后进入强制休息。
+    #[serde(
+        default = "default_eye_care_work_minutes",
+        alias = "break_reminder_interval_minutes"
+    )]
+    pub eye_care_work_minutes: u64,
+    /// 强制休息时长（分钟）。
+    #[serde(default = "default_eye_care_rest_minutes")]
+    pub eye_care_rest_minutes: u64,
+    /// 连续无输入多久后视为已经获得自然休息（分钟）。
+    #[serde(default = "default_eye_care_natural_rest_minutes")]
+    pub eye_care_natural_rest_minutes: u64,
+    /// 强制休息前的非阻塞预告时长（秒）。
+    #[serde(default = "default_eye_care_pre_break_seconds")]
+    pub eye_care_pre_break_seconds: u64,
+    /// 用户在非休息阶段显式暂停护眼计时。
     #[serde(default)]
-    pub break_reminder_enabled: bool,
-    /// 连续活跃多久后提醒（分钟）
-    #[serde(default = "default_break_reminder_interval_minutes")]
-    pub break_reminder_interval_minutes: u64,
+    pub eye_care_paused: bool,
     /// 每日工作时长目标（分钟），None = 不设目标
     #[serde(default)]
     pub daily_work_goal_minutes: Option<u32>,
-    /// 达到目标时桌宠庆祝提醒
-    #[serde(default)]
-    pub goal_notifications: bool,
     /// AI 工作记忆：自动合成洞察
     #[serde(default)]
     pub memory_enabled: bool,
@@ -1124,39 +1136,9 @@ pub struct AppConfig {
     /// 嵌入服务 API Key（Ollama 不需要）
     #[serde(default)]
     pub embedding_api_key: Option<String>,
-    /// 是否启用桌面化身窗口
-    #[serde(default)]
-    pub avatar_enabled: bool,
-    /// 隐藏桌宠本体（仅保留通知气泡与卡片），窗口收缩到仅容纳通知区（#137 诉求二）
-    #[serde(default)]
-    pub avatar_body_hidden: bool,
-    /// 桌宠缩放比例（0.7 - 1.3）
-    #[serde(default = "default_avatar_scale")]
-    pub avatar_scale: f64,
-    /// 桌宠猫体透明度（0.45 - 1.0）
-    #[serde(default = "default_avatar_opacity")]
-    pub avatar_opacity: f64,
-    /// 桌宠官方预设
-    #[serde(default = "default_avatar_preset")]
-    pub avatar_preset: String,
-    /// 桌宠互动风格
-    #[serde(default = "default_avatar_persona")]
-    pub avatar_persona: String,
-    /// 桌宠是否允许调用文本模型生成不定时提醒
-    #[serde(default)]
-    pub avatar_proactive_ai_enabled: bool,
-    /// 桌宠鼠标穿透（点击事件穿透到下层窗口）
-    #[serde(default)]
-    pub avatar_click_through: bool,
-    /// 通过桌宠手动记下的待跟进项
-    #[serde(default)]
-    pub avatar_followups: Vec<AvatarFollowupItem>,
-    /// 桌宠窗口横向位置
-    #[serde(default)]
-    pub avatar_x: Option<i32>,
-    /// 桌宠窗口纵向位置
-    #[serde(default)]
-    pub avatar_y: Option<i32>,
+    /// 工作助手创建的本地待办。兼容迁移旧桌宠待跟进字段。
+    #[serde(default, alias = "avatar_followups")]
+    pub assistant_todos: Vec<AssistantTodoItem>,
     /// 隐藏系统标题栏装饰
     #[serde(default)]
     pub hide_decorations: bool,
@@ -1199,11 +1181,17 @@ fn default_bg_opacity() -> f32 {
 fn default_bg_blur() -> u8 {
     1
 }
-fn default_break_reminder_interval_minutes() -> u64 {
-    50
+fn default_eye_care_work_minutes() -> u64 {
+    40
 }
-fn default_avatar_scale() -> f64 {
-    0.9
+fn default_eye_care_rest_minutes() -> u64 {
+    3
+}
+fn default_eye_care_natural_rest_minutes() -> u64 {
+    5
+}
+fn default_eye_care_pre_break_seconds() -> u64 {
+    30
 }
 fn default_assistant_search_provider() -> String {
     "tavily".to_string()
@@ -1219,15 +1207,6 @@ fn default_embedding_model() -> String {
 }
 fn default_standard_work_hours() -> f64 {
     8.0
-}
-fn default_avatar_opacity() -> f64 {
-    0.82
-}
-fn default_avatar_preset() -> String {
-    "original-standard".to_string()
-}
-fn default_avatar_persona() -> String {
-    "assistant".to_string()
 }
 fn default_ui_visual_style() -> String {
     "c".to_string()
@@ -1318,10 +1297,13 @@ impl Default for AppConfig {
             openai_model: "gpt-5.4".to_string(),
             hide_dock_icon: false,
             lightweight_mode: false,
-            break_reminder_enabled: false,
-            break_reminder_interval_minutes: default_break_reminder_interval_minutes(),
+            eye_care_enabled: true,
+            eye_care_work_minutes: default_eye_care_work_minutes(),
+            eye_care_rest_minutes: default_eye_care_rest_minutes(),
+            eye_care_natural_rest_minutes: default_eye_care_natural_rest_minutes(),
+            eye_care_pre_break_seconds: default_eye_care_pre_break_seconds(),
+            eye_care_paused: false,
             daily_work_goal_minutes: None,
-            goal_notifications: false,
             memory_enabled: false,
             memory_last_synthesis_date: None,
             assistant_web_access_enabled: false,
@@ -1332,23 +1314,43 @@ impl Default for AppConfig {
             embedding_endpoint: default_embedding_endpoint(),
             embedding_model: default_embedding_model(),
             embedding_api_key: None,
-            avatar_enabled: false,
-            avatar_body_hidden: false,
-            avatar_scale: default_avatar_scale(),
-            avatar_opacity: default_avatar_opacity(),
-            avatar_preset: default_avatar_preset(),
-            avatar_persona: default_avatar_persona(),
-            avatar_proactive_ai_enabled: false,
-            avatar_click_through: false,
-            avatar_followups: Vec::new(),
-            avatar_x: None,
-            avatar_y: None,
+            assistant_todos: Vec::new(),
             hide_decorations: false,
             background_image: None,
             background_opacity: 0.25,
             background_blur: 1,
         }
     }
+}
+
+fn deserialize_config_with_legacy_migration(
+    content: &str,
+) -> std::result::Result<AppConfig, serde_json::Error> {
+    let mut value: serde_json::Value = serde_json::from_str(content)?;
+    if let Some(object) = value.as_object_mut() {
+        let legacy_enabled = object.remove("break_reminder_enabled");
+        if !object.contains_key("eye_care_enabled") {
+            if let Some(enabled) = legacy_enabled.and_then(|value| value.as_bool()) {
+                object.insert("eye_care_enabled".to_string(), serde_json::json!(enabled));
+            }
+        }
+
+        let legacy_interval = object.remove("break_reminder_interval_minutes");
+        if !object.contains_key("eye_care_work_minutes") {
+            if let Some(value) = legacy_interval {
+                // 旧值只有在落入新护眼工作时长的合法范围内才保留；非法旧值按规格回退 40。
+                let minutes = value
+                    .as_u64()
+                    .filter(|minutes| (1..=240).contains(minutes))
+                    .unwrap_or_else(default_eye_care_work_minutes);
+                object.insert(
+                    "eye_care_work_minutes".to_string(),
+                    serde_json::json!(minutes),
+                );
+            }
+        }
+    }
+    serde_json::from_value(value)
 }
 
 impl AppConfig {
@@ -1374,13 +1376,11 @@ impl AppConfig {
         self.screenshot_interval = normalize_screenshot_interval(self.screenshot_interval);
         self.idle_threshold_minutes = normalize_idle_threshold_minutes(self.idle_threshold_minutes);
         self.ui_visual_style = normalize_ui_visual_style(&self.ui_visual_style);
-        self.avatar_scale = normalize_avatar_scale(self.avatar_scale);
-        self.avatar_opacity = normalize_avatar_opacity(self.avatar_opacity);
-        self.avatar_preset = normalize_avatar_preset(&self.avatar_preset);
-        self.avatar_persona = normalize_avatar_persona(&self.avatar_persona);
-        normalize_avatar_followups(&mut self.avatar_followups);
-        self.break_reminder_interval_minutes =
-            normalize_break_reminder_interval_minutes(self.break_reminder_interval_minutes);
+        normalize_assistant_todos(&mut self.assistant_todos);
+        self.eye_care_work_minutes = self.eye_care_work_minutes.clamp(1, 240);
+        self.eye_care_rest_minutes = self.eye_care_rest_minutes.clamp(1, 30);
+        self.eye_care_natural_rest_minutes = self.eye_care_natural_rest_minutes.clamp(1, 60);
+        self.eye_care_pre_break_seconds = self.eye_care_pre_break_seconds.clamp(5, 300);
         self.standard_work_hours = self.standard_work_hours.clamp(1.0, 24.0);
         self.daily_report_custom_prompt = self.daily_report_custom_prompt.trim().to_string();
         normalize_prompt_presets(&mut self.daily_report_prompt_presets);
@@ -1484,7 +1484,7 @@ impl AppConfig {
             }
         };
 
-        match serde_json::from_str::<AppConfig>(&content) {
+        match deserialize_config_with_legacy_migration(&content) {
             Ok(mut config) => {
                 config.normalize();
                 ConfigFileLoad::Loaded(config)
@@ -1497,7 +1497,7 @@ impl AppConfig {
 
     fn load_existing(path: &Path) -> Result<Self> {
         let content = std::fs::read_to_string(path)?;
-        let mut config: AppConfig = serde_json::from_str(&content)?;
+        let mut config = deserialize_config_with_legacy_migration(&content)?;
         config.normalize();
         Ok(config)
     }
@@ -1909,36 +1909,6 @@ fn normalize_prompt_presets(presets: &mut Vec<PromptPreset>) {
     presets.retain(|p| !p.name.is_empty() && !p.prompt.is_empty());
 }
 
-fn normalize_avatar_scale(value: f64) -> f64 {
-    if !value.is_finite() {
-        return default_avatar_scale();
-    }
-
-    value.clamp(0.4, 1.3)
-}
-
-fn normalize_avatar_opacity(value: f64) -> f64 {
-    if !value.is_finite() {
-        return default_avatar_opacity();
-    }
-
-    value.clamp(0.45, 1.0)
-}
-
-fn normalize_avatar_preset(value: &str) -> String {
-    match value.trim() {
-        "original-standard" | "keyboard-focus" | "minimal-office" => value.trim().to_string(),
-        _ => default_avatar_preset(),
-    }
-}
-
-fn normalize_avatar_persona(value: &str) -> String {
-    match value.trim() {
-        "companion" | "assistant" | "coach" => value.trim().to_string(),
-        _ => default_avatar_persona(),
-    }
-}
-
 fn normalize_ui_visual_style(value: &str) -> String {
     match value.trim().to_ascii_lowercase().as_str() {
         "a" | "b" | "c" => value.trim().to_ascii_lowercase(),
@@ -1946,7 +1916,7 @@ fn normalize_ui_visual_style(value: &str) -> String {
     }
 }
 
-fn normalize_avatar_followups(items: &mut Vec<AvatarFollowupItem>) {
+fn normalize_assistant_todos(items: &mut Vec<AssistantTodoItem>) {
     let mut seen = std::collections::HashSet::new();
     items.retain_mut(|item| {
         item.id = item.id.trim().to_string();
@@ -1957,10 +1927,10 @@ fn normalize_avatar_followups(items: &mut Vec<AvatarFollowupItem>) {
         item.project_key = item.project_key.trim().to_string();
         item.status = match item.status.trim() {
             "done" => "done".to_string(),
-            _ => default_avatar_followup_status(),
+            _ => default_assistant_todo_status(),
         };
 
-        if item.title.is_empty() || item.project_key.is_empty() || item.date.is_empty() {
+        if item.title.is_empty() || item.date.is_empty() {
             return false;
         }
 
@@ -1979,13 +1949,6 @@ fn normalize_avatar_followups(items: &mut Vec<AvatarFollowupItem>) {
             .then_with(|| a.title.cmp(&b.title))
     });
     items.truncate(200);
-}
-
-fn normalize_break_reminder_interval_minutes(value: u64) -> u64 {
-    match value {
-        30 | 45 | 50 | 60 | 90 | 120 => value,
-        _ => default_break_reminder_interval_minutes(),
-    }
 }
 
 /// 截屏间隔最低 5 秒，防止配置值过小导致 CPU/磁盘占用过高
@@ -2017,12 +1980,10 @@ mod tests {
     #![allow(clippy::field_reassign_with_default)]
 
     use super::{
-        commit_pending_config, config_backup_path, default_avatar_opacity, default_avatar_persona,
-        default_avatar_preset, default_avatar_scale, default_ui_visual_style,
-        normalize_app_category_rules, normalize_avatar_followups, normalize_avatar_opacity,
-        normalize_avatar_persona, normalize_avatar_preset, normalize_avatar_scale,
-        normalize_ui_visual_style, update_config_backup_with_sync, AiProvider, AppCategoryRule,
-        AppConfig, AvatarFollowupItem, ConfigLoadStatus, PendingConfigFile, RemoteStorageProvider,
+        commit_pending_config, config_backup_path, default_ui_visual_style,
+        normalize_app_category_rules, normalize_assistant_todos, normalize_ui_visual_style,
+        update_config_backup_with_sync, AiProvider, AppCategoryRule, AppConfig,
+        AssistantTodoItem, ConfigLoadStatus, PendingConfigFile, RemoteStorageProvider,
         ScreenshotDisplayMode, WebsiteSemanticRule, DEFAULT_LOCALHOST_API_PORT,
     };
     use std::io::{self, Write};
@@ -2444,45 +2405,6 @@ mod tests {
     }
 
     #[test]
-    fn 桌宠缩放默认值应为百分之九十() {
-        let config = AppConfig::default();
-
-        assert_eq!(config.avatar_scale, default_avatar_scale());
-        assert_eq!(config.avatar_scale, 0.9);
-    }
-
-    #[test]
-    fn 桌宠透明度默认值应为百分之八十二() {
-        let config = AppConfig::default();
-
-        assert_eq!(config.avatar_opacity, default_avatar_opacity());
-        assert_eq!(config.avatar_opacity, 0.82);
-    }
-
-    #[test]
-    fn 桌宠官方预设默认应为原版标准模式() {
-        let config = AppConfig::default();
-
-        assert_eq!(config.avatar_preset, default_avatar_preset());
-        assert_eq!(config.avatar_preset, "original-standard");
-    }
-
-    #[test]
-    fn 桌宠互动风格默认应为助手型() {
-        let config = AppConfig::default();
-
-        assert_eq!(config.avatar_persona, default_avatar_persona());
-        assert_eq!(config.avatar_persona, "assistant");
-    }
-
-    #[test]
-    fn 桌宠模型生成提醒默认应关闭() {
-        let config = AppConfig::default();
-
-        assert!(!config.avatar_proactive_ai_enabled);
-    }
-
-    #[test]
     fn 界面风格默认应保持当前柔和层次且只允许三套方案() {
         let config = AppConfig::default();
 
@@ -2492,14 +2414,6 @@ mod tests {
         assert_eq!(normalize_ui_visual_style("B"), "b");
         assert_eq!(normalize_ui_visual_style("c"), "c");
         assert_eq!(normalize_ui_visual_style("unknown"), "c");
-    }
-
-    #[test]
-    fn 桌宠默认位置应为空以便首次按锚点吸附() {
-        let config = AppConfig::default();
-
-        assert_eq!(config.avatar_x, None);
-        assert_eq!(config.avatar_y, None);
     }
 
     #[test]
@@ -2535,11 +2449,15 @@ mod tests {
     }
 
     #[test]
-    fn 休息提醒默认应关闭且间隔为五十分钟() {
+    fn 护眼功能默认应为四十分钟工作三分钟休息() {
         let config = AppConfig::default();
 
-        assert!(!config.break_reminder_enabled);
-        assert_eq!(config.break_reminder_interval_minutes, 50);
+        assert!(config.eye_care_enabled);
+        assert_eq!(config.eye_care_work_minutes, 40);
+        assert_eq!(config.eye_care_rest_minutes, 3);
+        assert_eq!(config.eye_care_natural_rest_minutes, 5);
+        assert_eq!(config.eye_care_pre_break_seconds, 30);
+        assert!(!config.eye_care_paused);
     }
 
     #[test]
@@ -2567,41 +2485,9 @@ mod tests {
     }
 
     #[test]
-    fn 桌宠缩放应被钳制在允许范围内() {
-        assert_eq!(normalize_avatar_scale(0.2), 0.4);
-        assert_eq!(normalize_avatar_scale(2.0), 1.3);
-        assert_eq!(normalize_avatar_scale(f64::NAN), 0.9);
-    }
-
-    #[test]
-    fn 桌宠透明度应被钳制在允许范围内() {
-        assert_eq!(normalize_avatar_opacity(0.1), 0.45);
-        assert_eq!(normalize_avatar_opacity(1.5), 1.0);
-        assert_eq!(normalize_avatar_opacity(f64::NAN), 0.82);
-    }
-
-    #[test]
-    fn 桌宠预设应被规范到官方预设集合内() {
-        assert_eq!(normalize_avatar_preset("keyboard-focus"), "keyboard-focus");
-        assert_eq!(
-            normalize_avatar_preset(" minimal-office "),
-            "minimal-office"
-        );
-        assert_eq!(normalize_avatar_preset("wild-theme"), "original-standard");
-        assert_eq!(normalize_avatar_preset(""), "original-standard");
-    }
-
-    #[test]
-    fn 桌宠互动风格应被规范到允许集合内() {
-        assert_eq!(normalize_avatar_persona("companion"), "companion");
-        assert_eq!(normalize_avatar_persona(" coach "), "coach");
-        assert_eq!(normalize_avatar_persona("other"), "assistant");
-    }
-
-    #[test]
-    fn 桌宠手动待跟进应去重并清理非法项() {
+    fn 工作助手待办应去重并清理非法项() {
         let mut items = vec![
-            AvatarFollowupItem {
+            AssistantTodoItem {
                 id: " 1 ".to_string(),
                 title: " 修复支付页回调 ".to_string(),
                 date: "2026-04-18".to_string(),
@@ -2611,7 +2497,7 @@ mod tests {
                 created_at: 20,
                 status: "open".to_string(),
             },
-            AvatarFollowupItem {
+            AssistantTodoItem {
                 id: "2".to_string(),
                 title: "修复支付页回调".to_string(),
                 date: "2026-04-18".to_string(),
@@ -2621,7 +2507,7 @@ mod tests {
                 created_at: 10,
                 status: "open".to_string(),
             },
-            AvatarFollowupItem {
+            AssistantTodoItem {
                 id: "3".to_string(),
                 title: "   ".to_string(),
                 date: "2026-04-18".to_string(),
@@ -2633,11 +2519,113 @@ mod tests {
             },
         ];
 
-        normalize_avatar_followups(&mut items);
+        normalize_assistant_todos(&mut items);
 
         assert_eq!(items.len(), 1);
         assert_eq!(items[0].id, "1");
         assert_eq!(items[0].title, "修复支付页回调");
+    }
+
+    #[test]
+    fn 旧桌宠提醒配置应迁移为护眼配置() {
+        let mut value = serde_json::to_value(AppConfig::default()).expect("默认配置应可序列化");
+        let object = value.as_object_mut().expect("配置应为对象");
+        object.remove("eye_care_enabled");
+        object.remove("eye_care_work_minutes");
+        object.insert("break_reminder_enabled".to_string(), serde_json::json!(true));
+        object.insert(
+            "break_reminder_interval_minutes".to_string(),
+            serde_json::json!(45),
+        );
+        // 旧桌宠字段即使含无关字段也不得导致加载失败。
+        object.insert("avatar_enabled".to_string(), serde_json::json!(true));
+        let mut config = super::deserialize_config_with_legacy_migration(&value.to_string())
+            .expect("旧配置应可读取");
+        config.normalize();
+
+        assert!(config.eye_care_enabled);
+        assert_eq!(config.eye_care_work_minutes, 45);
+        assert_eq!(config.eye_care_rest_minutes, 3);
+    }
+
+    #[test]
+    fn 非法旧提醒间隔应回退四十且新字段优先() {
+        let mut invalid = serde_json::to_value(AppConfig::default()).expect("默认配置应可序列化");
+        let invalid_object = invalid.as_object_mut().expect("配置应为对象");
+        invalid_object.remove("eye_care_enabled");
+        invalid_object.remove("eye_care_work_minutes");
+        invalid_object.insert(
+            "break_reminder_enabled".to_string(),
+            serde_json::json!("invalid"),
+        );
+        invalid_object.insert(
+            "break_reminder_interval_minutes".to_string(),
+            serde_json::json!(0),
+        );
+        invalid_object.insert(
+            "avatar_click_through".to_string(),
+            serde_json::json!({"unexpected": true}),
+        );
+        let mut migrated = super::deserialize_config_with_legacy_migration(&invalid.to_string())
+            .expect("非法旧提醒值不应破坏配置加载");
+        migrated.normalize();
+        assert!(migrated.eye_care_enabled);
+        assert_eq!(migrated.eye_care_work_minutes, 40);
+
+        let mut both = serde_json::to_value(AppConfig::default()).expect("默认配置应可序列化");
+        let both_object = both.as_object_mut().expect("配置应为对象");
+        both_object.insert("eye_care_enabled".to_string(), serde_json::json!(false));
+        both_object.insert("eye_care_work_minutes".to_string(), serde_json::json!(55));
+        both_object.insert(
+            "break_reminder_enabled".to_string(),
+            serde_json::json!(true),
+        );
+        both_object.insert(
+            "break_reminder_interval_minutes".to_string(),
+            serde_json::json!(45),
+        );
+        let mut migrated = super::deserialize_config_with_legacy_migration(&both.to_string())
+            .expect("新旧字段共存时不应产生重复字段错误");
+        migrated.normalize();
+        assert!(!migrated.eye_care_enabled);
+        assert_eq!(migrated.eye_care_work_minutes, 55);
+    }
+
+    #[test]
+    fn 旧桌宠待办应迁移为工作助手待办且允许空项目标识() {
+        let mut value = serde_json::to_value(AppConfig::default()).expect("默认配置应可序列化");
+        let object = value.as_object_mut().expect("配置应为对象");
+        object.remove("assistant_todos");
+        object.insert("avatar_followups".to_string(), serde_json::json!([{
+                "id": "todo-1",
+                "title": "整理发布说明",
+                "date": "2026-08-05",
+                "sourceApp": "工作助手",
+                "sourceTitle": "助手对话",
+                "projectKey": "",
+                "createdAt": 1,
+                "status": "open"
+            }]));
+        let mut config: AppConfig = serde_json::from_value(value).expect("旧待办应可读取");
+        config.normalize();
+
+        assert_eq!(config.assistant_todos.len(), 1);
+        assert_eq!(config.assistant_todos[0].title, "整理发布说明");
+    }
+
+    #[test]
+    fn 护眼时长应在后端归一化() {
+        let mut config = AppConfig::default();
+        config.eye_care_work_minutes = 0;
+        config.eye_care_rest_minutes = 99;
+        config.eye_care_natural_rest_minutes = 0;
+        config.eye_care_pre_break_seconds = 999;
+        config.normalize();
+
+        assert_eq!(config.eye_care_work_minutes, 1);
+        assert_eq!(config.eye_care_rest_minutes, 30);
+        assert_eq!(config.eye_care_natural_rest_minutes, 1);
+        assert_eq!(config.eye_care_pre_break_seconds, 300);
     }
 
     #[test]

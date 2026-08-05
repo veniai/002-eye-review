@@ -208,7 +208,6 @@ test('多语言 README 应展示完整界面预览截图且图片文件存在', 
     '设置-通用',
     '设置-外观',
     '设置-AI模型',
-    '设置-桌面化身',
     '设置-隐私',
     '设置-存储',
     '接入管理',
@@ -280,7 +279,7 @@ test('多语言 README 的社区图片应使用统一规格展示资产', async 
 
 test('多语言 README 的设置页面截图不应重复使用同一画面', async () => {
   const dirs = ['Introduction_en', 'Introduction_zh', 'Introduction_tw'];
-  const labels = ['设置-通用', '设置-存储', '设置-桌面化身', '设置-隐私'];
+  const labels = ['设置-通用', '设置-存储', '设置-隐私'];
 
   for (const dir of dirs) {
     const hashes = new Map();
@@ -293,11 +292,6 @@ test('多语言 README 的设置页面截图不应重复使用同一画面', asy
       hashes.get('设置-通用'),
       hashes.get('设置-存储'),
       `${dir} 的通用设置与存储设置截图不应相同`
-    );
-    assert.notEqual(
-      hashes.get('设置-通用'),
-      hashes.get('设置-桌面化身'),
-      `${dir} 的通用设置与桌面化身设置截图不应相同`
     );
     assert.notEqual(
       hashes.get('设置-通用'),
