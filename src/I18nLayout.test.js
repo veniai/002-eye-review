@@ -59,6 +59,6 @@ test('语言菜单应左对齐展开，并按“英文缩写 + 语言名称”�
   assert.match(source, /fullLabel: translate\(option\.fullLabelKey\)/);
   assert.match(
     source,
-    /<span class="font-semibold tracking-\[0\.08em\] text-slate-500 dark:text-\[#7d8590\]">\{option\.label\}<\/span>\s*<span class="text-slate-700 dark:text-\[#c9d1d9\]">\{option\.fullLabel\}<\/span>/s
+    /<span class="font-semibold tracking-\[0\.08em\] text-slate-500 dark:text-\[#86868b\]">\{option\.label\}<\/span>\s*<span class="text-slate-700 dark:text-\[#98989d\]">\{option\.fullLabel\}<\/span>/s
   );
 });

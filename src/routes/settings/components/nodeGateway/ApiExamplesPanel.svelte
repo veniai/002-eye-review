@@ -59,14 +59,14 @@
 <div>
   <button
     type="button"
-    class="flex w-full items-center justify-between gap-2 rounded-xl bg-white/70 px-3.5 py-2.5 ring-1 ring-slate-200/70 dark:bg-[#161b22]/20 dark:ring-[#30363d]/70"
+    class="flex w-full items-center justify-between gap-2 rounded-xl bg-white/70 px-3.5 py-2.5 ring-1 ring-slate-200/70 dark:bg-[#1c1c1e]/20 dark:ring-[var(--surface-border-default)]"
     on:click={() => (examplesExpanded = !examplesExpanded)}
   >
     <div class="flex items-center gap-2">
-      <svg class="w-3.5 h-3.5 text-slate-500 dark:text-[#7d8590]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-3.5 h-3.5 text-slate-500 dark:text-[#86868b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
       </svg>
-      <span class="text-sm font-medium text-slate-700 dark:text-[#c9d1d9]">{t('nodeGatewayPage.apiExamples')}</span>
+      <span class="text-sm font-medium text-slate-700 dark:text-[#98989d]">{t('nodeGatewayPage.apiExamples')}</span>
       <span class="text-[10px] text-slate-400">19 endpoints</span>
     </div>
     <svg class="w-4 h-4 text-slate-400 transition-transform {examplesExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,32 +90,32 @@
             on:click={() => activeApiCategory = cat.key}
             class="px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors
                    {activeApiCategory === cat.key
-                     ? 'bg-slate-700 text-white dark:bg-[#30363d] dark:text-[#c9d1d9]'
-                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-[#21262d] dark:text-[#7d8590] dark:hover:bg-[#30363d]'}"
+                     ? 'bg-slate-700 text-white dark:bg-[var(--editorial-surface-subtle)] dark:text-[#98989d]'
+                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-[#2c2c2e] dark:text-[#86868b] dark:hover:bg-[var(--editorial-surface-subtle)]'}"
           >{cat.label}</button>
         {/each}
       </div>
       {#each examples as example}
         {#if activeApiCategory === 'all' || activeApiCategory === example.cat}
-          <div class="rounded-lg ring-1 ring-slate-200/70 dark:ring-[#30363d]/70 overflow-hidden">
-            <div class="flex items-center gap-2 bg-white/90 px-3 py-1.5 dark:bg-[#21262d]/60">
+          <div class="rounded-lg ring-1 ring-slate-200/70 dark:ring-[var(--surface-border-default)] overflow-hidden">
+            <div class="flex items-center gap-2 bg-white/90 px-3 py-1.5 dark:bg-[#2c2c2e]/60">
               <span class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold leading-none
                 {example.method === 'POST'
                   ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'
                   : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'}"
               >{example.method}</span>
-              <span class="min-w-0 text-xs font-mono font-medium text-slate-700 dark:text-[#c9d1d9] truncate">{example.path}</span>
+              <span class="min-w-0 text-xs font-mono font-medium text-slate-700 dark:text-[#98989d] truncate">{example.path}</span>
               <span class="ml-auto shrink-0">
-                <button type="button" class="rounded-md px-2 py-0.5 text-[10px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-[#7d8590] dark:hover:bg-[#30363d] dark:hover:text-[#c9d1d9] transition-colors" on:click={() => copyCurl(example.cmd)}>
+                <button type="button" class="rounded-md px-2 py-0.5 text-[10px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-[#86868b] dark:hover:bg-[var(--editorial-surface-subtle)] dark:hover:text-[#98989d] transition-colors" on:click={() => copyCurl(example.cmd)}>
                   {t('nodeGatewayPage.copyCurl')}
                 </button>
               </span>
             </div>
-            <div class="border-t border-slate-100 dark:border-[#30363d]/50">
-              <div class="px-3 py-1 text-[11px] text-slate-500 dark:text-[#7d8590]">{example.desc}</div>
+            <div class="border-t border-slate-100 dark:border-[var(--surface-border-default)]/50">
+              <div class="px-3 py-1 text-[11px] text-slate-500 dark:text-[#86868b]">{example.desc}</div>
               <button
                 type="button"
-                class="mx-2 mb-1.5 block w-[calc(100%-1rem)] overflow-x-auto rounded-md bg-slate-800/90 px-2.5 py-1.5 text-left text-[11px] font-mono leading-relaxed text-emerald-300/90 dark:bg-[#161b22]/90"
+                class="mx-2 mb-1.5 block w-[calc(100%-1rem)] overflow-x-auto rounded-md bg-slate-800/90 px-2.5 py-1.5 text-left text-[11px] font-mono leading-relaxed text-emerald-300/90 dark:bg-[#1c1c1e]/90"
                 on:click={() => copyCurl(example.cmd)}
               ><span class="whitespace-pre">{example.cmd}</span></button>
             </div>

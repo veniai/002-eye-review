@@ -95,13 +95,13 @@
   })();
   $: yAxisTicks = [axisMax, Math.round(axisMax * 2 / 3), Math.round(axisMax / 3), 0];
   $: summaryCardClass = embedded
-    ? 'min-h-[88px] rounded-[22px] bg-slate-50/90 px-2 py-3 text-center dark:bg-[#161b22]/30'
-    : 'min-h-[104px] rounded-2xl border border-slate-100 bg-white p-4 text-center dark:border-[#30363d]/60 dark:bg-[#21262d]/80';
+    ? 'min-h-[88px] rounded-[22px] bg-slate-50/90 px-2 py-3 text-center dark:bg-[#1c1c1e]/30'
+    : 'min-h-[104px] rounded-2xl border border-slate-100 bg-white p-4 text-center dark:border-[var(--surface-border-default)]/60 dark:bg-[#2c2c2e]/80';
   $: summaryValueClass =
-    'mt-2 text-center text-base font-semibold text-slate-900 dark:text-[#e6edf3] leading-tight';
+    'mt-2 text-center text-base font-semibold text-slate-900 dark:text-[#f5f5f7] leading-tight';
   $: chartShellClass = embedded
     ? 'rounded-[24px] bg-transparent p-0'
-    : 'rounded-2xl border border-slate-100 bg-white p-4 dark:border-[#30363d]/60 dark:bg-[#21262d]/80';
+    : 'rounded-2xl border border-slate-100 bg-white p-4 dark:border-[var(--surface-border-default)]/60 dark:bg-[#2c2c2e]/80';
 </script>
 
 <div class="space-y-4" data-locale={currentLocale}>
@@ -133,7 +133,7 @@
         <p class={summaryValueClass}>
           {formatCompact(workDuration)} <span class="text-[0.7em] text-slate-400">/ {formatCompact(goalSecs)}</span>
         </p>
-        <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-[#30363d]">
+        <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]">
           <div class={`h-full rounded-full transition-all duration-500 ${reached ? 'bg-emerald-500' : 'bg-primary-500'}`} style={`width: ${pct}%;`}></div>
         </div>
       {:else}
@@ -148,10 +148,10 @@
   <div class={chartShellClass}>
     <div class="mb-4 flex items-center justify-between gap-3">
       <div>
-        <p class="text-sm font-semibold text-slate-700 dark:text-[#c9d1d9]">
+        <p class="text-sm font-semibold text-slate-700 dark:text-[#98989d]">
           {distributionTitle || t('hourlyChart.distributionTitle')}
         </p>
-        <p class="mt-1 text-xs text-slate-500 dark:text-[#7d8590]">
+        <p class="mt-1 text-xs text-slate-500 dark:text-[#86868b]">
           {t(distributionSubtitleKey, {
             hour: hasActiveData ? formatHourLabel(peakBucket.hour) : '--',
             duration: hasActiveData ? formatDurationLocalized(peakBucket.duration) : '--',
@@ -161,7 +161,7 @@
       {#if topBuckets.length > 0}
         <div class="hidden items-center gap-2 lg:flex">
           {#each topBuckets as bucket, index}
-            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-500 dark:bg-[#30363d]/70 dark:text-[#adbac7]">
+            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-500 dark:bg-[var(--editorial-surface-subtle)]/70 dark:text-[#98989d]">
               {t('hourlyChart.topHour', { index: index + 1, hour: formatHourLabel(bucket.hour) })}
             </span>
           {/each}
@@ -171,7 +171,7 @@
     {#if usedCategories.length}
       <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
         {#each usedCategories as cat}
-          <span class="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-[#7d8590]">
+          <span class="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-[#86868b]">
             <span class="inline-block h-2.5 w-2.5 rounded-[3px]" style={`background: ${(categoryColors && categoryColors[cat.category]) || '#94a3b8'};`}></span>
             {(categoryNames && categoryNames[cat.category]) || cat.category}
           </span>
@@ -179,7 +179,7 @@
       </div>
     {/if}
 
-    <div class="overflow-hidden rounded-2xl bg-slate-50 px-3 pb-3 pt-4 dark:bg-[#161b22]/40">
+    <div class="overflow-hidden rounded-2xl bg-slate-50 px-3 pb-3 pt-4 dark:bg-[#1c1c1e]/40">
         <div class="grid grid-cols-[2.9rem_minmax(0,1fr)] gap-2">
           <div class="relative h-44">
             {#each yAxisTicks as tick, index}
@@ -190,10 +190,10 @@
           </div>
           <div class="relative">
             <div class="pointer-events-none absolute inset-x-3 top-0 h-44">
-              <div class="absolute inset-x-0 top-0 border-t border-dashed border-slate-200 dark:border-[#30363d]/80"></div>
-              <div class="absolute inset-x-0 top-1/3 border-t border-dashed border-slate-200 dark:border-[#30363d]/80"></div>
-              <div class="absolute inset-x-0 top-2/3 border-t border-dashed border-slate-200 dark:border-[#30363d]/80"></div>
-              <div class="absolute inset-x-0 bottom-0 border-t border-dashed border-slate-200 dark:border-[#30363d]/80"></div>
+              <div class="absolute inset-x-0 top-0 border-t border-dashed border-slate-200 dark:border-[var(--surface-border-default)]"></div>
+              <div class="absolute inset-x-0 top-1/3 border-t border-dashed border-slate-200 dark:border-[var(--surface-border-default)]"></div>
+              <div class="absolute inset-x-0 top-2/3 border-t border-dashed border-slate-200 dark:border-[var(--surface-border-default)]"></div>
+              <div class="absolute inset-x-0 bottom-0 border-t border-dashed border-slate-200 dark:border-[var(--surface-border-default)]"></div>
             </div>
 
             <div class="relative px-3">
@@ -204,7 +204,7 @@
                   <div class="relative flex h-full min-w-0 flex-col justify-end">
                     <button
                       type="button"
-                      class={`w-full overflow-hidden transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-sky-300 dark:focus:ring-sky-500 ${selectedHour === bucket.hour ? 'ring-2 ring-sky-300 dark:focus:ring-sky-500' : ''} ${categoryMode && bucket.duration > 0 ? '' : isPeak ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-300 dark:bg-[#484f58]'}`}
+                      class={`w-full overflow-hidden transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-sky-300 dark:focus:ring-sky-500 ${selectedHour === bucket.hour ? 'ring-2 ring-sky-300 dark:focus:ring-sky-500' : ''} ${categoryMode && bucket.duration > 0 ? '' : isPeak ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'}`}
                       style={`height: ${height}%; opacity: ${bucket.duration > 0 ? 1 : 0.35}; border-top-left-radius: 10px; border-top-right-radius: 10px;`}
                       title={`${formatHourRangeLabel(bucket.hour)} · ${formatDurationLocalized(bucket.duration)}`}
                       aria-pressed={selectedHour === bucket.hour}
@@ -245,20 +245,20 @@
           .slice().sort((a, b) => b.duration - a.duration).slice(0, 5)}
         <div class="activity-hourly-selected-apps mt-3 rounded-2xl bg-sky-50 px-3.5 py-3 text-left dark:bg-sky-500/10">
           <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
-            <span class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] text-sky-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#161b22]/80 dark:text-sky-300 dark:shadow-none">
+            <span class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold tracking-[0.08em] text-sky-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#1c1c1e]/80 dark:text-sky-300 dark:shadow-none">
               {t('chart.currentlySelected')}
             </span>
-            <span class="min-w-0 truncate text-sm font-medium text-slate-700 dark:text-[#c9d1d9]">
+            <span class="min-w-0 truncate text-sm font-medium text-slate-700 dark:text-[#98989d]">
               {formatHourRangeLabel(selectedBucket.hour)}
             </span>
-            <span class="text-sm font-semibold tabular-nums text-slate-500 dark:text-[#adbac7]">
+            <span class="text-sm font-semibold tabular-nums text-slate-500 dark:text-[#98989d]">
               {formatCompact(selectedBucket.duration)}
             </span>
           </div>
           {#if hourApps.length > 0}
             <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1">
               {#each hourApps as app}
-                <span class="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-[#7d8590]">
+                <span class="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-[#86868b]">
                   <span class="inline-block h-2 w-2 rounded-sm" style={`background: ${(categoryColors && categoryColors[app.category]) || '#94a3b8'};`}></span>
                   <span>{app.app_name}</span>
                   <span class="tabular-nums text-slate-400">{formatCompact(app.duration)}</span>

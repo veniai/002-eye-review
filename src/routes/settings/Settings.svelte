@@ -96,9 +96,6 @@
       if (typeof config.localhost_api_host !== 'string' && config.localhost_api_host !== null) {
         config.localhost_api_host = null;
       }
-      if (!['a', 'b', 'c'].includes(config.ui_visual_style)) {
-        config.ui_visual_style = 'c';
-      }
       if (typeof config.telegram_bot_enabled !== 'boolean') {
         config.telegram_bot_enabled = false;
       }

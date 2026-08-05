@@ -503,19 +503,19 @@
 
   :global(.dark) .hourly-summary-drawer {
     border-color: var(--surface-border-default);
-    background: #161b22;
+    background: #1c1c1e;
     box-shadow: -18px 0 48px rgba(0, 0, 0, 0.28);
   }
 
   :global(.dark) .hourly-summary-header {
     border-bottom-color: var(--surface-border-subtle);
-    background: #161b22;
+    background: #1c1c1e;
   }
 
   :global(.dark) .hourly-summary-heading h2,
   :global(.dark) .hourly-summary-item h3,
   :global(.dark) .hourly-summary-primary {
-    color: #e6edf3;
+    color: #f5f5f7;
   }
 
   :global(.dark) .hourly-summary-heading p,
@@ -524,7 +524,7 @@
   :global(.dark) .hourly-summary-refreshing,
   :global(.dark) .hourly-summary-state,
   :global(.dark) .hourly-summary-expand {
-    color: #8b949e;
+    color: #98989d;
   }
 
   :global(.dark) .hourly-summary-kicker {
@@ -532,18 +532,18 @@
   }
 
   :global(.dark) .hourly-summary-close {
-    color: #adbac7;
+    color: #98989d;
     border-color: var(--surface-border-default);
-    background: #21262d;
+    background: #2c2c2e;
   }
 
   :global(.dark) .hourly-summary-close:hover {
-    color: #e6edf3;
-    background: #30363d;
+    color: #f5f5f7;
+    background: rgba(255,255,255,0.14);
   }
 
   :global(.dark) .hourly-summary-body {
-    background: #0d1117;
+    background: #000000;
   }
 
   :global(.dark) .hourly-summary-refresh-error {
@@ -554,7 +554,7 @@
 
   :global(.dark) .hourly-summary-item {
     border-color: var(--surface-border-subtle);
-    background: #161b22;
+    background: #1c1c1e;
     box-shadow: none;
   }
 
@@ -568,8 +568,8 @@
   }
 
   :global(.dark) .hourly-summary-rhythm-deep {
-    color: #e6edf3;
-    background: #30363d;
+    color: #f5f5f7;
+    background: rgba(255,255,255,0.14);
   }
 
   :global(.dark) .hourly-summary-rhythm-steady {
@@ -583,9 +583,9 @@
   }
 
   :global(.dark) .hourly-summary-apps span {
-    color: #adbac7;
+    color: #98989d;
     border-color: var(--surface-border-subtle);
-    background: #21262d;
+    background: #2c2c2e;
   }
 
   @keyframes hourly-summary-spin {

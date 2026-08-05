@@ -29,13 +29,13 @@
   }
 </script>
 
-<div class="rounded-xl bg-white/70 px-3.5 py-3 ring-1 ring-slate-200/70 dark:bg-[#161b22]/20 dark:ring-[#30363d]/70">
+<div class="rounded-xl bg-white/70 px-3.5 py-3 ring-1 ring-slate-200/70 dark:bg-[#1c1c1e]/20 dark:ring-[var(--surface-border-default)]">
   <div class="flex items-center justify-between gap-3">
     <div class="flex items-center gap-2">
       <svg class="w-4 h-4 text-[#229ED9]" viewBox="0 0 24 24" fill="currentColor">
         <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
       </svg>
-      <span class="text-sm text-slate-700 dark:text-[#c9d1d9]">Telegram</span>
+      <span class="text-sm text-slate-700 dark:text-[#98989d]">Telegram</span>
       {#if config.telegram_bot_enabled}
         <span class="settings-chip-success">{t('nodeGatewayPage.telegramEnabled')}</span>
       {/if}
@@ -44,7 +44,7 @@
       type="button"
       on:click={toggle}
       disabled={saving}
-      class="switch-track {config.telegram_bot_enabled ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[#484f58]'} {saving ? 'opacity-60 cursor-not-allowed' : ''}"
+      class="switch-track {config.telegram_bot_enabled ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'} {saving ? 'opacity-60 cursor-not-allowed' : ''}"
       role="switch"
       aria-label="Telegram"
       aria-checked={config.telegram_bot_enabled}
@@ -55,14 +55,14 @@
   {#if config.telegram_bot_enabled}
     <div class="mt-2 space-y-2">
       <label class="block">
-        <span class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('nodeGatewayPage.telegramBotToken')}</span>
+        <span class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('nodeGatewayPage.telegramBotToken')}</span>
         <div class="mt-0.5 relative">
           {#if tgTokenVisible}
             <input
               type="text"
               bind:value={config.telegram_bot_token}
               on:blur={() => dispatch('save')}
-              class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[#30363d]/50 dark:text-[#e6edf3] dark:ring-[#484f58] dark:focus:ring-primary-600 focus:outline-none"
+              class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[rgba(255,255,255,0.07)] dark:text-[#f5f5f7] dark:ring-[rgba(255,255,255,0.14)] dark:focus:ring-primary-600 focus:outline-none"
               placeholder="123456:ABC-DEF..."
             />
           {:else}
@@ -70,13 +70,13 @@
               type="password"
               bind:value={config.telegram_bot_token}
               on:blur={() => dispatch('save')}
-              class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[#30363d]/50 dark:text-[#e6edf3] dark:ring-[#484f58] dark:focus:ring-primary-600 focus:outline-none"
+              class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[rgba(255,255,255,0.07)] dark:text-[#f5f5f7] dark:ring-[rgba(255,255,255,0.14)] dark:focus:ring-primary-600 focus:outline-none"
               placeholder="123456:ABC-DEF..."
             />
           {/if}
           <button
             type="button"
-            class="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-[#adbac7]"
+            class="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-[#98989d]"
             aria-label={`${t(tgTokenVisible ? 'nodeGatewayPage.hideSecret' : 'nodeGatewayPage.showSecret')}: ${t('nodeGatewayPage.telegramBotToken')}`}
             on:click={() => (tgTokenVisible = !tgTokenVisible)}
           >
@@ -107,12 +107,12 @@
         {/if}
       {/if}
       <label class="block">
-        <span class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('nodeGatewayPage.telegramBotProxy')}</span>
+        <span class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('nodeGatewayPage.telegramBotProxy')}</span>
         <input
           type="text"
           bind:value={config.telegram_bot_proxy}
           on:blur={() => dispatch('save')}
-          class="mt-0.5 w-full rounded-md bg-white/80 px-3 py-1.5 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[#30363d]/50 dark:text-[#e6edf3] dark:ring-[#484f58] dark:focus:ring-primary-600 focus:outline-none"
+          class="mt-0.5 w-full rounded-md bg-white/80 px-3 py-1.5 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[rgba(255,255,255,0.07)] dark:text-[#f5f5f7] dark:ring-[rgba(255,255,255,0.14)] dark:focus:ring-primary-600 focus:outline-none"
           placeholder="http://127.0.0.1:7890"
         />
       </label>
@@ -139,7 +139,7 @@
         </div>
       </div>
       <label class="block mt-2">
-        <span class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('nodeGatewayPage.telegramAllowedChatIds')}</span>
+        <span class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('nodeGatewayPage.telegramAllowedChatIds')}</span>
         <input
           type="text"
           value={(config.telegram_bot_allowed_chat_ids || []).join(', ')}
@@ -148,7 +148,7 @@
             config.telegram_bot_allowed_chat_ids = ids;
             dispatch('save');
           }}
-          class="mt-0.5 w-full rounded-md bg-white/80 px-3 py-1.5 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[#30363d]/50 dark:text-[#e6edf3] dark:ring-[#484f58] dark:focus:ring-primary-600 focus:outline-none"
+          class="mt-0.5 w-full rounded-md bg-white/80 px-3 py-1.5 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[rgba(255,255,255,0.07)] dark:text-[#f5f5f7] dark:ring-[rgba(255,255,255,0.14)] dark:focus:ring-primary-600 focus:outline-none"
           placeholder="123456789, 987654321"
         />
       </label>

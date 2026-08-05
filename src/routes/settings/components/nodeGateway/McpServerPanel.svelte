@@ -34,7 +34,7 @@
   }
 </script>
 
-<div class="rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 space-y-4 dark:border-[#30363d]/80 dark:bg-[#21262d]/40">
+<div class="rounded-2xl border border-slate-200/80 bg-slate-50/90 p-4 space-y-4 dark:border-[var(--surface-border-default)] dark:bg-[#2c2c2e]/40">
   <div class="flex items-center justify-between gap-3">
     <div class="flex items-center gap-2">
       <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
@@ -43,7 +43,7 @@
         </svg>
       </div>
       <div>
-        <span class="text-sm font-semibold text-slate-700 dark:text-[#c9d1d9]">MCP Server</span>
+        <span class="text-sm font-semibold text-slate-700 dark:text-[#98989d]">MCP Server</span>
         {#if config.mcp_server_enabled}
           <span class="settings-chip-success ml-1.5">{t('nodeGatewayPage.mcpServerEnabled')}</span>
         {:else}
@@ -55,7 +55,7 @@
       type="button"
       on:click={toggle}
       disabled={saving}
-      class="switch-track {config.mcp_server_enabled ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[#484f58]'} {saving ? 'opacity-60 cursor-not-allowed' : ''}"
+      class="switch-track {config.mcp_server_enabled ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'} {saving ? 'opacity-60 cursor-not-allowed' : ''}"
       role="switch"
       aria-label={t('nodeGatewayPage.mcpServer')}
       aria-checked={config.mcp_server_enabled}
@@ -71,38 +71,38 @@
       <p class="text-[11px] text-slate-400 dark:text-[#636c76]">{t('nodeGatewayPage.mcpServerBinaryHint')}</p>
       <div class="space-y-1.5">
         {#if mcpDbPath}
-          <div class="flex flex-col gap-0.5 rounded-lg bg-white/70 px-3 py-1.5 ring-1 ring-slate-200/70 dark:bg-[#161b22]/20 dark:ring-[#30363d]/70">
+          <div class="flex flex-col gap-0.5 rounded-lg bg-white/70 px-3 py-1.5 ring-1 ring-slate-200/70 dark:bg-[#1c1c1e]/20 dark:ring-[var(--surface-border-default)]">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('nodeGatewayPage.mcpServerDbPath')}</span>
+              <span class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('nodeGatewayPage.mcpServerDbPath')}</span>
               <button type="button" class="text-[10px] text-primary-600 hover:underline focus:outline-none" on:click={() => copyPath(mcpDbPath, 'mcpServerDbPath')}>{t('nodeGatewayPage.mcpServerCopyPath')}</button>
             </div>
-            <span class="font-mono text-[11px] text-slate-700 dark:text-[#adbac7] break-all select-all" title={mcpDbPath}>{mcpDbPath}</span>
+            <span class="font-mono text-[11px] text-slate-700 dark:text-[#98989d] break-all select-all" title={mcpDbPath}>{mcpDbPath}</span>
           </div>
         {/if}
         {#if mcpConfigPath}
-          <div class="flex flex-col gap-0.5 rounded-lg bg-white/70 px-3 py-1.5 ring-1 ring-slate-200/70 dark:bg-[#161b22]/20 dark:ring-[#30363d]/70">
+          <div class="flex flex-col gap-0.5 rounded-lg bg-white/70 px-3 py-1.5 ring-1 ring-slate-200/70 dark:bg-[#1c1c1e]/20 dark:ring-[var(--surface-border-default)]">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('nodeGatewayPage.mcpServerConfigPath')}</span>
+              <span class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('nodeGatewayPage.mcpServerConfigPath')}</span>
               <button type="button" class="text-[10px] text-primary-600 hover:underline focus:outline-none" on:click={() => copyPath(mcpConfigPath, 'mcpServerConfigPath')}>{t('nodeGatewayPage.mcpServerCopyPath')}</button>
             </div>
-            <span class="font-mono text-[11px] text-slate-700 dark:text-[#adbac7] break-all select-all" title={mcpConfigPath}>{mcpConfigPath}</span>
+            <span class="font-mono text-[11px] text-slate-700 dark:text-[#98989d] break-all select-all" title={mcpConfigPath}>{mcpConfigPath}</span>
           </div>
         {/if}
-        <div class="flex flex-col gap-0.5 rounded-lg bg-white/70 px-3 py-1.5 ring-1 ring-slate-200/70 dark:bg-[#161b22]/20 dark:ring-[#30363d]/70">
+        <div class="flex flex-col gap-0.5 rounded-lg bg-white/70 px-3 py-1.5 ring-1 ring-slate-200/70 dark:bg-[#1c1c1e]/20 dark:ring-[var(--surface-border-default)]">
           <div class="flex items-center justify-between gap-2">
-            <span class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('nodeGatewayPage.mcpServerBinaryPath')}</span>
+            <span class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('nodeGatewayPage.mcpServerBinaryPath')}</span>
             <button type="button" class="text-[10px] text-primary-600 hover:underline focus:outline-none" on:click={() => copyPath('work-review-mcp-server', 'mcpServerBinaryPath')}>{t('nodeGatewayPage.mcpServerCopyPath')}</button>
           </div>
-          <span class="font-mono text-[11px] text-slate-700 dark:text-[#adbac7] break-all select-all">work-review-mcp-server</span>
+          <span class="font-mono text-[11px] text-slate-700 dark:text-[#98989d] break-all select-all">work-review-mcp-server</span>
         </div>
       </div>
       <div>
         <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-medium text-slate-700 dark:text-[#adbac7]">{t('nodeGatewayPage.mcpServerConfigTitle')}</span>
+          <span class="text-xs font-medium text-slate-700 dark:text-[#98989d]">{t('nodeGatewayPage.mcpServerConfigTitle')}</span>
           <button type="button" class="settings-chip-button settings-chip-button-active text-[11px]" on:click={copyMcpConfig}>{t('nodeGatewayPage.mcpServerCopyConfig')}</button>
         </div>
         <p class="text-[11px] text-slate-400 dark:text-[#636c76] mb-1.5">{t('nodeGatewayPage.mcpServerConfigHint')}</p>
-        <pre class="rounded-lg bg-slate-800 p-3 text-[11px] font-mono text-slate-400 leading-relaxed overflow-x-auto dark:bg-[#161b22]/80">{mcpConfigJson}</pre>
+        <pre class="rounded-lg bg-slate-800 p-3 text-[11px] font-mono text-slate-400 leading-relaxed overflow-x-auto dark:bg-[#1c1c1e]/80">{mcpConfigJson}</pre>
       </div>
     </div>
   {/if}

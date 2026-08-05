@@ -32,7 +32,12 @@
 </script>
 
 <aside class="notice" aria-label={t('eyeCare.preBreakTitle')}>
-  <div class="icon" aria-hidden="true">◌</div>
+  <div class="icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 12s3.4-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.4 5.5-9.5 5.5S2.5 12 2.5 12z" />
+      <circle cx="12" cy="12" r="2.6" />
+    </svg>
+  </div>
   <div class="copy">
     <strong>{t('eyeCare.preBreakTitle')}</strong>
     <span>{t('eyeCare.preBreakDescription', { seconds: remainingSeconds })}</span>
@@ -48,43 +53,53 @@
     overflow: hidden;
     background: transparent;
   }
+
   .notice {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: 42px minmax(0, 1fr) auto;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 14px;
-    padding: 17px 18px;
-    border: 1px solid rgba(125, 181, 199, .48);
-    border-radius: 22px;
-    background: linear-gradient(135deg, rgba(241, 252, 249, .98), rgba(235, 245, 255, .98));
-    box-shadow: 0 14px 42px rgba(15, 46, 68, .24);
-    color: #183a50;
-    font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+    background: rgba(28, 28, 30, 0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    color: #f5f5f7;
+    font-family: "SF Pro Display", "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
     user-select: none;
   }
+
   .icon {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: linear-gradient(135deg, #72cbb5, #79aee1);
-    color: white;
-    font-size: 28px;
-    line-height: 1;
+    background: rgba(10, 132, 255, 0.16);
+    color: #64d2ff;
   }
-  .copy { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-  strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
-  span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #5c7485; font-size: 12px; }
+
+  .icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .copy { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 600; }
+  span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #98989d; font-size: 12px; }
+
   .seconds {
-    min-width: 38px;
+    min-width: 34px;
     text-align: right;
-    color: #3c7189;
-    font-size: 28px;
-    font-weight: 780;
+    color: #64d2ff;
+    font-size: 26px;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
 </style>

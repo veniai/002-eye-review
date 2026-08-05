@@ -8,7 +8,7 @@
   export let subtitle = null;
 
   const iconColors = {
-    indigo: 'text-indigo-500 dark:text-indigo-400',
+    indigo: 'text-primary-500 dark:text-primary-400',
     emerald: 'text-emerald-500 dark:text-emerald-400',
     amber: 'text-amber-500 dark:text-amber-400',
     rose: 'text-rose-500 dark:text-rose-400',
@@ -17,7 +17,7 @@
   };
 
   const iconBgs = {
-    indigo: 'bg-indigo-50 dark:bg-indigo-950/40',
+    indigo: 'bg-primary-50 dark:bg-primary-900/40',
     emerald: 'bg-emerald-50 dark:bg-emerald-950/40',
     amber: 'bg-amber-50 dark:bg-amber-950/40',
     rose: 'bg-rose-50 dark:bg-rose-950/40',
@@ -26,14 +26,14 @@
   };
 
   $: cardClass = embedded
-    ? 'block min-h-[108px] rounded-[22px] bg-slate-50/88 px-4 py-4 dark:bg-[#161b22]/30'
-    : 'block min-h-[116px] rounded-2xl border border-slate-200/80 bg-white p-5 dark:border-[#30363d]/60 dark:bg-[#21262d]/80';
+    ? 'block min-h-[108px] rounded-[22px] bg-slate-50/88 px-4 py-4 dark:bg-[#1c1c1e]/30'
+    : 'block min-h-[116px] rounded-2xl border border-slate-200/80 bg-white p-5 dark:border-[var(--surface-border-default)]/60 dark:bg-[#2c2c2e]/80';
   $: iconClass = embedded
     ? `flex h-10 w-10 items-center justify-center rounded-2xl ${iconBgs[color]} ${iconColors[color]} shrink-0`
-    : `flex h-11 w-11 items-center justify-center rounded-2xl border border-white/80 shadow-sm dark:shadow-none dark:border-[#30363d]/80 ${iconBgs[color]} ${iconColors[color]} shrink-0`;
+    : `flex h-11 w-11 items-center justify-center rounded-2xl border border-white/80 shadow-sm dark:shadow-none dark:border-[var(--surface-border-default)] ${iconBgs[color]} ${iconColors[color]} shrink-0`;
   $: valueClass = embedded
-    ? 'mt-4 whitespace-nowrap text-[1.9rem] font-semibold leading-none text-slate-900 dark:text-[#e6edf3]'
-    : 'mt-6 whitespace-nowrap text-[2.15rem] font-semibold leading-none text-slate-900 dark:text-[#e6edf3]';
+    ? 'mt-4 whitespace-nowrap text-[1.9rem] font-semibold leading-none text-slate-900 dark:text-[#f5f5f7]'
+    : 'mt-6 whitespace-nowrap text-[2.15rem] font-semibold leading-none text-slate-900 dark:text-[#f5f5f7]';
   $: interactiveClass = embedded
     ? 'transition-all duration-200 hover:bg-slate-100/90 hover:-translate-y-0.5 dark:hover:bg-slate-900/50'
     : 'transition-all duration-200 hover:shadow-md dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 cursor-pointer group';
@@ -46,10 +46,10 @@
   >
     <div class="flex h-full items-center justify-between gap-4">
       <div class="min-w-0 flex-1">
-        <span class="text-[13px] font-medium text-slate-500 dark:text-[#7d8590] leading-none">{title}</span>
+        <span class="text-[13px] font-medium text-slate-500 dark:text-[#86868b] leading-none">{title}</span>
         <p class={valueClass}>{value}</p>
         {#if subtitle}
-          <p class="mt-1.5 text-xs font-medium leading-none text-slate-500 dark:text-[#7d8590]">{subtitle}</p>
+          <p class="mt-1.5 text-xs font-medium leading-none text-slate-500 dark:text-[#86868b]">{subtitle}</p>
         {/if}
       </div>
       <div class={iconClass}>
@@ -82,10 +82,10 @@
   <div class={cardClass}>
     <div class="flex h-full items-center justify-between gap-4">
       <div class="min-w-0 flex-1">
-        <span class="text-[13px] font-medium text-slate-500 dark:text-[#7d8590] leading-none">{title}</span>
+        <span class="text-[13px] font-medium text-slate-500 dark:text-[#86868b] leading-none">{title}</span>
         <p class={valueClass}>{value}</p>
         {#if subtitle}
-          <p class="mt-1.5 text-xs font-medium leading-none text-slate-500 dark:text-[#7d8590]">{subtitle}</p>
+          <p class="mt-1.5 text-xs font-medium leading-none text-slate-500 dark:text-[#86868b]">{subtitle}</p>
         {/if}
       </div>
       <div class={iconClass}>

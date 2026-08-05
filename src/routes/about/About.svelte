@@ -159,12 +159,12 @@
 
       <div class="about-update-grid mt-7 grid grid-cols-1 pt-5 sm:grid-cols-3">
         <div class="about-update-unit flex min-h-20 flex-col items-center justify-center gap-2 px-4 py-3">
-          <span class="text-xs font-medium text-slate-400 dark:text-[#7d8590]">{t('about.currentVersionTag')}</span>
-          <strong class="text-sm font-semibold text-slate-700 dark:text-[#c9d1d9]">v{appVersion}</strong>
+          <span class="text-xs font-medium text-slate-400 dark:text-[#86868b]">{t('about.currentVersionTag')}</span>
+          <strong class="text-sm font-semibold text-slate-700 dark:text-[#98989d]">v{appVersion}</strong>
         </div>
 
         <div class="about-update-unit flex min-h-20 flex-col items-center justify-center gap-2 px-4 py-3">
-          <span class="text-xs font-medium text-slate-400 dark:text-[#7d8590]">{t('about.autoCheckUpdate')}</span>
+          <span class="text-xs font-medium text-slate-400 dark:text-[#86868b]">{t('about.autoCheckUpdate')}</span>
           <button
             type="button"
             role="switch"
@@ -172,14 +172,14 @@
             aria-label={t('about.autoCheckUpdate')}
             title={t('about.autoCheckUpdate')}
             on:click={toggleAutoCheck}
-            class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 {autoCheckUpdate ? 'bg-blue-500' : 'bg-slate-300 dark:bg-[#484f58]'}"
+            class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 {autoCheckUpdate ? 'bg-blue-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'}"
           >
             <span class="pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 dark:shadow-none {autoCheckUpdate ? 'translate-x-[18px]' : 'translate-x-[2px]'}"></span>
           </button>
         </div>
 
         <div class="about-update-unit flex min-h-20 flex-col items-center justify-center gap-2 px-4 py-3">
-          <span class="text-xs font-medium text-slate-400 dark:text-[#7d8590]">{t('about.updateStatus')}</span>
+          <span class="text-xs font-medium text-slate-400 dark:text-[#86868b]">{t('about.updateStatus')}</span>
           <button
             type="button"
             on:click={checkForUpdates}
@@ -199,7 +199,7 @@
 
       {#if updateStatus}
         <div class="about-update-feedback mt-4 text-center" role="status" aria-live="polite">
-          <p class="text-sm text-slate-500 dark:text-[#7d8590]">{updateStatus}</p>
+          <p class="text-sm text-slate-500 dark:text-[#86868b]">{updateStatus}</p>
         </div>
       {/if}
     </section>
@@ -246,7 +246,7 @@
     ></button>
 
     <div
-      class="relative z-10 w-full max-w-3xl rounded-[28px] border border-slate-200/80 bg-white p-6 text-left shadow-2xl shadow-slate-950/20 dark:border-[#30363d]/70 dark:bg-[#161b22] sm:p-7"
+      class="relative z-10 w-full max-w-3xl rounded-[28px] border border-slate-200/80 bg-white p-6 text-left shadow-2xl shadow-slate-950/20 dark:border-[var(--surface-border-default)] dark:bg-[#1c1c1e] sm:p-7"
       role="dialog"
       aria-modal="true"
       aria-labelledby="sponsorship-dialog-title"
@@ -255,20 +255,20 @@
         <div class="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300">
           {t('about.supportBadge')}
         </div>
-        <h3 id="sponsorship-dialog-title" class="mt-3 text-2xl font-semibold text-slate-900 dark:text-[#e6edf3]">
+        <h3 id="sponsorship-dialog-title" class="mt-3 text-2xl font-semibold text-slate-900 dark:text-[#f5f5f7]">
           {t('about.supportTitle')}
         </h3>
-        <p class="mt-3 text-sm leading-7 text-slate-700 dark:text-[#adbac7]">
+        <p class="mt-3 text-sm leading-7 text-slate-700 dark:text-[#98989d]">
           {t('about.supportCopy')}
         </p>
-        <p class="text-sm leading-7 text-slate-500 dark:text-[#7d8590]">
+        <p class="text-sm leading-7 text-slate-500 dark:text-[#86868b]">
           {t('about.supportCopy2')}
         </p>
 
         <button
           type="button"
           on:click={closeSponsorshipModal}
-          class="absolute right-0 top-0 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-slate-700 dark:border-[#30363d] dark:bg-[#21262d] dark:text-[#7d8590] dark:hover:bg-[#30363d] dark:hover:text-[#c9d1d9]"
+          class="absolute right-0 top-0 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-slate-700 dark:border-[var(--surface-border-default)] dark:bg-[#2c2c2e] dark:text-[#86868b] dark:hover:bg-[var(--editorial-surface-subtle)] dark:hover:text-[#98989d]"
           aria-label={t('about.closeSupportDialog')}
         >
           <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +278,7 @@
       </div>
 
       <div class="mt-6 grid gap-4 grid-cols-3">
-        <div class="rounded-[28px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-[#30363d]/80 dark:bg-[#21262d]/50">
+        <div class="rounded-[28px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-[var(--surface-border-default)] dark:bg-[#2c2c2e]/50">
           <div class="flex items-center justify-center gap-2">
             <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,16 +286,16 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.5 12h3m9 0h3M12 4.5v3m0 9v3" />
               </svg>
             </div>
-            <h4 class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">{t('about.wechat')}</h4>
+            <h4 class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">{t('about.wechat')}</h4>
           </div>
-          <div class="mt-4 flex items-center justify-center rounded-[24px] bg-white p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#0d1117] dark:shadow-none">
+          <div class="mt-4 flex items-center justify-center rounded-[24px] bg-white p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#000000] dark:shadow-none">
             <button type="button" class="aspect-square w-40 cursor-zoom-in rounded-2xl transition-transform hover:scale-[1.02]" on:click={() => zoomedQr = wechatSponsorshipQr}>
               <img src={wechatSponsorshipQr} alt={t('about.wechatQrAlt')} class="h-full w-full rounded-2xl object-cover" />
             </button>
           </div>
         </div>
 
-        <div class="rounded-[28px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-[#30363d]/80 dark:bg-[#21262d]/50">
+        <div class="rounded-[28px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-[var(--surface-border-default)] dark:bg-[#2c2c2e]/50">
           <div class="flex items-center justify-center gap-2">
             <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -303,16 +303,16 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8.25 13.5h7.5" />
               </svg>
             </div>
-            <h4 class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">{t('about.alipay')}</h4>
+            <h4 class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">{t('about.alipay')}</h4>
           </div>
-          <div class="mt-4 flex items-center justify-center rounded-[24px] bg-white p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#0d1117] dark:shadow-none">
+          <div class="mt-4 flex items-center justify-center rounded-[24px] bg-white p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#000000] dark:shadow-none">
             <button type="button" class="aspect-square w-40 cursor-zoom-in rounded-2xl transition-transform hover:scale-[1.02]" on:click={() => zoomedQr = alipaySponsorshipQr}>
               <img src={alipaySponsorshipQr} alt={t('about.alipayQrAlt')} class="h-full w-full rounded-2xl object-cover" />
             </button>
           </div>
         </div>
 
-        <div class="rounded-[28px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-[#30363d]/80 dark:bg-[#21262d]/50">
+        <div class="rounded-[28px] border border-slate-200/80 bg-slate-50/80 p-4 dark:border-[var(--surface-border-default)] dark:bg-[#2c2c2e]/50">
           <div class="flex items-center justify-center gap-2">
             <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -321,9 +321,9 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 13.5h4.5" />
               </svg>
             </div>
-            <h4 class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">Buy Me a Coffee</h4>
+            <h4 class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">Buy Me a Coffee</h4>
           </div>
-          <div class="mt-4 flex items-center justify-center rounded-[24px] bg-white p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#0d1117] dark:shadow-none">
+          <div class="mt-4 flex items-center justify-center rounded-[24px] bg-white p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:bg-[#000000] dark:shadow-none">
             <button type="button" class="aspect-square w-40 cursor-zoom-in rounded-2xl transition-transform hover:scale-[1.02]" on:click={() => zoomedQr = bmcQr}>
               <img src={bmcQr} alt="Buy Me a Coffee QR code" class="h-full w-full rounded-2xl object-cover" />
             </button>

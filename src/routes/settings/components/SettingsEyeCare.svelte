@@ -25,7 +25,7 @@
     </div>
     <button
       type="button"
-      class="switch-track {config.eye_care_enabled ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[#484f58]'}"
+      class="switch-track {config.eye_care_enabled ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'}"
       role="switch"
       aria-checked={config.eye_care_enabled}
       aria-label={t('eyeCare.enabled')}
@@ -56,14 +56,14 @@
     </label>
   </div>
 
-  <div class="mt-5 flex items-center justify-between gap-5 rounded-xl border border-slate-200 p-4 dark:border-[#30363d]">
+  <div class="mt-5 flex items-center justify-between gap-5 rounded-xl border border-slate-200 p-4 dark:border-[var(--surface-border-default)]">
     <div>
       <div class="settings-text">{t('eyeCare.pause')}</div>
       <div class="settings-muted mt-1">{t('eyeCare.pauseHint')}</div>
     </div>
     <button
       type="button"
-      class="switch-track {config.eye_care_paused ? 'bg-amber-500' : 'bg-slate-300 dark:bg-[#484f58]'}"
+      class="switch-track {config.eye_care_paused ? 'bg-amber-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'}"
       role="switch"
       aria-checked={config.eye_care_paused}
       aria-label={t('eyeCare.pause')}

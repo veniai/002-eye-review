@@ -333,7 +333,7 @@
 {#if pendingPermissionItem}
   <div class="fixed inset-0 z-[90] flex items-end justify-center bg-slate-950/42 px-4 pb-6 pt-10 backdrop-blur-sm sm:items-center">
     <div
-      class="permission-setup-dialog w-full max-w-[440px] rounded-lg bg-white p-6 dark:bg-[#161b22]"
+      class="permission-setup-dialog w-full max-w-[440px] rounded-lg bg-white p-6 dark:bg-[#1c1c1e]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="permission-setup-title"

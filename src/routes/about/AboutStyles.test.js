@@ -47,8 +47,8 @@ test('关于页新卡片的深色边界应保持低对比', async () => {
 test('关于页产品原则在深色模式下应保持标题与说明可读', async () => {
   const css = await readFile(cssUrl, 'utf8');
 
-  assert.match(css, /\.dark \.about-trust-title\s*\{[\s\S]*?color:\s*#e6edf3;/);
-  assert.match(css, /\.dark \.about-trust-copy\s*\{[\s\S]*?color:\s*#8b949e;/);
+  assert.match(css, /\.dark \.about-trust-title\s*\{[\s\S]*?color:\s*#f5f5f7;/);
+  assert.match(css, /\.dark \.about-trust-copy\s*\{[\s\S]*?color:\s*#98989d;/);
 });
 
 test('关于页不应残留旧操作条、技术胶囊和更新横幅样式', async () => {

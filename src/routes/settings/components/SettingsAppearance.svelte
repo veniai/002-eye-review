@@ -8,19 +8,11 @@
   export let mode = 'full';
   const dispatch = createEventDispatcher();
   $: currentLocale = $locale;
-  $: showInterfaceStyleSettings = mode === 'full' || mode === 'background-only';
   $: showBackgroundSettings = mode === 'full' || mode === 'background-only';
-  let uiVisualStyleSaving = false;
   let bgPreview = null;
   let bgUploading = false;
   let appearanceDestroyed = false;
   let blurLabels = [];
-  const UI_VISUAL_STYLE_OPTIONS = [
-    { id: 'a', titleKey: 'settingsAppearance.uiStyleATitle', descriptionKey: 'settingsAppearance.uiStyleADesc', badgeKey: 'settingsAppearance.uiStyleABadge' },
-    { id: 'b', titleKey: 'settingsAppearance.uiStyleBTitle', descriptionKey: 'settingsAppearance.uiStyleBDesc', badgeKey: 'settingsAppearance.uiStyleBBadge' },
-    { id: 'c', titleKey: 'settingsAppearance.uiStyleCTitle', descriptionKey: 'settingsAppearance.uiStyleCDesc', badgeKey: 'settingsAppearance.uiStyleCBadge' },
-  ];
-
   $: {
     currentLocale;
     blurLabels = [t('settingsAppearance.blurClear'), t('settingsAppearance.blurLight'), t('settingsAppearance.blurMedium')];
@@ -33,23 +25,6 @@
     } catch {}
   });
   onDestroy(() => { appearanceDestroyed = true; });
-
-  async function selectUiVisualStyle(styleId) {
-    if (uiVisualStyleSaving || config.ui_visual_style === styleId) return;
-    const previousStyle = config.ui_visual_style || 'c';
-    uiVisualStyleSaving = true;
-    config.ui_visual_style = styleId;
-    dispatch('change', { autosaved: true, config });
-    window.dispatchEvent(new CustomEvent('ui-visual-style-changed', { detail: { style: styleId } }));
-    try {
-      await invoke('save_config', { config });
-    } catch (e) {
-      config.ui_visual_style = previousStyle;
-      dispatch('change', { autosaved: true, config });
-      window.dispatchEvent(new CustomEvent('ui-visual-style-changed', { detail: { style: previousStyle } }));
-      showToast(t('settingsAppearance.uiVisualStyleSaveFailed', { error: e }), 'error');
-    } finally { uiVisualStyleSaving = false; }
-  }
 
   function handleBgFileSelect(event) {
     const file = event.target.files?.[0];
@@ -106,69 +81,6 @@
   }
 </script>
 
-{#if showInterfaceStyleSettings}
-<div class="settings-card" data-locale={currentLocale}>
-  <div class="flex items-start justify-between gap-4">
-    <div>
-      <h3 class="settings-card-title">
-        {t('settingsAppearance.uiVisualStyle')}
-        <span class="ml-1.5 inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-1 py-px text-[10px] font-semibold uppercase tracking-[0.06em] text-amber-700 align-middle dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">Beta</span>
-      </h3>
-      <p class="settings-muted mt-1">{t('settingsAppearance.uiVisualStyleDesc')}</p>
-    </div>
-    {#if uiVisualStyleSaving}
-      <span class="text-xs text-slate-400 dark:text-[#636c76]">{t('settingsAppearance.syncing')}</span>
-    {/if}
-  </div>
-
-  <div class="mt-4 grid gap-3 md:grid-cols-3">
-    {#each UI_VISUAL_STYLE_OPTIONS as option}
-      <button
-        type="button"
-        class="settings-style-option {config.ui_visual_style === option.id ? 'settings-style-option-active' : ''}"
-        on:click={() => selectUiVisualStyle(option.id)}
-        aria-pressed={config.ui_visual_style === option.id}
-      >
-        <div class="settings-style-preview settings-style-preview--{option.id}" aria-hidden="true">
-          <div class="settings-style-preview__sidebar"></div>
-          <div class="settings-style-preview__topbar"></div>
-          <div class="settings-style-preview__metric"></div>
-          <div class="settings-style-preview__chart">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-        <div class="mt-3 flex items-center justify-between gap-2">
-          <div class="text-sm font-semibold text-slate-900 dark:text-[#e6edf3]">
-            {t(option.titleKey)}
-          </div>
-          <div class="flex items-center gap-1.5">
-            {#if config.ui_visual_style === option.id}
-              <span class="settings-style-current-mark">
-                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M3.5 8.2L6.5 11L12.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                {t('settingsAppearance.uiStyleCurrent')}
-              </span>
-            {/if}
-            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-500 dark:bg-[#30363d] dark:text-[#adbac7]">
-              {t(option.badgeKey)}
-            </span>
-          </div>
-        </div>
-        <p class="mt-2 text-xs leading-5 text-slate-500 dark:text-[#7d8590]">
-          {t(option.descriptionKey)}
-        </p>
-        <p class="mt-2 text-[11px] font-medium text-slate-400 dark:text-[#636c76]">
-          {t('settingsAppearance.uiVisualStyleApplyHint')}
-        </p>
-      </button>
-    {/each}
-  </div>
-</div>
-{/if}
-
 <!-- 背景图片 -->
 {#if showBackgroundSettings}
 <div class="settings-card" data-locale={currentLocale}>
@@ -178,11 +90,11 @@
     <!-- 预览 + 上传 -->
     <div class="flex items-start gap-4">
       {#if bgPreview}
-        <div class="w-32 h-20 rounded-lg overflow-hidden border border-slate-200 dark:border-[#30363d] flex-shrink-0">
+        <div class="w-32 h-20 rounded-lg overflow-hidden border border-slate-200 dark:border-[var(--surface-border-default)] flex-shrink-0">
           <img src={bgPreview} alt={t('settingsAppearance.bgPreviewAlt')} class="w-full h-full object-cover" />
         </div>
       {:else}
-        <div class="w-32 h-20 rounded-lg border-2 border-dashed border-slate-200 dark:border-[#30363d] flex items-center justify-center flex-shrink-0">
+        <div class="w-32 h-20 rounded-lg border-2 border-dashed border-slate-200 dark:border-[var(--surface-border-default)] flex items-center justify-center flex-shrink-0">
           <span class="settings-subtle">{t('settingsAppearance.noBackground')}</span>
         </div>
       {/if}
@@ -211,7 +123,7 @@
     </div>
 
     {#if bgPreview || config.background_image}
-      <hr class="border-slate-200 dark:border-[#30363d]" />
+      <hr class="border-slate-200 dark:border-[var(--surface-border-default)]" />
 
       <!-- 显示强度 -->
       <div class="settings-block">

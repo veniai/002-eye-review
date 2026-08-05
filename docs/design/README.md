@@ -90,3 +90,9 @@
 | [`assistant.md`](assistant.md) / [`settings.md`](settings.md) / [`about.md`](about.md) | 其余页面的并行探索(同一五原则基准,独立工作流产出) | 🧪 设计探索 | `assets/*-mockup.html` / `.png` |
 
 > 概览/时间线/日报三张 mockup 共用同一 `<style>` 基底与示意数据口径(7月26日 · 总投入 7h24m · 开发 3h07m…),便于并排评审时对齐。
+
+---
+
+## 五、后续收敛（2026-08）
+
+产品已收敛为**唯一视觉语言**，见 [`ui-convergence.md`](ui-convergence.md)：A/B/C 三风格开关整体下线，亮色迁移至 Apple 系（`#f5f5f7` 底 / 细黑透明边界），暗色从 GitHub 色迁移至 Apple dark（`#000` / `#1c1c1e` / `#2c2c2e`）；护眼休息遮罩、提醒条、复盘卡按同一血统重做（深色静谧 + 呼吸光晕）。本纲的信息设计原则与分类色板不变。

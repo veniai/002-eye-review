@@ -9,7 +9,7 @@
   };
 
   const colorMap = {
-    success: 'bg-slate-800 dark:bg-[#30363d] text-white dark:text-[#c9d1d9]',
+    success: 'bg-slate-800 dark:bg-[var(--editorial-surface-subtle)] text-white dark:text-[#98989d]',
     error: 'bg-red-600 text-white',
     warning: 'bg-amber-500 text-white',
     info: 'bg-sky-600 text-white',

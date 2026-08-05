@@ -53,7 +53,7 @@ test('常驻网站应呈现与应用使用一致的轻分隔排行', async () =>
   const categoryMetaClass = source.match(/class="([^"]*overview-domain-category-meta[^"]*)"/);
   assert.ok(categoryMetaClass, '常驻网站应保留页面数量与分类辅助信息');
   assert.match(categoryMetaClass[1], /text-slate-500/, '浅色模式辅助信息应提升对比度');
-  assert.match(categoryMetaClass[1], /dark:text-\[#7d8590\]/, '深色模式辅助信息应提升对比度');
+  assert.match(categoryMetaClass[1], /dark:text-\[#86868b\]/, '深色模式辅助信息应提升对比度');
   assert.doesNotMatch(categoryMetaClass[1], /text-slate-400|#636c76/, '辅助信息不应继续使用低对比颜色');
 
   assert.match(source, /overview-domain-heading[\s\S]*overview-domain-category-meta/);

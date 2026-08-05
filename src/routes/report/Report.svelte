@@ -935,7 +935,7 @@
             </svg>
             {t('report.generateSettings')}
             {#if hiddenBlocks.length > 0}
-              <span class="ml-1 rounded-full bg-slate-200 dark:bg-[#484f58] px-1.5 text-[10px] font-semibold">{hiddenBlocks.length}</span>
+              <span class="ml-1 rounded-full bg-slate-200 dark:bg-[rgba(255,255,255,0.14)] px-1.5 text-[10px] font-semibold">{hiddenBlocks.length}</span>
             {/if}
           </button>
         {/if}
@@ -993,7 +993,7 @@
       <div class="report-drawer-head">
         <h3 class="text-sm font-semibold">{t('report.generateSettings')}</h3>
         <button
-          class="text-slate-400 hover:text-slate-600 dark:text-[#7d8590] dark:hover:text-[#c9d1d9]"
+          class="text-slate-400 hover:text-slate-600 dark:text-[#86868b] dark:hover:text-[#98989d]"
           title={t('report.cancelEdit')}
           on:click={() => (showGenerateDrawer = false)}
         >
@@ -1071,14 +1071,14 @@
           ></textarea>
 
           <!-- 系统提示词覆盖 -->
-          <div class="mt-4 pt-3 border-t border-slate-200 dark:border-[#30363d]">
+          <div class="mt-4 pt-3 border-t border-slate-200 dark:border-[var(--surface-border-default)]">
             <div class="flex items-center justify-between mb-2">
-              <label for="daily-report-system-prompt-override" class="text-sm font-medium text-slate-700 dark:text-[#adbac7]">
+              <label for="daily-report-system-prompt-override" class="text-sm font-medium text-slate-700 dark:text-[#98989d]">
                 {t('report.systemPromptOverride')}
               </label>
               <button
                 type="button"
-                class="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-[#adbac7] transition"
+                class="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-[#98989d] transition"
                 on:click={() => { config.daily_report_system_prompt_override = null; }}
                 disabled={!config.daily_report_system_prompt_override}
               >
@@ -1101,11 +1101,11 @@
       <!-- 段落管理入口迁入抽屉：恢复被隐藏的段落 -->
       {#if hiddenBlocks.length > 0}
         <div class="report-drawer-section">
-          <h4 class="text-xs font-semibold text-slate-500 dark:text-[#7d8590] mb-2">{t('report.manageBlocksTitle')}</h4>
+          <h4 class="text-xs font-semibold text-slate-500 dark:text-[#86868b] mb-2">{t('report.manageBlocksTitle')}</h4>
           <div class="flex flex-wrap gap-2">
             {#each hiddenBlocks as blockName}
               <button
-                class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-[#30363d] bg-white dark:bg-[#21262d] px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-[#adbac7] hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
+                class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-[var(--surface-border-default)] bg-white dark:bg-[#2c2c2e] px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-[#98989d] hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
                 on:click={async () => {
                   const newHidden = hiddenBlocks.filter((b) => b !== blockName);
                   try {
@@ -1363,23 +1363,23 @@
     <!-- 生成中骨架屏：替代空白等待 -->
     <div class="page-card report-sheet report-article-card">
       <div class="report-sheet-content animate-pulse space-y-4 py-2">
-        <div class="h-3 w-40 rounded-full bg-slate-200/80 dark:bg-[#21262d] mx-auto"></div>
+        <div class="h-3 w-40 rounded-full bg-slate-200/80 dark:bg-[#2c2c2e] mx-auto"></div>
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {#each Array(4) as _}
-            <div class="h-16 rounded-lg bg-slate-100/90 dark:bg-[#161b22]"></div>
+            <div class="h-16 rounded-lg bg-slate-100/90 dark:bg-[#1c1c1e]"></div>
           {/each}
         </div>
-        <div class="h-6 w-1/3 rounded-full bg-slate-200/80 dark:bg-[#21262d]"></div>
+        <div class="h-6 w-1/3 rounded-full bg-slate-200/80 dark:bg-[#2c2c2e]"></div>
         <div class="space-y-2.5">
           {#each Array(3) as _}
-            <div class="h-3.5 rounded-full bg-slate-100/90 dark:bg-[#161b22]"></div>
+            <div class="h-3.5 rounded-full bg-slate-100/90 dark:bg-[#1c1c1e]"></div>
           {/each}
-          <div class="h-3.5 w-2/3 rounded-full bg-slate-100/90 dark:bg-[#161b22]"></div>
+          <div class="h-3.5 w-2/3 rounded-full bg-slate-100/90 dark:bg-[#1c1c1e]"></div>
         </div>
-        <div class="h-6 w-1/4 rounded-full bg-slate-200/80 dark:bg-[#21262d]"></div>
+        <div class="h-6 w-1/4 rounded-full bg-slate-200/80 dark:bg-[#2c2c2e]"></div>
         <div class="space-y-2.5">
           {#each Array(4) as _}
-            <div class="h-3.5 rounded-full bg-slate-100/90 dark:bg-[#161b22]"></div>
+            <div class="h-3.5 rounded-full bg-slate-100/90 dark:bg-[#1c1c1e]"></div>
           {/each}
         </div>
         <p class="pt-2 text-center text-xs text-slate-400 dark:text-[#636c76]">{t('report.generating')}…</p>
@@ -1471,20 +1471,20 @@
       </div>
       <div class="modal-body space-y-4">
         <div>
-          <label for="report-preset-name" class="block text-xs font-medium text-slate-500 dark:text-[#7d8590] mb-1.5">{t('report.presetNamePlaceholder')}</label>
+          <label for="report-preset-name" class="block text-xs font-medium text-slate-500 dark:text-[#86868b] mb-1.5">{t('report.presetNamePlaceholder')}</label>
           <input
             id="report-preset-name"
             type="text"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[#484f58] bg-white dark:bg-[#21262d] text-slate-900 dark:text-[#c9d1d9] placeholder-slate-400 dark:placeholder-[#636c76] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-colors"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[rgba(255,255,255,0.14)] bg-white dark:bg-[#2c2c2e] text-slate-900 dark:text-[#98989d] placeholder-slate-400 dark:placeholder-[#636c76] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-colors"
             placeholder={t('report.presetNamePlaceholder')}
             bind:value={editingPresetName}
           />
         </div>
         <div>
-          <label for="report-preset-prompt" class="block text-xs font-medium text-slate-500 dark:text-[#7d8590] mb-1.5">{t('report.promptLabel')}</label>
+          <label for="report-preset-prompt" class="block text-xs font-medium text-slate-500 dark:text-[#86868b] mb-1.5">{t('report.promptLabel')}</label>
           <textarea
             id="report-preset-prompt"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[#484f58] bg-white dark:bg-[#21262d] text-slate-900 dark:text-[#c9d1d9] placeholder-slate-400 dark:placeholder-[#636c76] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-colors resize-y min-h-[160px] leading-relaxed"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[rgba(255,255,255,0.14)] bg-white dark:bg-[#2c2c2e] text-slate-900 dark:text-[#98989d] placeholder-slate-400 dark:placeholder-[#636c76] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-colors resize-y min-h-[160px] leading-relaxed"
             placeholder={t('report.presetPromptPlaceholder')}
             bind:value={editingPresetPrompt}
             rows="6"
@@ -1493,7 +1493,7 @@
       </div>
       <div class="modal-footer">
         <button
-          class="px-4 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-[#7d8590] hover:bg-slate-100 dark:hover:bg-[#30363d] transition-colors"
+          class="px-4 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-[#86868b] hover:bg-slate-100 dark:hover:bg-[var(--editorial-surface-subtle)] transition-colors"
           on:click={() => { showPresetModal = false; }}
         >
           {t('report.cancelEdit')}
@@ -1549,7 +1549,7 @@
         </button>
       </div>
       <div class="modal-body space-y-4">
-        <p class="text-xs text-slate-500 dark:text-[#7d8590]">{t('report.batchExportHint')}</p>
+        <p class="text-xs text-slate-500 dark:text-[#86868b]">{t('report.batchExportHint')}</p>
 
         <div class="flex flex-wrap gap-2">
           <button class="page-control-btn" on:click={() => applyBatchPreset('thisWeek')}>{t('report.batchPresetThisWeek')}</button>
@@ -1560,28 +1560,28 @@
 
         <div class="grid gap-3 grid-cols-2">
           <label class="block">
-            <span class="text-xs font-medium text-slate-500 dark:text-[#7d8590]">{t('report.batchStartDate')}</span>
+            <span class="text-xs font-medium text-slate-500 dark:text-[#86868b]">{t('report.batchStartDate')}</span>
             <input
               type="date"
               bind:value={batchStartDate}
               max={getLocalDateString()}
-              class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[#484f58] bg-white dark:bg-[#21262d] text-slate-900 dark:text-[#c9d1d9] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[rgba(255,255,255,0.14)] bg-white dark:bg-[#2c2c2e] text-slate-900 dark:text-[#98989d] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
             />
           </label>
           <label class="block">
-            <span class="text-xs font-medium text-slate-500 dark:text-[#7d8590]">{t('report.batchEndDate')}</span>
+            <span class="text-xs font-medium text-slate-500 dark:text-[#86868b]">{t('report.batchEndDate')}</span>
             <input
               type="date"
               bind:value={batchEndDate}
               max={getLocalDateString()}
-              class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[#484f58] bg-white dark:bg-[#21262d] text-slate-900 dark:text-[#c9d1d9] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              class="mt-1 w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-[rgba(255,255,255,0.14)] bg-white dark:bg-[#2c2c2e] text-slate-900 dark:text-[#98989d] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
             />
           </label>
         </div>
       </div>
       <div class="modal-footer">
         <button
-          class="px-4 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-[#7d8590] hover:bg-slate-100 dark:hover:bg-[#30363d] transition-colors"
+          class="px-4 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-[#86868b] hover:bg-slate-100 dark:hover:bg-[var(--editorial-surface-subtle)] transition-colors"
           on:click={() => { if (!batchExporting) showBatchExportModal = false; }}
           disabled={batchExporting}
         >

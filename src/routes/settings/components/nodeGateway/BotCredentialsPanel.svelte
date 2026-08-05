@@ -21,7 +21,7 @@
   }
 </script>
 
-<div class="rounded-xl bg-white/70 px-3.5 py-3 ring-1 ring-slate-200/70 dark:bg-[#161b22]/20 dark:ring-[#30363d]/70">
+<div class="rounded-xl bg-white/70 px-3.5 py-3 ring-1 ring-slate-200/70 dark:bg-[#1c1c1e]/20 dark:ring-[var(--surface-border-default)]">
   <div class="flex items-center justify-between gap-3">
     <div class="flex items-center gap-2">
       {#if iconPath}
@@ -29,7 +29,7 @@
           <path d={iconPath} />
         </svg>
       {/if}
-      <span class="text-sm text-slate-700 dark:text-[#c9d1d9]">{t(titleKey)}</span>
+      <span class="text-sm text-slate-700 dark:text-[#98989d]">{t(titleKey)}</span>
       {#if config[enabledKey]}
         <span class="settings-chip-success">{t(enabledLabelKey)}</span>
       {/if}
@@ -38,7 +38,7 @@
       type="button"
       on:click={toggle}
       disabled={saving}
-      class="switch-track {config[enabledKey] ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[#484f58]'} {saving ? 'opacity-60 cursor-not-allowed' : ''}"
+      class="switch-track {config[enabledKey] ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'} {saving ? 'opacity-60 cursor-not-allowed' : ''}"
       role="switch"
       aria-label={t(titleKey)}
       aria-checked={config[enabledKey]}
@@ -51,7 +51,7 @@
       <div class="settings-responsive-field-grid grid gap-2">
         {#each fields as field}
           <label class="block">
-            <span class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t(field.labelKey)}</span>
+            <span class="text-[11px] text-slate-500 dark:text-[#86868b]">{t(field.labelKey)}</span>
             {#if field.secret}
               <div class="mt-0.5 relative">
                 {#if secretVisible[field.key]}
@@ -59,7 +59,7 @@
                     type="text"
                     bind:value={config[field.key]}
                     on:blur={() => dispatch('save')}
-                    class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[#30363d]/50 dark:text-[#e6edf3] dark:ring-[#484f58] dark:focus:ring-primary-600 focus:outline-none"
+                    class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[rgba(255,255,255,0.07)] dark:text-[#f5f5f7] dark:ring-[rgba(255,255,255,0.14)] dark:focus:ring-primary-600 focus:outline-none"
                     placeholder={field.placeholder || ''}
                   />
                 {:else}
@@ -67,13 +67,13 @@
                     type="password"
                     bind:value={config[field.key]}
                     on:blur={() => dispatch('save')}
-                    class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[#30363d]/50 dark:text-[#e6edf3] dark:ring-[#484f58] dark:focus:ring-primary-600 focus:outline-none"
+                    class="w-full rounded-md bg-white/80 px-3 py-1.5 pr-8 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[rgba(255,255,255,0.07)] dark:text-[#f5f5f7] dark:ring-[rgba(255,255,255,0.14)] dark:focus:ring-primary-600 focus:outline-none"
                     placeholder={field.placeholder || ''}
                   />
                 {/if}
                 <button
                   type="button"
-                  class="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-[#adbac7]"
+                  class="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-[#98989d]"
                   aria-label={`${t(secretVisible[field.key] ? 'nodeGatewayPage.hideSecret' : 'nodeGatewayPage.showSecret')}: ${t(field.labelKey)}`}
                   on:click={() => (secretVisible[field.key] = !secretVisible[field.key])}
                 >
@@ -89,7 +89,7 @@
                 type="text"
                 bind:value={config[field.key]}
                 on:blur={() => dispatch('save')}
-                class="mt-0.5 w-full rounded-md bg-white/80 px-3 py-1.5 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[#30363d]/50 dark:text-[#e6edf3] dark:ring-[#484f58] dark:focus:ring-primary-600 focus:outline-none"
+                class="mt-0.5 w-full rounded-md bg-white/80 px-3 py-1.5 text-sm font-mono text-slate-900 ring-1 ring-slate-200 focus:ring-primary-300 dark:bg-[rgba(255,255,255,0.07)] dark:text-[#f5f5f7] dark:ring-[rgba(255,255,255,0.14)] dark:focus:ring-primary-600 focus:outline-none"
                 placeholder={field.placeholder || ''}
               />
             {/if}

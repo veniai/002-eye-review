@@ -68,9 +68,12 @@ test('深色模式边界 token 应使用低对比中性层级', async () => {
   const css = await readFile(cssUrl, 'utf8');
 
   const darkTokens = readCssBlock(css, '.dark');
-  assert.match(darkTokens, /--surface-border-subtle:\s*rgba\(48,\s*54,\s*61,\s*0\.58\)/);
-  assert.match(darkTokens, /--surface-border-default:\s*rgba\(48,\s*54,\s*61,\s*0\.82\)/);
-  assert.doesNotMatch(css, /--surface-border-default:\s*rgba\(255,\s*255,\s*255/);
+  // Apple dark 映射：边界以半透明白层级表达
+  assert.match(darkTokens, /--surface-border-subtle:\s*rgba\(255,\s*255,\s*255,\s*0\.07\)/);
+  assert.match(darkTokens, /--surface-border-default:\s*rgba\(255,\s*255,\s*255,\s*0\.14\)/);
+  assert.match(darkTokens, /--editorial-surface-featured:\s*#1c1c1e/);
+  assert.match(darkTokens, /--editorial-surface-subtle:\s*#2c2c2e/);
+  assert.doesNotMatch(css, /rgba\(48,\s*54,\s*61/);
 });
 
 test('共享卡片应消费统一边界 token', async () => {
@@ -132,16 +135,6 @@ test('全局根字号应为 16px、正文不得低于 10px，标题不得使用�
   assert.deepEqual(undersized, []);
   assert.doesNotMatch([css, ...sources].join('\n'), /letter-spacing:\s*-/);
   assert.doesNotMatch([css, ...sources].join('\n'), /\btracking-(?:tight|tighter)\b/);
-});
-
-test('深色 A 风格应通过共享 token 控制卡片边界', async () => {
-  const css = await readFile(cssUrl, 'utf8');
-  const darkStyleA = readCssBlock(css, '.dark .app-shell.ui-style-a');
-  const darkStyleACards = readCssBlock(css, '.dark .app-shell.ui-style-a .page-card,');
-
-  assert.match(darkStyleA, /--surface-border-subtle:/);
-  assert.match(darkStyleA, /--surface-border-default:/);
-  assert.doesNotMatch(darkStyleACards, /border-color:/);
 });
 
 test('助手与关于页应将操作区接入操作轴，并让主体继续使用阅读轴', async () => {

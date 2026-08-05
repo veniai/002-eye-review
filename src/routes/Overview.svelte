@@ -1276,7 +1276,7 @@
         {/if}
         <!-- #131 录制状态点：改版后状态胶囊并入日期行，仍随录制状态灰/绿 -->
         <span
-          class="ms-1.5 inline-block h-1.5 w-1.5 rounded-full align-middle {overviewDotActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400 dark:bg-[#484f58]'}"
+          class="ms-1.5 inline-block h-1.5 w-1.5 rounded-full align-middle {overviewDotActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400 dark:bg-[rgba(255,255,255,0.14)]'}"
           title={overviewStatusLabel}
         ></span>
         </p>
@@ -1349,13 +1349,13 @@
   <!-- 洞察条：仅 today 模式、数据非空且上周同日基线可用时组句显示 -->
   {#if overviewMode === 'today' && insightSentence}
     <!-- 窄屏精修：flex-wrap 允许洞察句换行,链接自动下移到第二行,避免最小窗口横向溢出 -->
-    <div class="mb-4 flex flex-wrap items-center gap-3.5 rounded-[22px] border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-white px-5 py-3.5 dark:border-blue-900/40 dark:from-blue-950/35 dark:via-[#161b22] dark:to-[#161b22]">
+    <div class="mb-4 flex flex-wrap items-center gap-3.5 rounded-[22px] border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-white px-5 py-3.5 dark:border-blue-900/40 dark:from-blue-950/35 dark:via-[#1c1c1e] dark:to-[#1c1c1e]">
       <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-500 dark:bg-blue-900/40 dark:text-blue-300">
         <svg class="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2.5l2 6.4 6.5 2.1-6.5 2.1-2 6.4-2-6.4L3.5 11l6.5-2.1zM19 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z" />
         </svg>
       </span>
-      <p class="min-w-0 flex-1 basis-52 text-sm text-slate-600 dark:text-[#adbac7]">{insightSentence}</p>
+      <p class="min-w-0 flex-1 basis-52 text-sm text-slate-600 dark:text-[#98989d]">{insightSentence}</p>
       <a
         href="#/report"
         class="shrink-0 whitespace-nowrap text-[13px] font-semibold text-primary-600 transition-colors hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
@@ -1368,13 +1368,13 @@
   <div class="overview-summary-grid grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
     {#if loading || !stats}
       {#each [1,2,3,4] as _}
-        <div class="min-h-[116px] rounded-2xl border border-slate-100 bg-white p-5 animate-pulse dark:border-[#30363d]/60 dark:bg-[#21262d]/80">
+        <div class="min-h-[116px] rounded-2xl border border-slate-100 bg-white p-5 animate-pulse dark:border-[var(--surface-border-default)]/60 dark:bg-[#2c2c2e]/80">
           <div class="flex h-full items-center justify-between gap-4">
             <div class="flex-1">
-              <div class="h-3 rounded bg-slate-200 dark:bg-[#30363d] w-20"></div>
-              <div class="mt-6 h-8 w-1/2 rounded bg-slate-200 dark:bg-[#30363d]"></div>
+              <div class="h-3 rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)] w-20"></div>
+              <div class="mt-6 h-8 w-1/2 rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
             </div>
-            <div class="h-11 w-11 rounded-2xl bg-slate-100 dark:bg-[#30363d] shrink-0"></div>
+            <div class="h-11 w-11 rounded-2xl bg-slate-100 dark:bg-[var(--editorial-surface-subtle)] shrink-0"></div>
           </div>
         </div>
       {/each}
@@ -1439,7 +1439,7 @@
         <div class="flex h-[150px] items-end gap-2 px-1 animate-pulse">
           {#each [1, 2, 3, 4, 5, 6, 7] as pulseIndex}
             <div
-              class="flex-1 rounded-t-lg bg-slate-200 dark:bg-[#30363d]"
+              class="flex-1 rounded-t-lg bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"
               style={`height: ${24 + (pulseIndex % 4) * 22}px;`}
             ></div>
           {/each}
@@ -1449,12 +1449,12 @@
           {#each dailyBars as bar (bar.date)}
             <div class="flex min-w-0 flex-1 flex-col items-center justify-end gap-1.5">
               {#if bar.isHeaviest && bar.total > 0}
-                <span class="text-[11px] font-semibold text-slate-600 dark:text-[#adbac7]">
+                <span class="text-[11px] font-semibold text-slate-600 dark:text-[#98989d]">
                   {formatDurationLocalized(bar.total, { compact: true })}
                 </span>
               {/if}
               <span
-                class="block w-full max-w-[44px] rounded-t-md {bar.isToday || bar.isHeaviest ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[#30363d]'}"
+                class="block w-full max-w-[44px] rounded-t-md {bar.isToday || bar.isHeaviest ? 'bg-primary-500' : 'bg-slate-300 dark:bg-[var(--editorial-surface-subtle)]'}"
                 style={`height: ${bar.heightPx}px;`}
               ></span>
               <span class="max-w-full truncate text-[11px] {bar.isToday ? 'font-bold text-primary-600 dark:text-primary-400' : 'text-slate-400 dark:text-[#636c76]'}">
@@ -1477,24 +1477,24 @@
     </div>
     {#if loading || !stats}
       <div class="animate-pulse">
-        <div class="mb-5 h-3.5 rounded-full bg-slate-200 dark:bg-[#30363d]"></div>
+        <div class="mb-5 h-3.5 rounded-full bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
         <div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {#each [1,2,3,4] as _}
-            <div class="min-h-[88px] rounded-[22px] bg-slate-50/88 p-4 dark:bg-[#161b22]/30">
-              <div class="h-3 w-16 rounded bg-slate-200 dark:bg-[#30363d]"></div>
-              <div class="mt-4 h-7 w-20 rounded bg-slate-200 dark:bg-[#30363d]"></div>
+            <div class="min-h-[88px] rounded-[22px] bg-slate-50/88 p-4 dark:bg-[#1c1c1e]/30">
+              <div class="h-3 w-16 rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
+              <div class="mt-4 h-7 w-20 rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
             </div>
           {/each}
         </div>
-        <div class="rounded-[22px] bg-slate-50/90 p-4 dark:bg-[#161b22]/40">
+        <div class="rounded-[22px] bg-slate-50/90 p-4 dark:bg-[#1c1c1e]/40">
           <div class="flex h-40 items-end gap-1.5">
             {#each Array(24) as _, hour}
               <div class="flex h-full flex-1 flex-col items-center justify-end">
                 <div
-                  class="w-full rounded-t-lg bg-slate-200 dark:bg-[#30363d]"
+                  class="w-full rounded-t-lg bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"
                   style={`height: ${Math.max(((hour % 6) + 2) * 12, 18)}%; opacity: 0.8;`}
                 ></div>
-                <div class="mt-2 h-2 w-7 rounded bg-slate-100 dark:bg-[#30363d]/60"></div>
+                <div class="mt-2 h-2 w-7 rounded bg-slate-100 dark:bg-[rgba(255,255,255,0.09)]"></div>
               </div>
             {/each}
           </div>
@@ -1519,7 +1519,7 @@
             {#each compositionSegments as segment (segment.category)}
               <button
                 type="button"
-                class={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-colors ${selectedCompositionCategory === segment.category ? 'bg-slate-100 text-slate-800 dark:bg-[#30363d] dark:text-[#e6edf3]' : 'text-slate-500 hover:bg-slate-50 dark:text-[#7d8590] dark:hover:bg-[#21262d]'}`}
+                class={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs transition-colors ${selectedCompositionCategory === segment.category ? 'bg-slate-100 text-slate-800 dark:bg-[var(--editorial-surface-subtle)] dark:text-[#f5f5f7]' : 'text-slate-500 hover:bg-slate-50 dark:text-[#86868b] dark:hover:bg-[#2c2c2e]'}`}
                 aria-pressed={selectedCompositionCategory === segment.category}
                 on:click={() => toggleCompositionCategory(segment.category)}
               >
@@ -1532,26 +1532,26 @@
           </div>
 
           {#if selectedCompositionSummary}
-            <div class="overview-composition-summary mx-auto mt-4 max-w-3xl rounded-2xl bg-slate-50/90 px-4 py-3 text-center dark:bg-[#161b22]/35">
+            <div class="overview-composition-summary mx-auto mt-4 max-w-3xl rounded-2xl bg-slate-50/90 px-4 py-3 text-center dark:bg-[#1c1c1e]/35">
               <div class="grid gap-2 sm:grid-cols-3">
                 <div class="overview-composition-kpi rounded-xl px-3 py-2 text-center">
                   <p class="text-[11px] text-slate-400 dark:text-[#636c76]">{t('overview.compositionDuration')}</p>
-                  <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-[#e6edf3]">{formatDurationLocalized(selectedCompositionSummary.duration, { compact: true })}</p>
+                  <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-[#f5f5f7]">{formatDurationLocalized(selectedCompositionSummary.duration, { compact: true })}</p>
                 </div>
                 <div class="overview-composition-kpi rounded-xl px-3 py-2 text-center">
                   <p class="text-[11px] text-slate-400 dark:text-[#636c76]">{t('overview.compositionShare')}</p>
-                  <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-[#e6edf3]">{selectedCompositionSummary.percentage}%</p>
+                  <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-[#f5f5f7]">{selectedCompositionSummary.percentage}%</p>
                 </div>
                 <div class="overview-composition-kpi rounded-xl px-3 py-2 text-center">
                   <p class="text-[11px] text-slate-400 dark:text-[#636c76]">{t('overview.compositionActiveRange')}</p>
-                  <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-[#e6edf3]">{formatCompositionActiveRange(selectedCompositionSummary.activeRange)}</p>
+                  <p class="mt-1 text-sm font-semibold text-slate-800 dark:text-[#f5f5f7]">{formatCompositionActiveRange(selectedCompositionSummary.activeRange)}</p>
                 </div>
               </div>
               {#if selectedCompositionSummary.primaryApps.length > 0}
-                <div class="overview-composition-primary-apps mt-2 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 dark:text-[#7d8590]">
+                <div class="overview-composition-primary-apps mt-2 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 dark:text-[#86868b]">
                   <span>{t('overview.compositionPrimaryApps')}</span>
                   {#each selectedCompositionSummary.primaryApps as app (app.appName)}
-                    <span class="rounded-full bg-white px-2.5 py-1 dark:bg-[#21262d]">
+                    <span class="rounded-full bg-white px-2.5 py-1 dark:bg-[#2c2c2e]">
                       {app.appName} · {formatDurationLocalized(app.duration, { compact: true })}
                     </span>
                   {/each}
@@ -1584,21 +1584,21 @@
     <section class="page-card overview-section-card overview-panel overview-panel-subtle">
       <div class="mb-3 flex items-baseline justify-between gap-3">
         <h3 class="page-section-title !mb-0">{t('overview.topDomains')}</h3>
-        <span class="text-xs text-slate-500 dark:text-[#7d8590]">{t('overview.byDomainAggregated')}</span>
+        <span class="text-xs text-slate-500 dark:text-[#86868b]">{t('overview.byDomainAggregated')}</span>
       </div>
       {#if loading || !stats}
         <div class="overview-domain-skeleton-list overview-browser-gallery animate-pulse space-y-1">
           {#each [1, 2, 3, 4, 5, 6] as _}
             <div class="overview-domain-row overview-domain-skeleton-row grid w-full grid-cols-[minmax(0,11rem)_minmax(7rem,1fr)_auto] items-center gap-3 px-2 py-2.5">
               <div class="overview-domain-heading overview-domain-skeleton-heading min-w-0 space-y-1.5">
-                <div class="h-3 w-28 max-w-full rounded bg-slate-200 dark:bg-[#30363d]"></div>
-                <div class="h-2 w-20 max-w-full rounded bg-slate-100 dark:bg-[#30363d]/50"></div>
+                <div class="h-3 w-28 max-w-full rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
+                <div class="h-2 w-20 max-w-full rounded bg-slate-100 dark:bg-[rgba(255,255,255,0.07)]"></div>
               </div>
               <div class="overview-domain-skeleton-source min-w-0">
-                <div class="overview-domain-skeleton-source-label h-2 w-24 max-w-full rounded bg-slate-200 dark:bg-[#30363d]"></div>
-                <div class="overview-domain-source-track overview-domain-skeleton-source-track mt-1.5 h-2 w-full rounded-full !bg-slate-100 dark:!bg-[#30363d]/50"></div>
+                <div class="overview-domain-skeleton-source-label h-2 w-24 max-w-full rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
+                <div class="overview-domain-source-track overview-domain-skeleton-source-track mt-1.5 h-2 w-full rounded-full !bg-slate-100 dark:!bg-[rgba(255,255,255,0.14)]/50"></div>
               </div>
-              <div class="overview-domain-skeleton-duration h-3 w-12 justify-self-end rounded bg-slate-100 dark:bg-[#30363d]/50"></div>
+              <div class="overview-domain-skeleton-duration h-3 w-12 justify-self-end rounded bg-slate-100 dark:bg-[rgba(255,255,255,0.07)]"></div>
             </div>
           {/each}
         </div>
@@ -1607,14 +1607,14 @@
           {#each topDomainPresentations as domain (domain.domain)}
             <button
               type="button"
-              class="overview-domain-row grid w-full grid-cols-[minmax(0,11rem)_minmax(7rem,1fr)_auto] items-center gap-3 rounded-lg !bg-transparent px-2 py-2.5 text-start transition-colors hover:!bg-slate-100/70 focus:outline-none focus-visible:!bg-slate-100/70 dark:hover:!bg-[#21262d]/70 dark:focus-visible:!bg-[#21262d]/70"
+              class="overview-domain-row grid w-full grid-cols-[minmax(0,11rem)_minmax(7rem,1fr)_auto] items-center gap-3 rounded-lg !bg-transparent px-2 py-2.5 text-start transition-colors hover:!bg-slate-100/70 focus:outline-none focus-visible:!bg-slate-100/70 dark:hover:!bg-[#2c2c2e]/70 dark:focus-visible:!bg-[#2c2c2e]/70"
               on:click={() => openDomainDetail(domain)}
             >
               <span class="overview-domain-heading min-w-0">
-                <span class="block truncate text-[13px] font-semibold text-slate-700 dark:text-[#c9d1d9]">
+                <span class="block truncate text-[13px] font-semibold text-slate-700 dark:text-[#98989d]">
                   {getBrowserDomainDisplayLabel(domain)}
                 </span>
-                <span class="overview-domain-meta overview-domain-category-meta mt-0.5 flex items-center gap-1.5 truncate text-[11px] text-slate-500 dark:text-[#7d8590]">
+                <span class="overview-domain-meta overview-domain-category-meta mt-0.5 flex items-center gap-1.5 truncate text-[11px] text-slate-500 dark:text-[#86868b]">
                   <span>{t('overview.sitePagesMeta', { count: domain.presentation.pageCount })}</span>
                   <span aria-hidden="true">·</span>
                   <span class="overview-semantic-color-dot h-1.5 w-1.5 shrink-0 rounded-full" style={`background-color: ${getSemanticCategoryColor(domain.semantic_category)};`}></span>
@@ -1622,10 +1622,10 @@
                 </span>
               </span>
               <span class="min-w-0">
-                <span class="overview-domain-source-list block truncate text-[11px] text-slate-500 dark:text-[#7d8590]">
+                <span class="overview-domain-source-list block truncate text-[11px] text-slate-500 dark:text-[#86868b]">
                   {domain.presentation.sourceLabel || t('overview.domainSourcesUnknown')}
                 </span>
-                <span class="overview-domain-source-track mt-1.5 flex h-2 overflow-hidden rounded-full !bg-slate-100 dark:!bg-[#30363d]/50">
+                <span class="overview-domain-source-track mt-1.5 flex h-2 overflow-hidden rounded-full !bg-slate-100 dark:!bg-[rgba(255,255,255,0.14)]/50">
                   {#each domain.presentation.sourceTrack as source, sourceIndex (source.browser_name)}
                     <span
                       class="overview-domain-source-segment block h-full"
@@ -1635,13 +1635,13 @@
                   {/each}
                 </span>
               </span>
-              <span class="overview-domain-duration min-w-[4.5rem] whitespace-nowrap text-end text-xs font-semibold tabular-nums text-slate-600 dark:text-[#adbac7]">
+              <span class="overview-domain-duration min-w-[4.5rem] whitespace-nowrap text-end text-xs font-semibold tabular-nums text-slate-600 dark:text-[#98989d]">
                 {formatDurationLocalized(domain.duration, { compact: true })}
               </span>
             </button>
           {/each}
         </div>
-        <p class="mt-3 text-center text-xs text-slate-500 dark:text-[#7d8590]">
+        <p class="mt-3 text-center text-xs text-slate-500 dark:text-[#86868b]">
           {t('overview.domainsFooter', { count: stats.domain_total_count || domainUsageItems.length, browsers: domainBrowsersLabel })}
           {#if (stats.domain_total_count || domainUsageItems.length) > 6}
             ·
@@ -1696,14 +1696,14 @@
           {#each [1, 2, 3, 4, 5, 6] as _}
             <div class="app-usage-chart__row">
               <div class="app-usage-chart__heading gap-2.5">
-                <div class="h-5 w-5 shrink-0 rounded bg-slate-200 dark:bg-[#30363d]"></div>
+                <div class="h-5 w-5 shrink-0 rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
                 <div class="min-w-0 flex-1 space-y-1.5">
-                  <div class="h-3 w-24 max-w-full rounded bg-slate-200 dark:bg-[#30363d]"></div>
-                  <div class="h-2 w-16 max-w-full rounded bg-slate-100 dark:bg-[#30363d]/50"></div>
+                  <div class="h-3 w-24 max-w-full rounded bg-slate-200 dark:bg-[var(--editorial-surface-subtle)]"></div>
+                  <div class="h-2 w-16 max-w-full rounded bg-slate-100 dark:bg-[rgba(255,255,255,0.07)]"></div>
                 </div>
               </div>
-              <div class="app-usage-chart__track !bg-slate-100 dark:!bg-[#30363d]/50"></div>
-              <div class="app-usage-chart__duration h-3 w-12 justify-self-end rounded bg-slate-100 dark:bg-[#30363d]/50"></div>
+              <div class="app-usage-chart__track !bg-slate-100 dark:!bg-[rgba(255,255,255,0.14)]/50"></div>
+              <div class="app-usage-chart__duration h-3 w-12 justify-self-end rounded bg-slate-100 dark:bg-[rgba(255,255,255,0.07)]"></div>
             </div>
           {/each}
         </div>
@@ -1740,13 +1740,13 @@
     aria-labelledby="overview-domain-overlay-title"
     tabindex="-1"
   >
-    <div class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white p-5 dark:border-[#30363d] dark:from-[#21262d] dark:to-[#161b22]">
+    <div class="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white p-5 dark:border-[var(--surface-border-default)] dark:from-[#2c2c2e] dark:to-[#1c1c1e]">
       <div class="flex min-w-0 items-center gap-3">
         {#if domainOverlayView === 'detail' && domainCollection.length > 0}
           <button
             bind:this={domainOverlayBackButton}
             type="button"
-            class="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-[#7d8590] dark:hover:bg-[#30363d]"
+            class="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 dark:text-[#86868b] dark:hover:bg-[var(--editorial-surface-subtle)]"
             title={t('overview.viewAll')}
             on:click={showAllDomainSummaries}
           >
@@ -1757,14 +1757,14 @@
         {/if}
         <div class="min-w-0">
           {#if domainOverlayView === 'all'}
-            <h3 id="overview-domain-overlay-title" class="truncate text-lg font-bold text-slate-900 dark:text-[#e6edf3]">{t('overview.domainListTitle')}</h3>
-            <p class="truncate text-sm text-slate-500 dark:text-[#7d8590]">{t('overview.sitesCount', { count: domainCollectionTotalCount })}</p>
+            <h3 id="overview-domain-overlay-title" class="truncate text-lg font-bold text-slate-900 dark:text-[#f5f5f7]">{t('overview.domainListTitle')}</h3>
+            <p class="truncate text-sm text-slate-500 dark:text-[#86868b]">{t('overview.sitesCount', { count: domainCollectionTotalCount })}</p>
           {:else}
-            <h3 id="overview-domain-overlay-title" class="truncate text-lg font-bold text-slate-900 dark:text-[#e6edf3]">
+            <h3 id="overview-domain-overlay-title" class="truncate text-lg font-bold text-slate-900 dark:text-[#f5f5f7]">
               {selectedDomainDetail ? getBrowserDomainDisplayLabel(selectedDomainDetail) : t('overview.domainDetailTitle')}
             </h3>
             {#if selectedDomainDetail}
-              <p class="truncate text-sm text-slate-500 dark:text-[#7d8590]">
+              <p class="truncate text-sm text-slate-500 dark:text-[#86868b]">
                 {formatDuration(selectedDomainDetail.duration)} · {t('overview.pagesCount', { count: selectedDomainDetail.urls?.length || 0 })}
               </p>
             {/if}
@@ -1773,7 +1773,7 @@
       </div>
       <button
         type="button"
-        class="shrink-0 rounded-lg p-2 transition-colors hover:bg-slate-100 dark:hover:bg-[#30363d]"
+        class="shrink-0 rounded-lg p-2 transition-colors hover:bg-slate-100 dark:hover:bg-[var(--editorial-surface-subtle)]"
         title={t('overview.cancel')}
         on:click={closeDomainOverlay}
       >
@@ -1798,21 +1798,21 @@
             <button
               type="button"
               data-domain-summary
-              class="overview-domain-summary-row grid w-full grid-cols-[minmax(0,1fr)_auto] gap-3 rounded-2xl border border-slate-200/80 px-4 py-3 text-start transition-colors hover:border-sky-200 hover:bg-sky-50/45 focus:outline-none focus:ring-2 focus:ring-sky-300 dark:border-[#30363d] dark:hover:border-sky-800/70 dark:hover:bg-sky-950/10"
+              class="overview-domain-summary-row grid w-full grid-cols-[minmax(0,1fr)_auto] gap-3 rounded-2xl border border-slate-200/80 px-4 py-3 text-start transition-colors hover:border-sky-200 hover:bg-sky-50/45 focus:outline-none focus:ring-2 focus:ring-sky-300 dark:border-[var(--surface-border-default)] dark:hover:border-sky-800/70 dark:hover:bg-sky-950/10"
               on:click={() => selectDomainFromCollection(domain)}
             >
               <span class="min-w-0">
-                <span class="overview-domain-heading block truncate text-sm font-semibold text-slate-800 dark:text-[#e6edf3]">{getBrowserDomainDisplayLabel(domain)}</span>
+                <span class="overview-domain-heading block truncate text-sm font-semibold text-slate-800 dark:text-[#f5f5f7]">{getBrowserDomainDisplayLabel(domain)}</span>
                 <span class="overview-domain-meta mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-[#636c76]">
                   <span>{t('overview.sitePagesMeta', { count: summaryPresentation.pageCount })}</span>
                   <span aria-hidden="true">·</span>
                   <span class="h-1.5 w-1.5 rounded-full" style={`background-color: ${getSemanticCategoryColor(domain.semantic_category)};`}></span>
                   <span class="truncate">{getDomainSemanticLabel(domain)}</span>
                 </span>
-                <span class="overview-domain-source-list mt-2 block truncate text-[11px] text-slate-500 dark:text-[#7d8590]">
+                <span class="overview-domain-source-list mt-2 block truncate text-[11px] text-slate-500 dark:text-[#86868b]">
                   {summaryPresentation.sourceLabel || t('overview.domainSourcesUnknown')}
                 </span>
-                <span class="overview-domain-source-track mt-1.5 flex h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-[#30363d]/70">
+                <span class="overview-domain-source-track mt-1.5 flex h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-[var(--editorial-surface-subtle)]/70">
                   {#each summaryPresentation.sourceTrack as source, sourceIndex (source.browser_name)}
                     <span
                       class="overview-domain-source-segment block h-full"
@@ -1821,7 +1821,7 @@
                   {/each}
                 </span>
               </span>
-              <span class="self-center text-xs font-semibold text-slate-600 dark:text-[#adbac7]">{formatDurationLocalized(domain.duration, { compact: true })}</span>
+              <span class="self-center text-xs font-semibold text-slate-600 dark:text-[#98989d]">{formatDurationLocalized(domain.duration, { compact: true })}</span>
             </button>
           {/each}
           {#if domainCollection.length === 0}
@@ -1831,12 +1831,12 @@
       {:else if domainOverlayView === 'detail'}
       {#each (selectedDomainDetail ? [selectedDomainDetail] : []) as domain}
         {@const domainPresentation = buildDomainPresentation(domain)}
-        <div class="overview-domain-detail-source rounded-2xl bg-slate-50/80 p-3 dark:bg-[#21262d]/45">
-          <div class="overview-domain-source-list flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-[#7d8590]">
+        <div class="overview-domain-detail-source rounded-2xl bg-slate-50/80 p-3 dark:bg-[#2c2c2e]/45">
+          <div class="overview-domain-source-list flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-[#86868b]">
             <span>{domainPresentation.sourceLabel || t('overview.domainSourcesUnknown')}</span>
             <span>{formatDurationLocalized(domain.duration, { compact: true })}</span>
           </div>
-          <div class="overview-domain-source-track mt-2 flex h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-[#30363d]/70">
+          <div class="overview-domain-source-track mt-2 flex h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-[var(--editorial-surface-subtle)]/70">
             {#each domainPresentation.sourceTrack as source, sourceIndex (source.browser_name)}
               <span
                 class="overview-domain-source-segment block h-full"
@@ -1846,13 +1846,13 @@
             {/each}
           </div>
         </div>
-        <div class="overview-domain-detail relative rounded-lg border border-slate-200 dark:border-[#30363d]">
+        <div class="overview-domain-detail relative rounded-lg border border-slate-200 dark:border-[var(--surface-border-default)]">
           <!-- 域名头部 -->
-          <div class="flex items-center justify-between rounded-t-lg p-3 bg-slate-50 dark:bg-[#21262d]/50">
+          <div class="flex items-center justify-between rounded-t-lg p-3 bg-slate-50 dark:bg-[#2c2c2e]/50">
             <div class="flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-primary-500"></span>
-              <span class="font-medium text-slate-700 dark:text-[#c9d1d9]">{getBrowserDomainDisplayLabel(domain)}</span>
-              <span class="text-xs text-slate-400 bg-slate-200 dark:bg-[#30363d] px-1.5 py-0.5 rounded">
+              <span class="font-medium text-slate-700 dark:text-[#98989d]">{getBrowserDomainDisplayLabel(domain)}</span>
+              <span class="text-xs text-slate-400 bg-slate-200 dark:bg-[var(--editorial-surface-subtle)] px-1.5 py-0.5 rounded">
                 {t('overview.modalPages', { count: domain.urls.length })}
               </span>
             </div>
@@ -1870,7 +1870,7 @@
                   {t('overview.currentCategory', { label: getDomainSemanticLabel(domain) })}
                 </span>
                 <button
-                  class="text-xs px-2 py-1 rounded-full border border-slate-200 dark:border-[#484f58] text-slate-700 dark:text-[#adbac7] hover:border-primary-300 hover:text-primary-600 transition-colors"
+                  class="text-xs px-2 py-1 rounded-full border border-slate-200 dark:border-[rgba(255,255,255,0.14)] text-slate-700 dark:text-[#98989d] hover:border-primary-300 hover:text-primary-600 transition-colors"
                   aria-haspopup="dialog"
                   aria-expanded={editingDomainKey === domain.domain}
                   aria-controls={`semantic-category-popover-${domain.domain}`}
@@ -1886,7 +1886,7 @@
                   {t('overview.changeCategory')}
                 </button>
               {/if}
-              <span class="text-sm font-medium text-slate-700 dark:text-[#adbac7]">{formatDuration(domain.duration)}</span>
+              <span class="text-sm font-medium text-slate-700 dark:text-[#98989d]">{formatDuration(domain.duration)}</span>
             </div>
           </div>
 
@@ -1894,20 +1894,20 @@
             <div
               bind:this={semanticCategoryPopover}
               id={`semantic-category-popover-${domain.domain}`}
-              class="overview-semantic-popover fixed z-[160] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-[#30363d] dark:bg-[#161b22] dark:shadow-black/30"
+              class="overview-semantic-popover fixed z-[160] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-[var(--surface-border-default)] dark:bg-[#1c1c1e] dark:shadow-black/30"
               role="dialog"
               tabindex="-1"
               aria-label={t('overview.changeCategory')}
               style={semanticPopoverStyle}
             >
-              <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-2.5 dark:border-[#30363d]">
+              <div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-2.5 dark:border-[var(--surface-border-default)]">
                 <div class="min-w-0">
-                  <p class="text-sm font-semibold text-slate-800 dark:text-[#e6edf3]">{t('overview.selectCategory')}</p>
+                  <p class="text-sm font-semibold text-slate-800 dark:text-[#f5f5f7]">{t('overview.selectCategory')}</p>
                   <p class="mt-0.5 truncate text-[11px] text-slate-400 dark:text-[#636c76]">{getBrowserDomainDisplayLabel(domain)}</p>
                 </div>
                 <button
                   type="button"
-                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-[#21262d] dark:hover:text-[#adbac7]"
+                  class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-[#2c2c2e] dark:hover:text-[#98989d]"
                   on:click={cancelDomainSemanticEdit}
                   aria-label={t('overview.cancel')}
                 >
@@ -1915,7 +1915,7 @@
                 </button>
               </div>
 
-              <p class="py-2 text-[11px] leading-relaxed text-slate-400 dark:text-[#7d8590]">
+              <p class="py-2 text-[11px] leading-relaxed text-slate-400 dark:text-[#86868b]">
                 {t('overview.semanticCategoryHelp')}
               </p>
 
@@ -1927,7 +1927,7 @@
                       class="overview-semantic-option flex min-w-0 flex-1 items-center justify-between gap-3 rounded-xl px-2.5 py-2 text-start text-sm transition-colors
                         {editingSemanticCategory === cat.key
                           ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-200'
-                          : 'text-slate-700 hover:bg-slate-50 dark:text-[#adbac7] dark:hover:bg-[#21262d]'}"
+                          : 'text-slate-700 hover:bg-slate-50 dark:text-[#98989d] dark:hover:bg-[#2c2c2e]'}"
                       aria-pressed={editingSemanticCategory === cat.key}
                       disabled={isDomainSemanticSavePending(domain.domain)}
                       on:click={() => editingSemanticCategory = cat.key}
@@ -1973,7 +1973,7 @@
                   showCreateSemanticCategory = !showCreateSemanticCategory;
                   showRenameSemanticCategory = false;
                 }}
-                class="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-200 px-3 py-2 text-xs font-medium text-slate-500 transition-colors hover:border-primary-300 hover:text-primary-600 dark:border-[#30363d] dark:text-[#7d8590] dark:hover:border-[#484f58] dark:hover:text-primary-300"
+                class="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-200 px-3 py-2 text-xs font-medium text-slate-500 transition-colors hover:border-primary-300 hover:text-primary-600 dark:border-[var(--surface-border-default)] dark:text-[#86868b] dark:hover:border-[rgba(255,255,255,0.24)] dark:hover:text-primary-300"
                 disabled={semanticCategorySaving}
               >
                 <span>{showCreateSemanticCategory ? '×' : '+'}</span>
@@ -1981,19 +1981,19 @@
               </button>
 
               {#if showCreateSemanticCategory}
-                <div class="mt-2 space-y-2 rounded-xl bg-slate-50 p-2.5 dark:bg-[#21262d]/70">
-                  <p class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('overview.createSemanticCategoryHint')}</p>
+                <div class="mt-2 space-y-2 rounded-xl bg-slate-50 p-2.5 dark:bg-[#2c2c2e]/70">
+                  <p class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('overview.createSemanticCategoryHint')}</p>
                   <input
                     type="text"
                     bind:value={newSemanticCategoryName}
                     placeholder={t('overview.semanticCategoryNamePlaceholder')}
-                    class="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm dark:border-[#30363d] dark:bg-[#0d1117]"
+                    class="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm dark:border-[var(--surface-border-default)] dark:bg-[#000000]"
                   />
                   <div class="flex justify-end gap-2">
                     <button
                       type="button"
                       on:click={() => showCreateSemanticCategory = false}
-                      class="px-2.5 py-1.5 text-xs text-slate-500 dark:text-[#7d8590]"
+                      class="px-2.5 py-1.5 text-xs text-slate-500 dark:text-[#86868b]"
                     >{t('overview.cancel')}</button>
                     <button
                       type="button"
@@ -2006,18 +2006,18 @@
 
               {#if showRenameSemanticCategory}
                 <div class="mt-2 space-y-2 rounded-xl bg-blue-50/70 p-2.5 dark:bg-blue-900/15">
-                  <p class="text-[11px] text-slate-500 dark:text-[#7d8590]">{t('overview.renameSemanticCategory')}</p>
+                  <p class="text-[11px] text-slate-500 dark:text-[#86868b]">{t('overview.renameSemanticCategory')}</p>
                   <input
                     type="text"
                     bind:value={renameSemanticName}
                     placeholder={t('overview.semanticCategoryNamePlaceholder')}
-                    class="w-full rounded-lg border border-blue-200 bg-white px-2.5 py-2 text-sm dark:border-blue-900/50 dark:bg-[#0d1117]"
+                    class="w-full rounded-lg border border-blue-200 bg-white px-2.5 py-2 text-sm dark:border-blue-900/50 dark:bg-[#000000]"
                   />
                   <div class="flex justify-end gap-2">
                     <button
                       type="button"
                       on:click={() => showRenameSemanticCategory = false}
-                      class="px-2.5 py-1.5 text-xs text-slate-500 dark:text-[#7d8590]"
+                      class="px-2.5 py-1.5 text-xs text-slate-500 dark:text-[#86868b]"
                     >{t('overview.cancel')}</button>
                     <button
                       type="button"
@@ -2028,11 +2028,11 @@
                 </div>
               {/if}
 
-              <div class="mt-3 flex items-center justify-end gap-3 border-t border-slate-100 pt-3 dark:border-[#30363d]">
+              <div class="mt-3 flex items-center justify-end gap-3 border-t border-slate-100 pt-3 dark:border-[var(--surface-border-default)]">
                 <div class="flex shrink-0 items-center gap-2">
                   <button
                     type="button"
-                    class="rounded-lg px-2.5 py-1.5 text-xs text-slate-500 transition-colors hover:bg-slate-100 dark:text-[#7d8590] dark:hover:bg-[#21262d]"
+                    class="rounded-lg px-2.5 py-1.5 text-xs text-slate-500 transition-colors hover:bg-slate-100 dark:text-[#86868b] dark:hover:bg-[#2c2c2e]"
                     disabled={isDomainSemanticSavePending(domain.domain)}
                     on:click={cancelDomainSemanticEdit}
                   >{t('overview.cancel')}</button>
@@ -2050,12 +2050,12 @@
           {/if}
           
           <!-- URL 列表，支持展开/收起超出的部分 -->
-          <div class="overflow-hidden rounded-b-lg divide-y divide-slate-100 dark:divide-[#30363d]/50">
+          <div class="overflow-hidden rounded-b-lg divide-y divide-slate-100 dark:divide-[rgba(255,255,255,0.14)]/50">
             {#each (expandedDomains.has(domain.domain) ? domain.urls : domain.urls.slice(0, 10)) as url}
-              <div class="flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-[#21262d]/30 transition-colors">
+              <div class="flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-[#2c2c2e]/30 transition-colors">
                 <div class="flex-1 min-w-0 mr-3">
                   <p
-                    class="text-sm text-slate-700 dark:text-[#adbac7] truncate"
+                    class="text-sm text-slate-700 dark:text-[#98989d] truncate"
                     title={formatBrowserUrlForDisplay(url.url)}
                   >
                     {formatBrowserUrlForDisplay(url.url)}
@@ -2105,15 +2105,15 @@
     role="presentation"
     on:click|self={cancelDeleteSemanticCategory}
   >
-    <div use:trapFocus role="dialog" aria-modal="true" class="w-full max-w-sm rounded-2xl border border-slate-200 dark:border-[#30363d] bg-white dark:bg-[#161b22] shadow-2xl p-6 mx-4">
-      <h3 class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">{t('overview.deleteSemanticCategoryTitle')}</h3>
-      <p class="mt-2 text-sm text-slate-700 dark:text-[#7d8590] leading-relaxed">
+    <div use:trapFocus role="dialog" aria-modal="true" class="w-full max-w-sm rounded-2xl border border-slate-200 dark:border-[var(--surface-border-default)] bg-white dark:bg-[#1c1c1e] shadow-2xl p-6 mx-4">
+      <h3 class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">{t('overview.deleteSemanticCategoryTitle')}</h3>
+      <p class="mt-2 text-sm text-slate-700 dark:text-[#86868b] leading-relaxed">
         {t('overview.deleteSemanticCategoryMessage', { category: pendingDeleteSemanticCategory.name })}
       </p>
       <div class="mt-5 flex justify-end gap-2">
         <button
           on:click={cancelDeleteSemanticCategory}
-          class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#7d8590] dark:hover:text-[#c9d1d9] border border-slate-200 dark:border-[#30363d]"
+          class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#86868b] dark:hover:text-[#98989d] border border-slate-200 dark:border-[var(--surface-border-default)]"
         >
           {t('overview.cancel')}
         </button>

@@ -548,7 +548,7 @@
 
 <!-- AI 能力配置：三入口分区 -->
 {#if isAiMode}
-  <div class="pt-3 border-t border-slate-200 dark:border-[#30363d]">
+  <div class="pt-3 border-t border-slate-200 dark:border-[var(--surface-border-default)]">
     <div class="mb-3 grid grid-cols-1 gap-2 md:grid-cols-3">
       {#each [
         { id: 'model', label: t('settingsAI.sectionModel'), on: isTextModelConfigured },
@@ -561,7 +561,7 @@
             {aiSection === section.id ? 'settings-segment-success' : 'settings-segment-idle'}"
           on:click={() => (aiSection = section.id)}
         >
-          <span class="inline-block h-1.5 w-1.5 rounded-full {section.on ? 'bg-emerald-400' : 'bg-slate-300 dark:bg-[#484f58]'}"></span>
+          <span class="inline-block h-1.5 w-1.5 rounded-full {section.on ? 'bg-emerald-400' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'}"></span>
           <span>{section.label}</span>
         </button>
       {/each}
@@ -579,15 +579,15 @@
             type="button"
             class="flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-start transition
               {active
-                ? 'border-indigo-400 bg-indigo-50/70 ring-1 ring-indigo-300/60 dark:border-indigo-500/70 dark:bg-indigo-950/30 dark:ring-indigo-500/40'
-                : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:border-[#30363d] dark:bg-[#161b22] dark:hover:border-[#484f58] dark:hover:bg-[#21262d]'}"
+                ? 'border-primary-400 bg-primary-50/70 ring-1 ring-primary-300/60 dark:border-primary-500/70 dark:bg-primary-900/30 dark:ring-primary-500/40'
+                : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:border-[var(--surface-border-default)] dark:bg-[#1c1c1e] dark:hover:border-[rgba(255,255,255,0.24)] dark:hover:bg-[#2c2c2e]'}"
             on:click={() => selectProvider(provider.id)}
           >
             {#if !providerIconFailed[provider.id]}
               <img
                 src={`/icons/providers/${provider.id}.svg`}
                 alt=""
-                class="h-8 w-8 shrink-0 rounded-lg bg-white object-contain p-1 ring-1 ring-slate-200/70 dark:ring-[#30363d]"
+                class="h-8 w-8 shrink-0 rounded-lg bg-white object-contain p-1 ring-1 ring-slate-200/70 dark:ring-[var(--surface-border-default)]"
                 on:error={() => (providerIconFailed = { ...providerIconFailed, [provider.id]: true })}
               />
             {:else}
@@ -599,9 +599,9 @@
               </span>
             {/if}
             <span class="min-w-0 flex-1">
-              <span class="block truncate text-[13px] font-medium text-slate-800 dark:text-[#e6edf3]">{provider.name}</span>
+              <span class="block truncate text-[13px] font-medium text-slate-800 dark:text-[#f5f5f7]">{provider.name}</span>
               {#if active}
-                <span class="block text-[10px] leading-tight text-indigo-500 dark:text-indigo-400">{t('settingsAI.providerActive')}</span>
+                <span class="block text-[10px] leading-tight text-primary-500 dark:text-primary-400">{t('settingsAI.providerActive')}</span>
               {/if}
             </span>
           </button>
@@ -610,21 +610,21 @@
     </div>
 
     <!-- 连接配置卡：字段分组 + 常驻状态徽标 + 紧凑测试入口 -->
-    <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-[#30363d]">
-      <div class="flex items-center justify-between gap-3 border-b border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5 dark:border-[#30363d]/80 dark:bg-[#161b22]/70">
+    <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-[var(--surface-border-default)]">
+      <div class="flex items-center justify-between gap-3 border-b border-slate-200/80 bg-slate-50/70 px-3.5 py-2.5 dark:border-[var(--surface-border-default)] dark:bg-[#1c1c1e]/70">
         <div class="flex min-w-0 items-center gap-2">
-          <span class="text-[13px] font-semibold text-slate-700 dark:text-[#c9d1d9]">{t('settingsAI.connectionTitle')}</span>
+          <span class="text-[13px] font-semibold text-slate-700 dark:text-[#98989d]">{t('settingsAI.connectionTitle')}</span>
           {#if textTestStatus === 'success'}
             <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">✓ {t('settingsAI.statusConnected')}</span>
           {:else if textTestStatus === 'error'}
             <span class="rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-medium text-rose-500 dark:bg-rose-950/40 dark:text-rose-400">✗ {t('settingsAI.statusFailed')}</span>
           {:else if textTestStatus === 'testing'}
-            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:bg-[#21262d] dark:text-[#7d8590]">
+            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:bg-[#2c2c2e] dark:text-[#86868b]">
               <span class="h-2 w-2 animate-spin rounded-full border border-current border-t-transparent"></span>
               {t('settingsAI.testing')}
             </span>
           {:else}
-            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-400 dark:bg-[#21262d] dark:text-[#636c76]">{t('settingsAI.statusUntested')}</span>
+            <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-400 dark:bg-[#2c2c2e] dark:text-[#636c76]">{t('settingsAI.statusUntested')}</span>
           {/if}
         </div>
         <button
@@ -676,7 +676,7 @@
           {/if}
           <button
             type="button"
-            class="absolute inset-y-0 right-3 inline-flex items-center justify-center text-slate-400 transition hover:text-slate-700 dark:text-[#636c76] dark:hover:text-[#adbac7]"
+            class="absolute inset-y-0 right-3 inline-flex items-center justify-center text-slate-400 transition hover:text-slate-700 dark:text-[#636c76] dark:hover:text-[#98989d]"
             aria-label={showApiKey ? t('settingsAI.hideApiKey') : t('settingsAI.showApiKey')}
             title={showApiKey ? t('settingsAI.hideApiKey') : t('settingsAI.showApiKey')}
             on:click={() => showApiKey = !showApiKey}
@@ -778,7 +778,7 @@
         <div class="min-w-0">
           <span class="settings-text text-sm inline-flex items-center gap-2">
             {t('settingsAI.webAccess.title')}
-            <span class="rounded-full px-1.5 py-0.5 text-[10px] font-medium {config.assistant_web_access_enabled ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-400 dark:bg-[#21262d] dark:text-[#636c76]'}">
+            <span class="rounded-full px-1.5 py-0.5 text-[10px] font-medium {config.assistant_web_access_enabled ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-400 dark:bg-[#2c2c2e] dark:text-[#636c76]'}">
               {config.assistant_web_access_enabled ? t('settingsAI.statusEnabled') : t('settingsAI.statusDisabled')}
             </span>
           </span>
@@ -786,7 +786,7 @@
         </div>
         <button
           type="button"
-          class="switch-track shrink-0 {config.assistant_web_access_enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-[#484f58]'}"
+          class="switch-track shrink-0 {config.assistant_web_access_enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'}"
           role="switch"
           aria-label={t('settingsAI.webAccess.title')}
           aria-checked={config.assistant_web_access_enabled}
@@ -854,16 +854,16 @@
     <!-- 语义记忆（屏幕级数字记忆）：默认关闭；本地 Ollama 数据不出机，云端接口明示出网 -->
     <div class="space-y-3">
       <!-- 开启前后对比示例 + 模型类型说明 -->
-      <div class="space-y-1.5 rounded-lg bg-slate-50 px-3 py-2.5 dark:bg-[#161b22]/60">
-        <p class="settings-muted"><span class="font-medium text-slate-600 dark:text-[#adbac7]">{t('settingsAI.semanticMemory.offLabel')}</span>{t('settingsAI.semanticMemory.offExample')}</p>
-        <p class="settings-muted"><span class="font-medium text-slate-600 dark:text-[#adbac7]">{t('settingsAI.semanticMemory.onLabel')}</span>{t('settingsAI.semanticMemory.onExample')}</p>
+      <div class="space-y-1.5 rounded-lg bg-slate-50 px-3 py-2.5 dark:bg-[#1c1c1e]/60">
+        <p class="settings-muted"><span class="font-medium text-slate-600 dark:text-[#98989d]">{t('settingsAI.semanticMemory.offLabel')}</span>{t('settingsAI.semanticMemory.offExample')}</p>
+        <p class="settings-muted"><span class="font-medium text-slate-600 dark:text-[#98989d]">{t('settingsAI.semanticMemory.onLabel')}</span>{t('settingsAI.semanticMemory.onExample')}</p>
         <p class="settings-muted">{t('settingsAI.semanticMemory.modelTypeNote')}</p>
       </div>
       <label class="flex items-center justify-between gap-3 cursor-pointer">
         <div class="min-w-0">
           <span class="settings-text text-sm inline-flex items-center gap-2">
             {t('settingsAI.semanticMemory.title')}
-            <span class="rounded-full px-1.5 py-0.5 text-[10px] font-medium {config.memory_semantic_enabled ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-400 dark:bg-[#21262d] dark:text-[#636c76]'}">
+            <span class="rounded-full px-1.5 py-0.5 text-[10px] font-medium {config.memory_semantic_enabled ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-400 dark:bg-[#2c2c2e] dark:text-[#636c76]'}">
               {config.memory_semantic_enabled ? t('settingsAI.statusEnabled') : t('settingsAI.statusDisabled')}
             </span>
           </span>
@@ -871,7 +871,7 @@
         </div>
         <button
           type="button"
-          class="switch-track shrink-0 {config.memory_semantic_enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-[#484f58]'}"
+          class="switch-track shrink-0 {config.memory_semantic_enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-[rgba(255,255,255,0.14)]'}"
           role="switch"
           aria-label={t('settingsAI.semanticMemory.title')}
           aria-checked={config.memory_semantic_enabled}
@@ -959,7 +959,7 @@
             <span>{t('memoryPage.indexStatus', { embedded: semanticStats.embeddedChunks ?? 0, total: semanticStats.totalChunks ?? 0 })}</span>
             <button
               type="button"
-              class="text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 disabled:opacity-50"
+              class="text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 disabled:opacity-50"
               on:click={startSemanticIndexing}
               disabled={semanticIndexing}
             >
@@ -985,7 +985,7 @@
     {/if}
   </div>
 {:else}
-  <div class="pt-3 border-t border-slate-200 dark:border-[#30363d]">
+  <div class="pt-3 border-t border-slate-200 dark:border-[var(--surface-border-default)]">
     <p class="settings-empty">{t('settingsAI.aiModeDisabled')}</p>
   </div>
 {/if}

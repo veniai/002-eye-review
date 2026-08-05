@@ -5,7 +5,7 @@
   const toneMap = {
     info: {
       iconBg: 'bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-300',
-      button: 'bg-indigo-500 hover:bg-indigo-600 text-white',
+      button: 'bg-primary-500 hover:bg-primary-600 text-white',
     },
     warning: {
       iconBg: 'bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300',
@@ -33,7 +33,7 @@
   <div class="fixed inset-0 z-[200] flex items-center justify-center px-4 py-6 bg-slate-950/48 backdrop-blur-md animate-fadeIn">
     <div
       use:trapFocus
-      class="w-full max-w-md rounded-3xl border border-slate-200 dark:border-[#30363d] bg-white dark:bg-[#161b22] shadow-2xl shadow-slate-950/24 dark:shadow-black/50 p-6"
+      class="w-full max-w-md rounded-3xl border border-slate-200 dark:border-[var(--surface-border-default)] bg-white dark:bg-[#1c1c1e] shadow-2xl shadow-slate-950/24 dark:shadow-black/50 p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
@@ -45,10 +45,10 @@
           </svg>
         </div>
         <div class="min-w-0 flex-1">
-          <h3 id="confirm-dialog-title" class="text-lg font-semibold text-slate-900 dark:text-[#e6edf3]">
+          <h3 id="confirm-dialog-title" class="text-lg font-semibold text-slate-900 dark:text-[#f5f5f7]">
             {dialogState.title}
           </h3>
-          <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-[#7d8590] whitespace-pre-line">
+          <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-[#86868b] whitespace-pre-line">
             {dialogState.message}
           </p>
         </div>
@@ -58,7 +58,7 @@
         <button
           type="button"
           on:click={() => resolveConfirm(false)}
-          class="inline-flex min-h-11 items-center justify-center rounded-2xl border border-slate-200 dark:border-[#30363d] bg-white dark:bg-[#21262d] px-5 text-sm font-medium text-slate-700 dark:text-[#adbac7] transition-colors hover:bg-slate-50 dark:hover:bg-[#30363d]"
+          class="inline-flex min-h-11 items-center justify-center rounded-2xl border border-slate-200 dark:border-[var(--surface-border-default)] bg-white dark:bg-[#2c2c2e] px-5 text-sm font-medium text-slate-700 dark:text-[#98989d] transition-colors hover:bg-slate-50 dark:hover:bg-[var(--editorial-surface-subtle)]"
         >
           {dialogState.cancelText}
         </button>

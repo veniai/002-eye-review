@@ -1037,9 +1037,6 @@ pub struct AppConfig {
     pub last_app_version: Option<String>,
     /// 主题模式: system, light, dark
     pub theme: String,
-    /// 界面风格: a=Quiet Pro, b=当前柔和层次, c=Compact Data
-    #[serde(default = "default_ui_visual_style")]
-    pub ui_visual_style: String,
     /// 上班开始时间（0-23）
     #[serde(default = "default_work_start")]
     pub work_start_hour: u8,
@@ -1208,10 +1205,6 @@ fn default_embedding_model() -> String {
 fn default_standard_work_hours() -> f64 {
     8.0
 }
-fn default_ui_visual_style() -> String {
-    "c".to_string()
-}
-
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
@@ -1268,7 +1261,6 @@ impl Default for AppConfig {
             macos_screen_capture_permission_prompted: false,
             last_app_version: None,
             theme: "system".to_string(),
-            ui_visual_style: default_ui_visual_style(),
             work_start_hour: 9,
             work_end_hour: 18,
             work_start_minute: 0,
@@ -1375,7 +1367,6 @@ impl AppConfig {
         );
         self.screenshot_interval = normalize_screenshot_interval(self.screenshot_interval);
         self.idle_threshold_minutes = normalize_idle_threshold_minutes(self.idle_threshold_minutes);
-        self.ui_visual_style = normalize_ui_visual_style(&self.ui_visual_style);
         normalize_assistant_todos(&mut self.assistant_todos);
         self.eye_care_work_minutes = self.eye_care_work_minutes.clamp(1, 240);
         self.eye_care_rest_minutes = self.eye_care_rest_minutes.clamp(1, 30);
@@ -1909,13 +1900,6 @@ fn normalize_prompt_presets(presets: &mut Vec<PromptPreset>) {
     presets.retain(|p| !p.name.is_empty() && !p.prompt.is_empty());
 }
 
-fn normalize_ui_visual_style(value: &str) -> String {
-    match value.trim().to_ascii_lowercase().as_str() {
-        "a" | "b" | "c" => value.trim().to_ascii_lowercase(),
-        _ => default_ui_visual_style(),
-    }
-}
-
 fn normalize_assistant_todos(items: &mut Vec<AssistantTodoItem>) {
     let mut seen = std::collections::HashSet::new();
     items.retain_mut(|item| {
@@ -1980,8 +1964,8 @@ mod tests {
     #![allow(clippy::field_reassign_with_default)]
 
     use super::{
-        commit_pending_config, config_backup_path, default_ui_visual_style,
-        normalize_app_category_rules, normalize_assistant_todos, normalize_ui_visual_style,
+        commit_pending_config, config_backup_path,
+        normalize_app_category_rules, normalize_assistant_todos,
         update_config_backup_with_sync, AiProvider, AppCategoryRule, AppConfig,
         AssistantTodoItem, ConfigLoadStatus, PendingConfigFile, RemoteStorageProvider,
         ScreenshotDisplayMode, WebsiteSemanticRule, DEFAULT_LOCALHOST_API_PORT,
@@ -2402,18 +2386,6 @@ mod tests {
             .collect::<Vec<_>>();
         assert!(!names.iter().any(|name| name.contains(".tmp-")));
         std::fs::remove_dir_all(dir).expect("应清理临时目录");
-    }
-
-    #[test]
-    fn 界面风格默认应保持当前柔和层次且只允许三套方案() {
-        let config = AppConfig::default();
-
-        assert_eq!(config.ui_visual_style, default_ui_visual_style());
-        assert_eq!(config.ui_visual_style, "c");
-        assert_eq!(normalize_ui_visual_style(" a "), "a");
-        assert_eq!(normalize_ui_visual_style("B"), "b");
-        assert_eq!(normalize_ui_visual_style("c"), "c");
-        assert_eq!(normalize_ui_visual_style("unknown"), "c");
     }
 
     #[test]

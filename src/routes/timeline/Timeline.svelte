@@ -1309,7 +1309,7 @@
         {t('timeline.subtitle')}
         {#if isToday}
           <span class="ms-1.5 inline-flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full {timelineDotActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400 dark:bg-[#484f58]'}"></span>
+            <span class="w-1.5 h-1.5 rounded-full {timelineDotActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400 dark:bg-[rgba(255,255,255,0.14)]'}"></span>
             <span class="font-mono text-xs text-emerald-600 dark:text-emerald-400">{formatLocalizedTime(currentTime, { hour: '2-digit', minute: '2-digit' })}</span>
           </span>
         {/if}
@@ -1568,8 +1568,8 @@
               {/if}
             </div>
             <div>
-              <h3 id="timeline-detail-title" class="text-lg font-semibold text-slate-900 dark:text-[#e6edf3]">{getTimelineAppName(selectedActivity)}</h3>
-              <p class="text-sm text-slate-500 dark:text-[#7d8590]">{info.name}</p>
+              <h3 id="timeline-detail-title" class="text-lg font-semibold text-slate-900 dark:text-[#f5f5f7]">{getTimelineAppName(selectedActivity)}</h3>
+              <p class="text-sm text-slate-500 dark:text-[#86868b]">{info.name}</p>
             </div>
           </div>
           <div class="flex items-center gap-1">
@@ -1622,11 +1622,11 @@
                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
               </div>
             {:else if selectedActivity.screenshot_path}
-              <div class="timeline-detail-preview-state text-slate-400 dark:text-[#7d8590]">
+              <div class="timeline-detail-preview-state text-slate-400 dark:text-[#86868b]">
                 <span>{t('timeline.detail.screenshotLoadFailed')}</span>
               </div>
             {:else}
-              <div class="timeline-detail-preview-state text-slate-400 dark:text-[#7d8590]">
+              <div class="timeline-detail-preview-state text-slate-400 dark:text-[#86868b]">
                 <span>{t('timeline.detail.screenshotMissing')}</span>
               </div>
             {/if}
@@ -1655,13 +1655,13 @@
         <div class="timeline-category-section timeline-detail-setting-row">
           <div class="flex items-center justify-between gap-3">
             <div>
-              <span class="text-sm font-medium text-slate-500 dark:text-[#7d8590]">{t('timeline.detail.appCategory')}</span>
-              <p class="mt-1 text-xs text-slate-500 dark:text-[#7d8590]">
+              <span class="text-sm font-medium text-slate-500 dark:text-[#86868b]">{t('timeline.detail.appCategory')}</span>
+              <p class="mt-1 text-xs text-slate-500 dark:text-[#86868b]">
                 {t('timeline.detail.appCategoryHelp')}
               </p>
             </div>
             {#if categorySaving}
-              <span class="text-xs text-slate-400 dark:text-[#7d8590]">{t('timeline.detail.saving')}</span>
+              <span class="text-xs text-slate-400 dark:text-[#86868b]">{t('timeline.detail.saving')}</span>
             {/if}
           </div>
 
@@ -1817,13 +1817,13 @@
         <div class="timeline-detail-setting-row">
           <div class="flex items-center justify-between gap-3">
             <div>
-              <span class="text-sm font-medium text-slate-500 dark:text-[#7d8590]">{t('timeline.detail.privacyRule')}</span>
-              <p class="mt-1 text-xs text-slate-500 dark:text-[#7d8590]">
+              <span class="text-sm font-medium text-slate-500 dark:text-[#86868b]">{t('timeline.detail.privacyRule')}</span>
+              <p class="mt-1 text-xs text-slate-500 dark:text-[#86868b]">
                 {t('timeline.detail.privacyRuleHelp')}
               </p>
             </div>
             {#if privacySaving}
-              <span class="text-xs text-slate-400 dark:text-[#7d8590]">{t('timeline.detail.saving')}</span>
+              <span class="text-xs text-slate-400 dark:text-[#86868b]">{t('timeline.detail.saving')}</span>
             {/if}
           </div>
           <div class="mt-3 flex gap-2">
@@ -1834,7 +1834,7 @@
             ] as opt}
               <button
                 on:click={() => requestPrivacyRule(opt.value)}
-                class="segment-btn flex-1 text-center border border-slate-200 dark:border-[#484f58] rounded-lg {(selectedActivity._privacyLevel || 'full') === opt.value ? opt.activeClass : 'settings-segment-idle'}"
+                class="segment-btn flex-1 text-center border border-slate-200 dark:border-[rgba(255,255,255,0.14)] rounded-lg {(selectedActivity._privacyLevel || 'full') === opt.value ? opt.activeClass : 'settings-segment-idle'}"
                 disabled={privacySaving}
               >
                 {opt.label}
@@ -1868,9 +1868,9 @@
     on:click|self={() => !cleanupBusy && (showCleanupPanel = false)}
     on:keydown={(e) => e.key === 'Escape' && !cleanupBusy && (showCleanupPanel = false)}
   >
-    <div class="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-[#30363d] bg-white dark:bg-[#161b22] shadow-2xl">
-      <div class="flex items-center justify-between p-5 border-b border-slate-200 dark:border-[#30363d]">
-        <h3 class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">{t('timeline.cleanupRecordsTitle')}</h3>
+    <div class="w-full max-w-lg rounded-2xl border border-slate-200 dark:border-[var(--surface-border-default)] bg-white dark:bg-[#1c1c1e] shadow-2xl">
+      <div class="flex items-center justify-between p-5 border-b border-slate-200 dark:border-[var(--surface-border-default)]">
+        <h3 class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">{t('timeline.cleanupRecordsTitle')}</h3>
         <button class="btn btn-ghost" on:click={() => (showCleanupPanel = false)} disabled={cleanupBusy}>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -1878,12 +1878,12 @@
         </button>
       </div>
       <div class="p-5 space-y-4">
-        <p class="text-xs text-slate-500 dark:text-[#7d8590] leading-relaxed">{t('timeline.cleanupRecordsHint')}</p>
+        <p class="text-xs text-slate-500 dark:text-[#86868b] leading-relaxed">{t('timeline.cleanupRecordsHint')}</p>
 
         <div class="flex gap-2">
           {#each [{ key: 'date', label: t('timeline.deleteByDate') }, { key: 'range', label: t('timeline.deleteByRange') }, { key: 'app', label: t('timeline.deleteByApp') }] as tab}
             <button
-              class="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors {cleanupMode === tab.key ? 'border-rose-400 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-700' : 'border-slate-200 dark:border-[#30363d] text-slate-600 dark:text-[#adbac7] hover:bg-slate-50 dark:hover:bg-[#21262d]'}"
+              class="flex-1 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors {cleanupMode === tab.key ? 'border-rose-400 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-700' : 'border-slate-200 dark:border-[var(--surface-border-default)] text-slate-600 dark:text-[#98989d] hover:bg-slate-50 dark:hover:bg-[#2c2c2e]'}"
               on:click={() => (cleanupMode = tab.key)}
             >
               {tab.label}
@@ -1893,7 +1893,7 @@
 
         {#if cleanupMode === 'date'}
           <div class="space-y-3">
-            <p class="text-sm text-slate-700 dark:text-[#adbac7] leading-relaxed">
+            <p class="text-sm text-slate-700 dark:text-[#98989d] leading-relaxed">
               {t('timeline.deleteByDateMessage', { date: selectedDate })}
             </p>
             <button
@@ -1914,11 +1914,11 @@
               triggerClass="page-control-input w-auto"
             />
             <div class="grid grid-cols-2 gap-3">
-              <label class="text-xs text-slate-500 dark:text-[#7d8590] flex flex-col gap-1">
+              <label class="text-xs text-slate-500 dark:text-[#86868b] flex flex-col gap-1">
                 <span>{t('datePicker.startDate')}</span>
                 <input type="time" bind:value={cleanupRangeStartTime} class="page-control-input" />
               </label>
-              <label class="text-xs text-slate-500 dark:text-[#7d8590] flex flex-col gap-1">
+              <label class="text-xs text-slate-500 dark:text-[#86868b] flex flex-col gap-1">
                 <span>{t('datePicker.endDate')}</span>
                 <input type="time" bind:value={cleanupRangeEndTime} class="page-control-input" />
               </label>
@@ -1934,7 +1934,7 @@
         {:else}
           <div class="space-y-3">
             {#if cleanupAppCandidates.length === 0}
-              <p class="text-sm text-slate-500 dark:text-[#7d8590]">{t('timeline.noActivitiesToDelete')}</p>
+              <p class="text-sm text-slate-500 dark:text-[#86868b]">{t('timeline.noActivitiesToDelete')}</p>
             {:else}
               <select class="page-control-input w-full" bind:value={cleanupApp}>
                 <option value="">{t('timeline.selectApp')}</option>
@@ -1980,16 +1980,16 @@
       tabindex="-1"
     >
       {#if isDelete}
-        <h3 id="timeline-action-confirm-title" class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">
+        <h3 id="timeline-action-confirm-title" class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">
           {t('timeline.deleteCategoryTitle')}
         </h3>
-        <p class="mt-2 text-sm text-slate-700 dark:text-[#7d8590] leading-relaxed">
+        <p class="mt-2 text-sm text-slate-700 dark:text-[#86868b] leading-relaxed">
           {t('timeline.deleteCategoryMessage', { category: pendingDeleteCategory.name })}
         </p>
         <div class="mt-5 flex justify-end gap-2">
           <button
             on:click={cancelAction}
-            class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#7d8590] dark:hover:text-[#c9d1d9] border border-slate-200 dark:border-[#30363d]"
+            class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#86868b] dark:hover:text-[#98989d] border border-slate-200 dark:border-[var(--surface-border-default)]"
           >
             {t('timeline.cancel')}
           </button>
@@ -2001,10 +2001,10 @@
           </button>
         </div>
       {:else if isPrivacy}
-        <h3 id="timeline-action-confirm-title" class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">
+        <h3 id="timeline-action-confirm-title" class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">
           {t('timeline.detail.privacyRule')}
         </h3>
-        <p class="mt-2 text-sm text-slate-700 dark:text-[#7d8590] leading-relaxed">
+        <p class="mt-2 text-sm text-slate-700 dark:text-[#86868b] leading-relaxed">
           {t('timeline.detail.privacyConfirmMessage', {
             appName: selectedActivity.app_name,
             level: pendingPrivacyRule.levelLabel,
@@ -2013,7 +2013,7 @@
         <div class="mt-5 flex justify-end gap-2">
           <button
             on:click={cancelAction}
-            class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#7d8590] dark:hover:text-[#c9d1d9] border border-slate-200 dark:border-[#30363d]"
+            class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#86868b] dark:hover:text-[#98989d] border border-slate-200 dark:border-[var(--surface-border-default)]"
           >
             {t('timeline.cancel')}
           </button>
@@ -2027,16 +2027,16 @@
       {:else}
         {@const categoryName = isApply ? pendingApplyCategory.name : pendingChangeCategory.categoryName}
         {@const appName = selectedActivity.app_name}
-        <h3 id="timeline-action-confirm-title" class="text-base font-semibold text-slate-900 dark:text-[#e6edf3]">
+        <h3 id="timeline-action-confirm-title" class="text-base font-semibold text-slate-900 dark:text-[#f5f5f7]">
           {t('timeline.changeCategoryTitle')}
         </h3>
-        <p class="mt-2 text-sm text-slate-700 dark:text-[#7d8590] leading-relaxed">
+        <p class="mt-2 text-sm text-slate-700 dark:text-[#86868b] leading-relaxed">
           {t('timeline.changeCategoryMessage', { appName, category: categoryName })}
         </p>
         <div class="mt-5 flex justify-end gap-2">
           <button
             on:click={cancelAction}
-            class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#7d8590] dark:hover:text-[#c9d1d9] border border-slate-200 dark:border-[#30363d]"
+            class="px-4 py-2 text-sm rounded-lg text-slate-500 hover:text-slate-700 dark:text-[#86868b] dark:hover:text-[#98989d] border border-slate-200 dark:border-[var(--surface-border-default)]"
           >
             {t('timeline.cancel')}
           </button>
@@ -2065,8 +2065,8 @@
   }
 
   :global(.dark) .timeline-action-confirm-dialog {
-    border-color: #30363d;
-    background: #161b22;
+    border-color: rgba(255,255,255,0.14);
+    background: #1c1c1e;
   }
 
   .timeline-summary-strip {
@@ -2957,7 +2957,7 @@
   }
 
   :global(.dark) .timeline-rail {
-    background: linear-gradient(180deg, rgba(71, 85, 105, 0.62), rgba(48, 54, 61, 0.2));
+    background: linear-gradient(180deg, rgba(71, 85, 105, 0.62), rgba(255, 255, 255, 0.033));
   }
 
   :global(.dark) .timeline-entry-time {
@@ -3035,7 +3035,7 @@
   }
 
   :global(.dark) .timeline-app-icon {
-    color: #e6edf3;
+    color: #f5f5f7;
     background: var(--icon-bg-dark, rgba(51, 65, 85, 0.74));
     box-shadow: none;
   }
@@ -3083,43 +3083,43 @@
   }
 
   :global(.dark) .timeline-detail-drawer {
-    border-color: rgba(48, 54, 61, 0.88);
-    background: #161b22;
+    border-color: rgba(255, 255, 255, 0.14);
+    background: #1c1c1e;
     box-shadow: -18px 0 48px rgba(0, 0, 0, 0.28);
   }
 
   :global(.dark) .timeline-detail-header {
-    border-color: rgba(48, 54, 61, 0.8);
-    background: rgba(22, 27, 34, 0.94);
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(28, 28, 30, 0.94);
   }
 
   :global(.dark) .timeline-detail-hero-item span,
   :global(.dark) .timeline-detail-section-heading,
   :global(.dark) .timeline-detail-meta-row > span {
-    color: #7d8590;
+    color: #86868b;
   }
 
   :global(.dark) .timeline-detail-hero-item strong,
   :global(.dark) .timeline-detail-meta-row p {
-    color: #e6edf3;
+    color: #f5f5f7;
   }
 
   :global(.dark) .timeline-detail-hero-divider,
   :global(.dark) .timeline-detail-settings {
-    border-color: rgba(48, 54, 61, 0.8);
+    border-color: rgba(255, 255, 255, 0.14);
   }
 
   :global(.dark) .timeline-detail-hero-divider {
-    background: rgba(48, 54, 61, 0.8);
+    background: rgba(255, 255, 255, 0.14);
   }
 
   :global(.dark) .timeline-detail-preview-frame {
-    background: rgba(48, 54, 61, 0.38);
+    background: rgba(255, 255, 255, 0.06);
   }
 
   :global(.dark) .timeline-detail-preview-loading-indicator {
-    border-color: rgba(48, 54, 61, 0.8);
-    background: rgba(22, 27, 34, 0.82);
+    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(28, 28, 30, 0.82);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
   }
 
@@ -3132,13 +3132,13 @@
   :global(.dark) .timeline-category-editor,
   :global(.dark) .timeline-category-editor-fields input[type='text'],
   :global(.dark) .timeline-category-editor-actions button {
-    border-color: rgba(48, 54, 61, 0.8);
-    color: #adbac7;
-    background: #21262d;
+    border-color: rgba(255, 255, 255, 0.14);
+    color: #98989d;
+    background: #2c2c2e;
   }
 
   :global(.dark) .timeline-category-option {
-    color: #adbac7;
+    color: #98989d;
   }
 
   :global(.dark) .timeline-category-option:hover,
@@ -3146,13 +3146,13 @@
   :global(.dark) .timeline-category-option-actions button:hover,
   :global(.dark) .timeline-category-emoji-grid button:hover,
   :global(.dark) .timeline-category-emoji-active {
-    color: #e6edf3;
-    background: #30363d !important;
+    color: #f5f5f7;
+    background: rgba(255,255,255,0.14) !important;
   }
 
   :global(.dark) .timeline-category-create-trigger {
-    color: #8b949e;
-    border-color: rgba(48, 54, 61, 0.8);
+    color: #98989d;
+    border-color: rgba(255, 255, 255, 0.14);
   }
 
   :global(.dark) .timeline-category-check {

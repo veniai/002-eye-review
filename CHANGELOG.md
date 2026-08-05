@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-08-06
+
+### 调整
+- **视觉语言全面收敛**：产品统一为一套 Apple 风格设计语言——亮色 `#f5f5f7` 页面底 + 22px 圆角白卡 + 细黑透明边界；暗色从 GitHub 色系迁移至 Apple 深色（`#000` 底 / `#1c1c1e` 卡片 / `#2c2c2e` 次级面 + 半透明白边界）。
+- **界面风格开关下线**：移除 A/B/C 三套界面风格与外观设置中的选择入口，所有用户统一使用同一套视觉；相关配置字段、i18n 文案与测试同步清理。
+- **护眼界面重做**：强制休息遮罩改为深色静谧全屏（缓慢呼吸的冷色光晕 + 青蓝渐变倒计时 + 细进度条）；休息前提醒条改为深色玻璃拟态；休息后的周期回顾改为标准模态卡片，与主界面同一血统。
+- **侧边栏打磨**：导航选中态从彩色渐变改为白底细边（暗色为次级面），去除位移动效；主色从 indigo 统一收敛到品牌蓝。
+
+### 移除
+- 界面风格 A/B/C 切换（配置项 `ui_visual_style` 及其设置界面）。
+
 ## [1.1.1] - 2026-08-05
 
 ### 新增

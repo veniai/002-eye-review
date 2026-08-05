@@ -172,7 +172,6 @@
   let backgroundOpacity = 0.25;
   let backgroundBlur = 1;
   let runtimeConfig = null;
-  let uiVisualStyle = 'c';
   let eyeCareStatus = null;
   let eyeCareRecap = null;
   let unsubscribeLocale = () => {};
@@ -191,16 +190,6 @@
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }
-
-  function normalizeUiVisualStyle(value) {
-    const nextStyle = typeof value === 'string' ? value.trim().toLowerCase() : '';
-    return ['a', 'b', 'c'].includes(nextStyle) ? nextStyle : 'c';
-  }
-
-  function applyUiVisualStyle(value) {
-    uiVisualStyle = normalizeUiVisualStyle(value);
-    document.documentElement.dataset.uiVisualStyle = uiVisualStyle;
   }
 
   async function handleThemeChange(event) {
@@ -362,11 +351,9 @@
         runtimeConfig = config;
         cache.setConfig(config);
         applyTheme(config.theme || 'system');
-        applyUiVisualStyle(config.ui_visual_style || 'c');
       } catch (e) {
         console.error('加载配置失败:', e);
         applyTheme('system');
-        applyUiVisualStyle('c');
         config = { work_end_hour: 18 };
         runtimeConfig = config;
       }
@@ -400,9 +387,6 @@
           applyTheme(state.config.theme);
         }
 
-        if (state.config.ui_visual_style && state.config.ui_visual_style !== uiVisualStyle) {
-          applyUiVisualStyle(state.config.ui_visual_style);
-        }
       });
       pendingCleanup.push(unsubscribeCache);
 
@@ -416,7 +400,6 @@
 
       const unlistenConfigChanged = await safeListen('config-changed', (event) => {
         runtimeConfig = event.payload;
-        applyUiVisualStyle(event.payload?.ui_visual_style || 'c');
         cache.setConfig(event.payload);
       });
       if (disposed) { try { if (unlistenConfigChanged) unlistenConfigChanged(); } catch {} return; }
@@ -466,12 +449,6 @@
       const handleBgChange = (e) => handleBackgroundChanged(e);
       window.addEventListener('background-changed', handleBgChange);
       pendingCleanup.push(() => window.removeEventListener('background-changed', handleBgChange));
-
-      const handleUiVisualStyleChange = (event) => {
-        applyUiVisualStyle(event.detail?.style || 'c');
-      };
-      window.addEventListener('ui-visual-style-changed', handleUiVisualStyleChange);
-      pendingCleanup.push(() => window.removeEventListener('ui-visual-style-changed', handleUiVisualStyleChange));
 
       // 启动预加载
       preloadApp();
@@ -597,12 +574,7 @@
     <svelte:component this={EyeCarePreBreakComponent} />
   {/if}
 {:else}
-<div class="app-shell ui-style-{uiVisualStyle} flex h-screen overflow-hidden relative" data-eye-care-phase={eyeCareStatus?.phase || 'UNKNOWN'}>
-  <div class="app-shell-ambient pointer-events-none absolute inset-0 z-0 opacity-80">
-    <div class="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.14),transparent_62%)] dark:bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.18),transparent_62%)]"></div>
-    <div class="absolute -right-16 top-24 h-48 w-48 rounded-full bg-indigo-200/20 blur-3xl dark:bg-indigo-500/12"></div>
-    <div class="absolute left-8 bottom-10 h-44 w-44 rounded-full bg-sky-200/20 blur-3xl dark:bg-sky-500/10"></div>
-  </div>
+<div class="app-shell flex h-screen overflow-hidden relative" data-eye-care-phase={eyeCareStatus?.phase || 'UNKNOWN'}>
   <!-- 背景图层：图片全强度 + 半透明遮罩控制显隐 -->
   {#if backgroundImage}
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -613,7 +585,7 @@
       ></div>
       <!-- 半透明遮罩：遮罩越透明 = 背景图越明显 -->
       <div
-        class="absolute inset-0 bg-slate-50 dark:bg-[#161b22] transition-opacity duration-300"
+        class="absolute inset-0 bg-slate-50 dark:bg-[#1c1c1e] transition-opacity duration-300"
         style="opacity: {Math.max(0, 1 - backgroundOpacity)};"
       ></div>
     </div>

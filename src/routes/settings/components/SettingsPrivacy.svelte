@@ -277,7 +277,7 @@
               {t('settingsPrivacy.strategy')}
             </span>
             <div
-              class="settings-privacy-strategy-segments flex overflow-hidden rounded-lg border border-slate-200 dark:border-[#484f58]"
+              class="settings-privacy-strategy-segments flex overflow-hidden rounded-lg border border-slate-200 dark:border-[rgba(255,255,255,0.14)]"
               role="radiogroup"
               aria-labelledby="settings-privacy-strategy-label"
             >
@@ -321,7 +321,7 @@
       {/if}
 
       {#if config.privacy.app_rules.length > 0}
-        <ul class="settings-privacy-rule-list mt-3 divide-y divide-slate-200/70 dark:divide-[#30363d]/70">
+        <ul class="settings-privacy-rule-list mt-3 divide-y divide-slate-200/70 dark:divide-[rgba(255,255,255,0.14)]/70">
           {#each config.privacy.app_rules as rule, i}
             <li class="settings-privacy-rule-row flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
               <span class="settings-privacy-rule-app settings-text min-w-0 flex-1">{rule.app_name}</span>

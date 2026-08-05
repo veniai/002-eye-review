@@ -151,7 +151,7 @@ test('时间线与详情抽屉的深色边界应采用低对比层级，不保�
   const source = await readFile(new URL('./Timeline.svelte', import.meta.url), 'utf8');
 
   assert.match(source, /:global\(\.dark\) \.timeline-editorial-board[\s\S]*border-color:\s*rgba\(71, 85, 105, 0\.5\)/);
-  assert.match(source, /:global\(\.dark\) \.timeline-detail-drawer[\s\S]*border-color:\s*rgba\(48, 54, 61,/);
+  assert.match(source, /:global\(\.dark\) \.timeline-detail-drawer[\s\S]*border-color:\s*rgba\(255, 255, 255, 0\.14\)/);
   assert.doesNotMatch(source, /rgba\(248, 250, 252, 0\.84\)/);
   assert.doesNotMatch(source, /inset 0 1px 0 rgba\(255, 255, 255, 0\.04\)/);
 });
@@ -212,7 +212,7 @@ test('活动详情应按阅读顺序组织截图、活动信息与记录设置�
   assert.match(source, /\.timeline-detail-settings\s*\{[\s\S]*border-top:\s*1px solid rgba\(148, 163, 184, 0\.2\)/);
   assert.match(source, /\.timeline-detail-preview-frame\s*\{[\s\S]*background:\s*rgba\(148, 163, 184, 0\.1\)/);
   assert.doesNotMatch(source, /\.timeline-detail-settings\s*\{[^}]*box-shadow:/);
-  assert.match(source, /:global\(\.dark\) \.timeline-detail-preview-frame[\s\S]*background:\s*rgba\(48, 54, 61, 0\.38\)/);
+  assert.match(source, /:global\(\.dark\) \.timeline-detail-preview-frame[\s\S]*background:\s*rgba\(255, 255, 255, 0\.06\)/);
   assert.match(source, /@media \(max-width: 640px\)[\s\S]*\.timeline-detail-meta-row\s*\{[\s\S]*grid-template-columns:\s*1fr/);
 });
 

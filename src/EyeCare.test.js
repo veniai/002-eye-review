@@ -68,8 +68,12 @@ test('预告非阻挡，休息层覆盖每块显示器且 watchdog 会恢复窗�
   assert.match(main, /同步护眼休息层失败，watchdog 将重试/);
   assert.match(main, /api\.prevent_close\(\)/);
   assert.match(main, /api\.prevent_exit\(\)/);
-  assert.match(overlay, /width:\s*78vw/);
-  assert.match(overlay, /height:\s*78vh/);
+  // 休息遮罩为深色静谧全屏（Apple-grade editorial 收敛后不再使用 78vw 圆角卡片）
+  assert.match(overlay, /100vw/);
+  assert.match(overlay, /100vh/);
+  assert.match(overlay, /radial-gradient/);
+  assert.match(overlay, /tabular-nums/);
+  assert.doesNotMatch(overlay, /orb-one|orb-two/);
   assert.match(overlay, /EMERGENCY_HOLD_MS\s*=\s*5000/);
   assert.match(overlay, /ControlLeft[\s\S]*AltLeft[\s\S]*ShiftLeft/);
   assert.doesNotMatch(overlay, /skip|postpone|延后|跳过/i);
