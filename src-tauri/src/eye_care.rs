@@ -134,6 +134,22 @@ impl EyeCareRuntime {
     }
 
     pub fn load_or_default(path: &Path, now_unix: i64, config: EyeCareConfig) -> Self {
+        Self::load_or_default_with_clock(
+            path,
+            now_unix,
+            config,
+            suspend_aware_clock_ms(),
+            cfg!(windows),
+        )
+    }
+
+    fn load_or_default_with_clock(
+        path: &Path,
+        now_unix: i64,
+        config: EyeCareConfig,
+        current_suspend_clock_ms: Option<u64>,
+        is_windows: bool,
+    ) -> Self {
         let loaded = std::fs::read(path)
             .ok()
             .and_then(|bytes| serde_json::from_slice::<Self>(&bytes).ok());
@@ -141,13 +157,12 @@ impl EyeCareRuntime {
             return Self::new(now_unix);
         };
 
-        let current_suspend_clock_ms = suspend_aware_clock_ms();
         let trusted_gap_ms = trusted_restart_gap_ms(
             runtime.saved_at,
             now_unix,
             runtime.saved_suspend_clock_ms,
             current_suspend_clock_ms,
-            cfg!(windows),
+            is_windows,
         );
 
         match runtime.phase {
@@ -937,8 +952,19 @@ mod tests {
         runtime.fixed_rest_total_ms = 3_000;
         runtime.rest_remaining_ms = 3_000;
         runtime.save(&path, 100).unwrap();
+        let saved_suspend_clock_ms = runtime.saved_suspend_clock_ms;
 
-        let loaded = EyeCareRuntime::load_or_default(&path, 90, config());
+        // Keep the injected suspend-aware clock fixed. On Windows the real
+        // GetTickCount64 advances while the test performs filesystem I/O, which
+        // is legitimate runtime behavior but made this wall-clock-only assertion
+        // timing-dependent.
+        let loaded = EyeCareRuntime::load_or_default_with_clock(
+            &path,
+            90,
+            config(),
+            saved_suspend_clock_ms,
+            cfg!(windows),
+        );
         assert_eq!(loaded.phase, EyeCarePhase::Resting);
         assert_eq!(loaded.rest_remaining_ms, 3_000);
         let _ = std::fs::remove_dir_all(dir);
