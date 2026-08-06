@@ -30,6 +30,63 @@ test('护眼配置默认 40/3/5/30 且旧提醒字段有确定性迁移', async 
   }
 });
 
+test('护眼从设置迁到概览下方的独立主页并保留全部可配置项', async () => {
+  const [app, sidebar, settings, dashboard] = await Promise.all([
+    read('./App.svelte'),
+    read('./lib/components/Sidebar.svelte'),
+    read('./routes/settings/Settings.svelte'),
+    read('./routes/eye-care/EyeCare.svelte'),
+  ]);
+
+  assert.match(app, /'\/eye-care'[\s\S]*EyeCare\.svelte/);
+  assert.match(sidebar, /path: '\/'[\s\S]*path: '\/eye-care'[\s\S]*path: '\/timeline'/);
+  assert.match(sidebar, /sidebar\.nav\.eyeCare/);
+  assert.doesNotMatch(settings, /SettingsEyeCare|activeTab === 'eyeCare'|id: 'eyeCare'/);
+  assert.match(dashboard, /SettingsEyeCare/);
+  assert.match(dashboard, /get_eye_care_status/);
+  assert.match(dashboard, /eye-care-status-changed/);
+  assert.match(dashboard, /countedWorkSeconds/);
+  assert.match(dashboard, /excludedSeconds/);
+  assert.match(dashboard, /recentEvents/);
+});
+
+test('护眼主页用可审计状态解释计时，并区分全部未计入原因', async () => {
+  const [engine, dashboard] = await Promise.all([
+    read('../src-tauri/src/eye_care.rs'),
+    read('./routes/eye-care/EyeCare.svelte'),
+  ]);
+
+  for (const reason of [
+    'Counting',
+    'ShortIdle',
+    'InputUnavailable',
+    'Locked',
+    'SuspendedOrUnknown',
+    'NaturalRest',
+    'Paused',
+    'Disabled',
+  ]) {
+    assert.match(engine, new RegExp(`\\b${reason}\\b`));
+  }
+  for (const field of [
+    'counted_work_seconds',
+    'excluded_seconds',
+    'short_idle_seconds',
+    'locked_seconds',
+    'suspended_seconds',
+    'unavailable_seconds',
+    'paused_seconds',
+    'observed_seconds',
+    'input_idle_seconds',
+    'recent_events',
+  ]) {
+    assert.match(engine, new RegExp(`pub ${field}`));
+  }
+  assert.match(engine, /MAX_DIAGNOSTIC_EVENTS/);
+  assert.match(dashboard, /reason\.\$\{timerReason\}/);
+  assert.doesNotMatch(dashboard, /window_title|screenshot|ocr_text/);
+});
+
 test('护眼状态机独立使用单调增量并覆盖等待返回、锁屏、挂起和持久化', async () => {
   const [engine, main] = await Promise.all([
     read('../src-tauri/src/eye_care.rs'),
