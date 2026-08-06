@@ -303,6 +303,9 @@ jobs:
 
   publish-release:
     needs: build-tauri
+    # workflow_dispatch on a branch is a test build: keep its Actions artifact,
+    # but never create/update a public GitHub Release unless the ref is a v* tag.
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: write
