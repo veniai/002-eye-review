@@ -35,6 +35,7 @@
     if (typeof loaded.eye_care_enabled !== 'boolean') loaded.eye_care_enabled = true;
     if (!Number.isInteger(loaded.eye_care_work_minutes)) loaded.eye_care_work_minutes = 40;
     if (!Number.isInteger(loaded.eye_care_rest_minutes)) loaded.eye_care_rest_minutes = 3;
+    if (!Number.isInteger(loaded.eye_care_input_grace_seconds)) loaded.eye_care_input_grace_seconds = 60;
     if (!Number.isInteger(loaded.eye_care_natural_rest_minutes)) loaded.eye_care_natural_rest_minutes = 5;
     if (!Number.isInteger(loaded.eye_care_pre_break_seconds)) loaded.eye_care_pre_break_seconds = 30;
     if (typeof loaded.eye_care_paused !== 'boolean') loaded.eye_care_paused = false;

@@ -346,6 +346,7 @@ const config = {
   eye_care_enabled: true,
   eye_care_work_minutes: 40,
   eye_care_rest_minutes: 3,
+  eye_care_input_grace_seconds: 60,
   eye_care_natural_rest_minutes: 5,
   eye_care_pre_break_seconds: 30,
   eye_care_paused: false,

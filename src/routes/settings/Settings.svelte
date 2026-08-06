@@ -156,6 +156,7 @@
       if (typeof config.eye_care_enabled !== 'boolean') config.eye_care_enabled = true;
       if (!Number.isInteger(config.eye_care_work_minutes)) config.eye_care_work_minutes = 40;
       if (!Number.isInteger(config.eye_care_rest_minutes)) config.eye_care_rest_minutes = 3;
+      if (!Number.isInteger(config.eye_care_input_grace_seconds)) config.eye_care_input_grace_seconds = 60;
       if (!Number.isInteger(config.eye_care_natural_rest_minutes)) config.eye_care_natural_rest_minutes = 5;
       if (!Number.isInteger(config.eye_care_pre_break_seconds)) config.eye_care_pre_break_seconds = 30;
       if (typeof config.eye_care_paused !== 'boolean') config.eye_care_paused = false;

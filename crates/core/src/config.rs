@@ -1090,6 +1090,9 @@ pub struct AppConfig {
     /// 强制休息时长（分钟）。
     #[serde(default = "default_eye_care_rest_minutes")]
     pub eye_care_rest_minutes: u64,
+    /// 停止键鼠输入后，仍计入有效屏幕使用的宽限（秒）。
+    #[serde(default = "default_eye_care_input_grace_seconds")]
+    pub eye_care_input_grace_seconds: u64,
     /// 连续无输入多久后视为已经获得自然休息（分钟）。
     #[serde(default = "default_eye_care_natural_rest_minutes")]
     pub eye_care_natural_rest_minutes: u64,
@@ -1183,6 +1186,9 @@ fn default_eye_care_work_minutes() -> u64 {
 }
 fn default_eye_care_rest_minutes() -> u64 {
     3
+}
+fn default_eye_care_input_grace_seconds() -> u64 {
+    60
 }
 fn default_eye_care_natural_rest_minutes() -> u64 {
     5
@@ -1292,6 +1298,7 @@ impl Default for AppConfig {
             eye_care_enabled: true,
             eye_care_work_minutes: default_eye_care_work_minutes(),
             eye_care_rest_minutes: default_eye_care_rest_minutes(),
+            eye_care_input_grace_seconds: default_eye_care_input_grace_seconds(),
             eye_care_natural_rest_minutes: default_eye_care_natural_rest_minutes(),
             eye_care_pre_break_seconds: default_eye_care_pre_break_seconds(),
             eye_care_paused: false,
@@ -1370,6 +1377,7 @@ impl AppConfig {
         normalize_assistant_todos(&mut self.assistant_todos);
         self.eye_care_work_minutes = self.eye_care_work_minutes.clamp(1, 240);
         self.eye_care_rest_minutes = self.eye_care_rest_minutes.clamp(1, 30);
+        self.eye_care_input_grace_seconds = self.eye_care_input_grace_seconds.clamp(5, 300);
         self.eye_care_natural_rest_minutes = self.eye_care_natural_rest_minutes.clamp(1, 60);
         self.eye_care_pre_break_seconds = self.eye_care_pre_break_seconds.clamp(5, 300);
         self.standard_work_hours = self.standard_work_hours.clamp(1.0, 24.0);
@@ -2427,9 +2435,22 @@ mod tests {
         assert!(config.eye_care_enabled);
         assert_eq!(config.eye_care_work_minutes, 40);
         assert_eq!(config.eye_care_rest_minutes, 3);
+        assert_eq!(config.eye_care_input_grace_seconds, 60);
         assert_eq!(config.eye_care_natural_rest_minutes, 5);
         assert_eq!(config.eye_care_pre_break_seconds, 30);
         assert!(!config.eye_care_paused);
+    }
+
+    #[test]
+    fn 缺失无输入宽限配置应使用六十秒默认值() {
+        let mut value = serde_json::to_value(AppConfig::default()).expect("默认配置应可序列化");
+        value
+            .as_object_mut()
+            .expect("配置应为对象")
+            .remove("eye_care_input_grace_seconds");
+
+        let config: AppConfig = serde_json::from_value(value).expect("旧配置应可读取");
+        assert_eq!(config.eye_care_input_grace_seconds, 60);
     }
 
     #[test]
@@ -2590,12 +2611,14 @@ mod tests {
         let mut config = AppConfig::default();
         config.eye_care_work_minutes = 0;
         config.eye_care_rest_minutes = 99;
+        config.eye_care_input_grace_seconds = 0;
         config.eye_care_natural_rest_minutes = 0;
         config.eye_care_pre_break_seconds = 999;
         config.normalize();
 
         assert_eq!(config.eye_care_work_minutes, 1);
         assert_eq!(config.eye_care_rest_minutes, 30);
+        assert_eq!(config.eye_care_input_grace_seconds, 5);
         assert_eq!(config.eye_care_natural_rest_minutes, 1);
         assert_eq!(config.eye_care_pre_break_seconds, 300);
     }
