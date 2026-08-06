@@ -24,6 +24,8 @@ const MAX_TRUSTED_RESTART_GAP_SECS: i64 = 7 * 24 * 60 * 60;
 const MAX_TRUSTED_RESTART_GAP_MS: u64 = MAX_TRUSTED_RESTART_GAP_SECS as u64 * 1_000;
 const UNKNOWN_TICK_GAP_MS: u64 = 5_000;
 const MAX_DIAGNOSTIC_EVENTS: usize = 24;
+// 新一轮只在确认出现新的键鼠输入时开始；这不是日常计时阈值。
+const FRESH_INPUT_IDLE_MAX_MS: u64 = 2_000;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -64,6 +66,7 @@ pub struct EyeCareConfig {
     pub paused: bool,
     pub work_ms: u64,
     pub rest_ms: u64,
+    pub input_grace_ms: u64,
     pub natural_rest_ms: u64,
     pub pre_break_ms: u64,
 }
@@ -75,6 +78,7 @@ impl From<&AppConfig> for EyeCareConfig {
             paused: config.eye_care_paused,
             work_ms: config.eye_care_work_minutes.saturating_mul(60_000),
             rest_ms: config.eye_care_rest_minutes.saturating_mul(60_000),
+            input_grace_ms: config.eye_care_input_grace_seconds.saturating_mul(1_000),
             natural_rest_ms: config.eye_care_natural_rest_minutes.saturating_mul(60_000),
             pre_break_ms: config.eye_care_pre_break_seconds.saturating_mul(1_000),
         }
@@ -239,7 +243,7 @@ impl EyeCareRuntime {
                 }
             }
             EyeCarePhase::Working | EyeCarePhase::PreBreak => {
-                if trusted_gap_ms >= config.rest_ms {
+                if trusted_gap_ms >= config.natural_rest_ms {
                     runtime.reset_cycle(now_unix, true);
                 }
             }
@@ -249,6 +253,9 @@ impl EyeCareRuntime {
         runtime.timer_reason = match runtime.phase {
             EyeCarePhase::Resting => EyeCareTimerReason::Resting,
             EyeCarePhase::WaitingReturn => EyeCareTimerReason::WaitingReturn,
+            EyeCarePhase::Working | EyeCarePhase::PreBreak if runtime.awaiting_fresh_activity => {
+                EyeCareTimerReason::NaturalRest
+            }
             EyeCarePhase::Working | EyeCarePhase::PreBreak => EyeCareTimerReason::InputUnavailable,
         };
         runtime.last_input_idle_ms = None;
@@ -300,12 +307,17 @@ impl EyeCareRuntime {
             return transition;
         }
 
-        let active = !locked
+        // 日常计时允许阅读、思考等短暂无键鼠输入；休息结束或自然休息后，
+        // 则仍必须等到一次新输入，不能因为旧输入尚在宽限内就启动新周期。
+        let has_fresh_input = !locked
             && !suspended_or_unknown_gap
-            && input_idle_ms.is_some_and(|idle_ms| idle_ms < 2_000);
+            && input_idle_ms.is_some_and(|idle_ms| idle_ms < FRESH_INPUT_IDLE_MAX_MS);
+        let counts_as_screen_use = !locked
+            && !suspended_or_unknown_gap
+            && input_idle_ms.is_some_and(|idle_ms| idle_ms < config.input_grace_ms);
 
         if self.phase == EyeCarePhase::WaitingReturn {
-            if active {
+            if has_fresh_input {
                 self.reset_cycle(now_unix, false);
                 self.set_timer_reason(EyeCareTimerReason::Counting, now_unix);
                 transition.returned = true;
@@ -335,7 +347,7 @@ impl EyeCareRuntime {
                 self.set_timer_reason(EyeCareTimerReason::SuspendedOrUnknown, now_unix);
             }
             self.system_away_ms = self.system_away_ms.saturating_add(delta_ms);
-            if self.system_away_ms >= config.rest_ms {
+            if self.system_away_ms >= config.natural_rest_ms {
                 self.set_timer_reason(EyeCareTimerReason::NaturalRest, now_unix);
                 self.reset_cycle(now_unix, true);
                 transition.natural_reset = true;
@@ -363,17 +375,22 @@ impl EyeCareRuntime {
             return transition;
         }
 
-        // IDLE_CANDIDATE：暂停而不清空。
-        if !active {
+        if self.awaiting_fresh_activity {
+            if !has_fresh_input {
+                self.set_timer_reason(EyeCareTimerReason::NaturalRest, now_unix);
+                return transition;
+            }
+            self.cycle_started_at = now_unix;
+            self.awaiting_fresh_activity = false;
+        }
+
+        // 超过无输入宽限但尚未达到自然休息阈值：暂停而不清空本轮。
+        if !counts_as_screen_use {
             self.short_idle_ms = self.short_idle_ms.saturating_add(delta_ms);
             self.set_timer_reason(EyeCareTimerReason::ShortIdle, now_unix);
             return transition;
         }
 
-        if self.awaiting_fresh_activity {
-            self.cycle_started_at = now_unix;
-            self.awaiting_fresh_activity = false;
-        }
         self.accumulated_work_ms = self.accumulated_work_ms.saturating_add(delta_ms);
         self.set_timer_reason(EyeCareTimerReason::Counting, now_unix);
 
@@ -975,6 +992,7 @@ mod tests {
             paused: false,
             work_ms: 40_000,
             rest_ms: 3_000,
+            input_grace_ms: 2_000,
             natural_rest_ms: 5_000,
             pre_break_ms: 2_000,
         }
@@ -1026,11 +1044,65 @@ mod tests {
     }
 
     #[test]
-    fn long_lock_or_suspend_resets_without_counting_gap_as_work() {
+    fn input_grace_counts_reading_before_pausing_this_cycle() {
+        let mut runtime = EyeCareRuntime::new(100);
+        let cfg = EyeCareConfig {
+            work_ms: 600_000,
+            input_grace_ms: 60_000,
+            natural_rest_ms: 300_000,
+            ..config()
+        };
+
+        runtime.tick(30_000, Some(30_000), false, false, cfg, 130);
+        assert_eq!(runtime.accumulated_work_ms, 30_000);
+        assert_eq!(runtime.timer_reason, EyeCareTimerReason::Counting);
+
+        runtime.tick(1_000, Some(60_000), false, false, cfg, 131);
+        assert_eq!(runtime.accumulated_work_ms, 30_000);
+        assert_eq!(runtime.short_idle_ms, 1_000);
+        assert_eq!(runtime.timer_reason, EyeCareTimerReason::ShortIdle);
+
+        runtime.tick(1_000, Some(0), false, false, cfg, 132);
+        assert_eq!(runtime.accumulated_work_ms, 31_000);
+        assert_eq!(runtime.timer_reason, EyeCareTimerReason::Counting);
+    }
+
+    #[test]
+    fn natural_rest_waits_for_fresh_input_even_inside_grace_period() {
+        let mut runtime = EyeCareRuntime::new(100);
+        let cfg = EyeCareConfig {
+            work_ms: 600_000,
+            input_grace_ms: 60_000,
+            natural_rest_ms: 300_000,
+            ..config()
+        };
+        runtime.tick(10_000, Some(0), false, false, cfg, 110);
+
+        assert!(
+            runtime
+                .tick(1_000, Some(300_000), false, false, cfg, 111)
+                .natural_reset
+        );
+        assert!(runtime.awaiting_fresh_activity);
+
+        runtime.tick(1_000, Some(30_000), false, false, cfg, 112);
+        assert_eq!(runtime.accumulated_work_ms, 0);
+        assert!(runtime.awaiting_fresh_activity);
+        assert_eq!(runtime.timer_reason, EyeCareTimerReason::NaturalRest);
+
+        runtime.tick(1_000, Some(0), false, false, cfg, 113);
+        assert_eq!(runtime.accumulated_work_ms, 1_000);
+        assert!(!runtime.awaiting_fresh_activity);
+    }
+
+    #[test]
+    fn lock_or_suspend_uses_natural_rest_threshold_without_counting_gap_as_work() {
         let mut runtime = EyeCareRuntime::new(100);
         let cfg = config();
         runtime.tick(20_000, Some(0), false, false, cfg, 120);
         runtime.tick(3_000, Some(0), true, false, cfg, 123);
+        assert_eq!(runtime.accumulated_work_ms, 20_000);
+        runtime.tick(2_000, Some(0), true, false, cfg, 125);
         assert_eq!(runtime.accumulated_work_ms, 0);
 
         runtime.tick(10_000, Some(0), false, false, cfg, 133);
@@ -1177,6 +1249,32 @@ mod tests {
         );
         assert_eq!(loaded.phase, EyeCarePhase::Resting);
         assert_eq!(loaded.rest_remaining_ms, 3_000);
+        let _ = std::fs::remove_dir_all(dir);
+    }
+
+    #[test]
+    fn restart_gap_uses_natural_rest_threshold() {
+        let dir = std::env::temp_dir().join(format!("eye-care-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("state.json");
+        let cfg = config();
+        let mut runtime = EyeCareRuntime::new(100);
+        runtime.tick(20_000, Some(0), false, false, cfg, 120);
+        runtime.save(&path, 120).unwrap();
+
+        let before_natural_rest =
+            EyeCareRuntime::load_or_default_with_clock(&path, 124, cfg, None, false);
+        assert_eq!(before_natural_rest.accumulated_work_ms, 20_000);
+        assert!(!before_natural_rest.awaiting_fresh_activity);
+
+        let after_natural_rest =
+            EyeCareRuntime::load_or_default_with_clock(&path, 125, cfg, None, false);
+        assert_eq!(after_natural_rest.accumulated_work_ms, 0);
+        assert!(after_natural_rest.awaiting_fresh_activity);
+        assert_eq!(
+            after_natural_rest.timer_reason,
+            EyeCareTimerReason::NaturalRest
+        );
         let _ = std::fs::remove_dir_all(dir);
     }
 

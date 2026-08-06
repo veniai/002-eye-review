@@ -45,6 +45,11 @@
       <input class="control-input mt-3" type="number" min="1" max="30" bind:value={config.eye_care_rest_minutes} on:change={() => clampNumber('eye_care_rest_minutes', 1, 30, 3)} />
     </label>
     <label class="settings-block">
+      <span class="settings-text">{t('eyeCare.inputGraceSeconds')}</span>
+      <span class="settings-muted mt-1">{t('eyeCare.inputGraceSecondsHint')}</span>
+      <input class="control-input mt-3" type="number" min="5" max="300" bind:value={config.eye_care_input_grace_seconds} on:change={() => clampNumber('eye_care_input_grace_seconds', 5, 300, 60)} />
+    </label>
+    <label class="settings-block">
       <span class="settings-text">{t('eyeCare.naturalRestMinutes')}</span>
       <span class="settings-muted mt-1">{t('eyeCare.naturalRestMinutesHint')}</span>
       <input class="control-input mt-3" type="number" min="1" max="60" bind:value={config.eye_care_natural_rest_minutes} on:change={() => clampNumber('eye_care_natural_rest_minutes', 1, 60, 5)} />

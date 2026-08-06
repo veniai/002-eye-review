@@ -5,7 +5,7 @@ import { constants } from 'node:fs';
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8');
 
-test('护眼配置默认 40/3/5/30 且旧提醒字段有确定性迁移', async () => {
+test('护眼配置默认 40/3/60/5/30 且旧提醒字段有确定性迁移', async () => {
   const [config, settings] = await Promise.all([
     read('../crates/core/src/config.rs'),
     read('./routes/settings/components/SettingsEyeCare.svelte'),
@@ -13,6 +13,7 @@ test('护眼配置默认 40/3/5/30 且旧提醒字段有确定性迁移', async 
 
   assert.match(config, /fn default_eye_care_work_minutes\(\)[\s\S]*?40/);
   assert.match(config, /fn default_eye_care_rest_minutes\(\)[\s\S]*?3/);
+  assert.match(config, /fn default_eye_care_input_grace_seconds\(\)[\s\S]*?60/);
   assert.match(config, /fn default_eye_care_natural_rest_minutes\(\)[\s\S]*?5/);
   assert.match(config, /fn default_eye_care_pre_break_seconds\(\)[\s\S]*?30/);
   assert.match(config, /deserialize_config_with_legacy_migration/);
@@ -22,6 +23,7 @@ test('护眼配置默认 40/3/5/30 且旧提醒字段有确定性迁移', async 
     'eye_care_enabled',
     'eye_care_work_minutes',
     'eye_care_rest_minutes',
+    'eye_care_input_grace_seconds',
     'eye_care_natural_rest_minutes',
     'eye_care_pre_break_seconds',
     'eye_care_paused',
