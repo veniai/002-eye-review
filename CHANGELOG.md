@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-08-06
+
+### 修复
+- **有效屏幕使用计时**：新增默认 60 秒、可调 5–300 秒的无输入宽限；阅读或短暂思考时不再在约 2 秒后立即停表，超过宽限才暂停本轮。
+- **自然休息判定统一**：连续无输入、锁屏、休眠/未知间隔和程序重启恢复均使用自然休息阈值（默认 5 分钟），不再误用强制休息时长（默认 3 分钟）。
+- **新周期启动**：自然休息后必须检测到新的键鼠输入才重新计时，避免旧输入仍在宽限内时误开新一轮。
+
+### 调整
+- **护眼主页设置**：新增「无输入宽限（秒）」并在状态说明中明确显示“超过无输入宽限，暂不计时”；旧配置自动补齐默认值。
+
 ## [1.3.0] - 2026-08-06
 
 ### 新增
