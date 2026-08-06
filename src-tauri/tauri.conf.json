@@ -19,7 +19,11 @@
     "windows": {
       "certificateThumbprint": null,
       "digestAlgorithm": "sha256",
-      "timestampUrl": ""
+      "timestampUrl": "",
+      "webviewInstallMode": {
+        "type": "onlineBootstrapper",
+        "silent": true
+      }
     },
     "icon": [
       "icons/16x16.png",

@@ -172,10 +172,22 @@ export async function runUpdateFlow(options = {}) {
 
     const runtimePlatform = await getRuntimePlatform();
     if (runtimePlatform === 'windows') {
-      onStatusChange(t('updater.installerStartedStatus'));
-      showToast(t('updater.installerStartedToast'), 'success');
-      await invoke('quit_app_for_update');
-      return { updated: true, handoffToInstaller: true };
+      // 优雅模式：安装器已静默启动，不立即退出；
+      // 给用户选择——立即重启完成更新，或下次自然启动时生效
+      onStatusChange(t('updater.readyToRestartStatus'));
+      const shouldRestartNow = await confirm({
+        title: t('updater.readyToRestartTitle'),
+        message: t('updater.readyToRestartMessage', { version: releaseInfo.latestVersion }),
+        confirmText: t('updater.restartNow'),
+        cancelText: t('updater.restartLater'),
+        tone: 'info',
+      });
+      if (shouldRestartNow) {
+        await invoke('quit_app_for_update');
+        return { updated: true, handoffToInstaller: true };
+      }
+      showToast(t('updater.restartLaterToast'), 'info', 5000);
+      return { updated: true, pendingRestart: true };
     }
 
     onStatusChange(t('updater.restarting'));
