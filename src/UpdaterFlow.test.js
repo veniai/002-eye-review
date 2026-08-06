@@ -26,7 +26,7 @@ test('Windows 更新为优雅模式：包体精简 + 静默安装 + 就绪后由
   const zhCN = await rf(new URL('./lib/i18n/locales/zh-CN.js', import.meta.url), 'utf8');
 
   // 包体：WebView2 在线引导（setup.exe 不再内嵌 ~180MB Runtime）
-  assert.equal(conf.bundle.windows.webviewInstallMode?.type, 'onlineBootstrapper');
+  assert.equal(conf.bundle.windows.webviewInstallMode?.type, 'downloadBootstrapper');
   assert.equal(conf.bundle.windows.webviewInstallMode?.silent, true);
 
   // 安装：NSIS passive 静默进度条（无安装向导）

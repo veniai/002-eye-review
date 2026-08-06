@@ -21,7 +21,7 @@
       "digestAlgorithm": "sha256",
       "timestampUrl": "",
       "webviewInstallMode": {
-        "type": "onlineBootstrapper",
+        "type": "downloadBootstrapper",
         "silent": true
       }
     },
