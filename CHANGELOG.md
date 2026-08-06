@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-08-06
+
+### 新增
+- **护眼独立主页**：护眼从设置页提升到概览下方的一级入口，集中展示本轮已计工作时间、剩余时间、进度、当前计时原因、输入空闲时长和最近观测时间。
+- **计时诊断明细**：分别统计短时空闲、锁屏、睡眠或未知间隔、输入探测不可用、手动暂停等未计入时间，并保留最近状态变化，方便直接核对计时是否准确；不记录窗口标题、截图或输入内容。
+
+### 调整
+- **设置就地管理**：工作、休息、自然休息和提前预告时长统一在护眼主页调整，保留默认 40/3/5/30 与全部原有可配置能力。
+- **发布安全门**：分支手动构建只生成 Actions 产物，不再误创建正式 Release；只有版本标签可以发布自动更新。
+
+### 修复
+- **Rust CI 恢复全绿**：清理空闲检测中的过期阈值封装，并按 Clippy 建议派生护眼计时原因的默认值。
+
 ## [1.2.2] - 2026-08-06
 
 ### 调整
