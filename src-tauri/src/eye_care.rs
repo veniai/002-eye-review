@@ -23,6 +23,7 @@ pub const RECAP_EVENT: &str = "eye-care-recap-ready";
 const MAX_TRUSTED_RESTART_GAP_SECS: i64 = 7 * 24 * 60 * 60;
 const MAX_TRUSTED_RESTART_GAP_MS: u64 = MAX_TRUSTED_RESTART_GAP_SECS as u64 * 1_000;
 const UNKNOWN_TICK_GAP_MS: u64 = 5_000;
+const MAX_DIAGNOSTIC_EVENTS: usize = 24;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -31,6 +32,30 @@ pub enum EyeCarePhase {
     PreBreak,
     Resting,
     WaitingReturn,
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum EyeCareTimerReason {
+    Disabled,
+    Paused,
+    Counting,
+    ShortIdle,
+    #[default]
+    InputUnavailable,
+    Locked,
+    SuspendedOrUnknown,
+    NaturalRest,
+    Resting,
+    WaitingReturn,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct EyeCareDiagnosticEvent {
+    pub reason: EyeCareTimerReason,
+    pub occurred_at: i64,
+    pub counted_work_seconds: u64,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -72,6 +97,24 @@ pub struct EyeCareRuntime {
     awaiting_fresh_activity: bool,
     #[serde(default)]
     saved_suspend_clock_ms: Option<u64>,
+    #[serde(default)]
+    short_idle_ms: u64,
+    #[serde(default)]
+    locked_ms: u64,
+    #[serde(default)]
+    suspended_ms: u64,
+    #[serde(default)]
+    unavailable_ms: u64,
+    #[serde(default)]
+    paused_ms: u64,
+    #[serde(default)]
+    timer_reason: EyeCareTimerReason,
+    #[serde(default)]
+    diagnostic_events: Vec<EyeCareDiagnosticEvent>,
+    #[serde(skip, default)]
+    last_input_idle_ms: Option<u64>,
+    #[serde(skip, default)]
+    last_observed_at: i64,
     pub saved_at: i64,
 }
 
@@ -94,6 +137,19 @@ pub struct EyeCareStatus {
     pub progress: f64,
     pub cycle_started_at: i64,
     pub break_started_at: Option<i64>,
+    pub timer_reason: EyeCareTimerReason,
+    pub counting: bool,
+    pub counted_work_seconds: u64,
+    pub excluded_seconds: u64,
+    pub short_idle_seconds: u64,
+    pub locked_seconds: u64,
+    pub suspended_seconds: u64,
+    pub unavailable_seconds: u64,
+    pub paused_seconds: u64,
+    pub observed_seconds: u64,
+    pub input_idle_seconds: Option<u64>,
+    pub observed_at: i64,
+    pub recent_events: Vec<EyeCareDiagnosticEvent>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -129,6 +185,15 @@ impl EyeCareRuntime {
             system_away_ms: 0,
             awaiting_fresh_activity: false,
             saved_suspend_clock_ms: suspend_aware_clock_ms(),
+            short_idle_ms: 0,
+            locked_ms: 0,
+            suspended_ms: 0,
+            unavailable_ms: 0,
+            paused_ms: 0,
+            timer_reason: EyeCareTimerReason::InputUnavailable,
+            diagnostic_events: Vec::new(),
+            last_input_idle_ms: None,
+            last_observed_at: now_unix,
             saved_at: now_unix,
         }
     }
@@ -181,6 +246,13 @@ impl EyeCareRuntime {
             EyeCarePhase::WaitingReturn => {}
         }
         runtime.saved_suspend_clock_ms = current_suspend_clock_ms;
+        runtime.timer_reason = match runtime.phase {
+            EyeCarePhase::Resting => EyeCareTimerReason::Resting,
+            EyeCarePhase::WaitingReturn => EyeCareTimerReason::WaitingReturn,
+            EyeCarePhase::Working | EyeCarePhase::PreBreak => EyeCareTimerReason::InputUnavailable,
+        };
+        runtime.last_input_idle_ms = None;
+        runtime.last_observed_at = now_unix;
         runtime.saved_at = now_unix;
         runtime
     }
@@ -214,11 +286,15 @@ impl EyeCareRuntime {
         now_unix: i64,
     ) -> EyeCareTransition {
         let mut transition = EyeCareTransition::default();
+        self.last_input_idle_ms = input_idle_ms;
+        self.last_observed_at = now_unix;
 
         if self.phase == EyeCarePhase::Resting {
+            self.set_timer_reason(EyeCareTimerReason::Resting, now_unix);
             self.rest_remaining_ms = self.rest_remaining_ms.saturating_sub(delta_ms);
             if self.rest_remaining_ms == 0 {
                 self.finish_rest();
+                self.set_timer_reason(EyeCareTimerReason::WaitingReturn, now_unix);
                 transition.completed_rest = true;
             }
             return transition;
@@ -231,18 +307,36 @@ impl EyeCareRuntime {
         if self.phase == EyeCarePhase::WaitingReturn {
             if active {
                 self.reset_cycle(now_unix, false);
+                self.set_timer_reason(EyeCareTimerReason::Counting, now_unix);
                 transition.returned = true;
+            } else {
+                self.set_timer_reason(EyeCareTimerReason::WaitingReturn, now_unix);
             }
             return transition;
         }
 
-        if !config.enabled || config.paused {
+        if !config.enabled {
+            self.set_timer_reason(EyeCareTimerReason::Disabled, now_unix);
+            return transition;
+        }
+
+        if config.paused {
+            self.paused_ms = self.paused_ms.saturating_add(delta_ms);
+            self.set_timer_reason(EyeCareTimerReason::Paused, now_unix);
             return transition;
         }
 
         if locked || suspended_or_unknown_gap {
+            if locked {
+                self.locked_ms = self.locked_ms.saturating_add(delta_ms);
+                self.set_timer_reason(EyeCareTimerReason::Locked, now_unix);
+            } else {
+                self.suspended_ms = self.suspended_ms.saturating_add(delta_ms);
+                self.set_timer_reason(EyeCareTimerReason::SuspendedOrUnknown, now_unix);
+            }
             self.system_away_ms = self.system_away_ms.saturating_add(delta_ms);
             if self.system_away_ms >= config.rest_ms {
+                self.set_timer_reason(EyeCareTimerReason::NaturalRest, now_unix);
                 self.reset_cycle(now_unix, true);
                 transition.natural_reset = true;
             }
@@ -253,19 +347,26 @@ impl EyeCareRuntime {
 
         // 空闲探测不可用时属于未知输入区间，只暂停，不把“探测失败”当成活跃或自然离开。
         let Some(input_idle_ms) = input_idle_ms else {
+            self.unavailable_ms = self.unavailable_ms.saturating_add(delta_ms);
+            self.set_timer_reason(EyeCareTimerReason::InputUnavailable, now_unix);
             return transition;
         };
 
         if input_idle_ms >= config.natural_rest_ms {
             if self.accumulated_work_ms > 0 || !self.awaiting_fresh_activity {
+                self.set_timer_reason(EyeCareTimerReason::NaturalRest, now_unix);
                 self.reset_cycle(now_unix, true);
                 transition.natural_reset = true;
+            } else {
+                self.set_timer_reason(EyeCareTimerReason::NaturalRest, now_unix);
             }
             return transition;
         }
 
         // IDLE_CANDIDATE：暂停而不清空。
         if !active {
+            self.short_idle_ms = self.short_idle_ms.saturating_add(delta_ms);
+            self.set_timer_reason(EyeCareTimerReason::ShortIdle, now_unix);
             return transition;
         }
 
@@ -274,6 +375,7 @@ impl EyeCareRuntime {
             self.awaiting_fresh_activity = false;
         }
         self.accumulated_work_ms = self.accumulated_work_ms.saturating_add(delta_ms);
+        self.set_timer_reason(EyeCareTimerReason::Counting, now_unix);
 
         if self.accumulated_work_ms >= config.work_ms {
             self.phase = EyeCarePhase::Resting;
@@ -282,6 +384,7 @@ impl EyeCareRuntime {
             self.break_started_at = Some(now_unix);
             self.recap_cycle_started_at = Some(self.cycle_started_at);
             self.recap_break_started_at = Some(now_unix);
+            self.set_timer_reason(EyeCareTimerReason::Resting, now_unix);
             transition.entered_rest = true;
         } else if self.accumulated_work_ms
             >= config
@@ -299,6 +402,7 @@ impl EyeCareRuntime {
     pub fn emergency_release(&mut self, now_unix: i64) {
         if self.phase == EyeCarePhase::Resting {
             self.finish_rest();
+            self.set_timer_reason(EyeCareTimerReason::WaitingReturn, now_unix);
             self.saved_at = now_unix;
         }
     }
@@ -324,6 +428,24 @@ impl EyeCareRuntime {
                 )
             }
         };
+        let excluded_ms = self
+            .short_idle_ms
+            .saturating_add(self.locked_ms)
+            .saturating_add(self.suspended_ms)
+            .saturating_add(self.unavailable_ms)
+            .saturating_add(self.paused_ms);
+        let counted_work_seconds = self.accumulated_work_ms / 1_000;
+        let timer_reason = match self.phase {
+            EyeCarePhase::Resting => EyeCareTimerReason::Resting,
+            EyeCarePhase::WaitingReturn => EyeCareTimerReason::WaitingReturn,
+            EyeCarePhase::Working | EyeCarePhase::PreBreak if !config.enabled => {
+                EyeCareTimerReason::Disabled
+            }
+            EyeCarePhase::Working | EyeCarePhase::PreBreak if config.paused => {
+                EyeCareTimerReason::Paused
+            }
+            EyeCarePhase::Working | EyeCarePhase::PreBreak => self.timer_reason,
+        };
         EyeCareStatus {
             phase: self.phase,
             enabled: config.enabled,
@@ -333,6 +455,35 @@ impl EyeCareRuntime {
             progress: progress.clamp(0.0, 1.0),
             cycle_started_at: self.cycle_started_at,
             break_started_at: self.break_started_at,
+            timer_reason,
+            counting: timer_reason == EyeCareTimerReason::Counting,
+            counted_work_seconds,
+            excluded_seconds: excluded_ms / 1_000,
+            short_idle_seconds: self.short_idle_ms / 1_000,
+            locked_seconds: self.locked_ms / 1_000,
+            suspended_seconds: self.suspended_ms / 1_000,
+            unavailable_seconds: self.unavailable_ms / 1_000,
+            paused_seconds: self.paused_ms / 1_000,
+            observed_seconds: self.accumulated_work_ms.saturating_add(excluded_ms) / 1_000,
+            input_idle_seconds: self.last_input_idle_ms.map(|value| value / 1_000),
+            observed_at: self.last_observed_at,
+            recent_events: self.diagnostic_events.clone(),
+        }
+    }
+
+    fn set_timer_reason(&mut self, reason: EyeCareTimerReason, now_unix: i64) {
+        if self.timer_reason == reason {
+            return;
+        }
+        self.timer_reason = reason;
+        self.diagnostic_events.push(EyeCareDiagnosticEvent {
+            reason,
+            occurred_at: now_unix,
+            counted_work_seconds: self.accumulated_work_ms / 1_000,
+        });
+        if self.diagnostic_events.len() > MAX_DIAGNOSTIC_EVENTS {
+            let overflow = self.diagnostic_events.len() - MAX_DIAGNOSTIC_EVENTS;
+            self.diagnostic_events.drain(..overflow);
         }
     }
 
@@ -343,6 +494,11 @@ impl EyeCareRuntime {
         self.fixed_rest_total_ms = 0;
         self.break_started_at = None;
         self.system_away_ms = 0;
+        self.short_idle_ms = 0;
+        self.locked_ms = 0;
+        self.suspended_ms = 0;
+        self.unavailable_ms = 0;
+        self.paused_ms = 0;
         self.awaiting_fresh_activity = await_activity;
         self.cycle_started_at = now_unix;
     }
@@ -911,6 +1067,60 @@ mod tests {
         let transition = runtime.tick(20_000, None, false, false, config(), 130);
         assert_eq!(runtime.accumulated_work_ms, 10_000);
         assert_eq!(transition, EyeCareTransition::default());
+    }
+
+    #[test]
+    fn diagnostics_separate_counted_and_excluded_time_by_reason() {
+        let mut runtime = EyeCareRuntime::new(100);
+        let cfg = config();
+
+        runtime.tick(2_000, Some(0), false, false, cfg, 102);
+        runtime.tick(1_000, Some(3_000), false, false, cfg, 103);
+        runtime.tick(1_000, Some(0), true, false, cfg, 104);
+        runtime.tick(1_000, Some(0), false, true, cfg, 105);
+        runtime.tick(1_000, None, false, false, cfg, 106);
+        runtime.tick(
+            1_000,
+            Some(0),
+            false,
+            false,
+            EyeCareConfig {
+                paused: true,
+                ..cfg
+            },
+            107,
+        );
+
+        let status = runtime.status(cfg);
+        assert_eq!(status.counted_work_seconds, 2);
+        assert_eq!(status.short_idle_seconds, 1);
+        assert_eq!(status.locked_seconds, 1);
+        assert_eq!(status.suspended_seconds, 1);
+        assert_eq!(status.unavailable_seconds, 1);
+        assert_eq!(status.paused_seconds, 1);
+        assert_eq!(status.excluded_seconds, 5);
+        assert_eq!(status.observed_seconds, 7);
+        assert_eq!(status.input_idle_seconds, Some(0));
+        assert_eq!(status.timer_reason, EyeCareTimerReason::Paused);
+        assert!(!status.counting);
+        assert_eq!(status.observed_at, 107);
+    }
+
+    #[test]
+    fn diagnostic_event_history_is_transition_only_and_bounded() {
+        let mut runtime = EyeCareRuntime::new(100);
+        let cfg = config();
+        for index in 0..40 {
+            let idle_ms = if index % 2 == 0 { 0 } else { 3_000 };
+            runtime.tick(100, Some(idle_ms), false, false, cfg, 101 + index);
+        }
+
+        assert_eq!(runtime.diagnostic_events.len(), MAX_DIAGNOSTIC_EVENTS);
+        assert_eq!(runtime.diagnostic_events.last().unwrap().occurred_at, 140);
+        assert_eq!(
+            runtime.diagnostic_events.last().unwrap().reason,
+            EyeCareTimerReason::ShortIdle
+        );
     }
 
     #[test]

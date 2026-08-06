@@ -9,7 +9,6 @@
   import SettingsGeneral from './components/SettingsGeneral.svelte';
   import SettingsAppearance from './components/SettingsAppearance.svelte';
   import SettingsAI from './components/SettingsAI.svelte';
-  import SettingsEyeCare from './components/SettingsEyeCare.svelte';
   import SettingsNodeGateway from './components/SettingsNodeGateway.svelte';
   import SettingsSystem from './components/SettingsSystem.svelte';
   import SettingsPrivacy from './components/SettingsPrivacy.svelte';
@@ -36,7 +35,6 @@
   const tabs = [
     { id: 'general', labelKey: 'settings.tabs.general', icon: 'general' },
     { id: 'appearance', labelKey: 'settings.tabs.appearance', icon: 'appearance' },
-    { id: 'eyeCare', labelKey: 'settings.tabs.eyeCare', icon: 'eyeCare' },
     { id: 'ai', labelKey: 'settings.tabs.ai', icon: 'ai' },
     { id: 'privacy', labelKey: 'settings.tabs.privacy', icon: 'privacy' },
     { id: 'storage', labelKey: 'settings.tabs.storage', icon: 'storage' },
@@ -369,8 +367,6 @@
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                 {:else if tab.icon === 'node'}
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 7h14M5 12h14M5 17h10" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a2 2 0 012-2h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" /></svg>
-                {:else if tab.icon === 'eyeCare'}
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.5 12s3.4-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.4 5.5-9.5 5.5S2.5 12 2.5 12z" /><circle cx="12" cy="12" r="2.5" stroke-width="1.5" /></svg>
                 {:else if tab.icon === 'privacy'}
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                 {:else if tab.icon === 'storage'}
@@ -394,8 +390,6 @@
           <SettingsGeneral bind:config on:change={() => dirty = true} />
         {:else if activeTab === 'appearance'}
           <SettingsAppearance bind:config mode="background-only" on:change={handleSettingsChange} />
-        {:else if activeTab === 'eyeCare'}
-          <SettingsEyeCare bind:config on:change={() => dirty = true} />
         {:else if activeTab === 'node'}
           <SettingsNodeGateway bind:config {dataDir} on:change={() => dirty = true} />
         {:else if activeTab === 'ai'}

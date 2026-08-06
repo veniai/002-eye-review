@@ -32,6 +32,7 @@ test('Release workflow 应支持对版本标签手动重试且拒绝普通分支
 
   assert.match(source, /workflow_dispatch:/);
   assert.match(source, /build-tauri:\s+if: startsWith\(github\.ref, 'refs\/tags\/v'\) \|\| github\.event_name == 'workflow_dispatch'/);
+  assert.match(source, /publish-release:[\s\S]*?if: startsWith\(github\.ref, 'refs\/tags\/v'\)/);
 });
 
 test('macOS release 应保持 ad-hoc 签名且不导入自签证书', () => {

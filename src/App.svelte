@@ -154,6 +154,7 @@
 
   const routes = {
     '/': wrap({ asyncComponent: () => import('./routes/Overview.svelte') }),
+    '/eye-care': wrap({ asyncComponent: () => import('./routes/eye-care/EyeCare.svelte') }),
     '/timeline': wrap({ asyncComponent: () => import('./routes/timeline/Timeline.svelte') }),
     '/timeline/summary/:date': wrap({ asyncComponent: () => import('./routes/timeline/Summary.svelte') }),
     '/timeline/summary': wrap({ asyncComponent: () => import('./routes/timeline/Summary.svelte') }),
