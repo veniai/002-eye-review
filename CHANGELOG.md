@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-08-06
+
+### 调整
+- **Windows 更新体验优化**：安装包体积从约 50MB 精简至约 8MB（WebView2 改为在线引导）；更新下载安装完成后由用户选择"立即重启"或"下次启动时生效"，不再强制立即退出。
+
 ## [1.2.1] - 2026-08-06
 
 ### 调整
