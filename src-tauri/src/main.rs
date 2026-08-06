@@ -1398,7 +1398,7 @@ async fn background_screenshot_task(state: Arc<Mutex<AppState>>, app: AppHandle)
         let guard = state.lock().unwrap_or_else(|e| e.into_inner());
         guard.config.idle_threshold_minutes as u64
     };
-    let idle_detector = idle_detector::IdleDetector::new(idle_threshold_minutes.max(1));
+    let idle_detector = idle_detector::IdleDetector::new();
     let mut last_idle_log_time = std::time::Instant::now();
     let mut is_currently_idle = false; // 当前是否处于空闲状态
 

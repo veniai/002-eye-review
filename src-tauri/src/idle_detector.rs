@@ -12,24 +12,12 @@ static LAST_SCREENSHOT_HASH: AtomicU64 = AtomicU64::new(0);
 static NO_CHANGE_COUNT: AtomicU64 = AtomicU64::new(0);
 
 /// 空闲检测器
-pub struct IdleDetector {
-    /// 空闲超时时间（秒）
-    idle_timeout_secs: u64,
-}
+pub struct IdleDetector;
 
 impl IdleDetector {
     /// 创建空闲检测器
-    pub fn new(idle_timeout_minutes: u64) -> Self {
-        Self {
-            idle_timeout_secs: idle_timeout_minutes * 60,
-        }
-    }
-
-    /// 第一阶段：检查键鼠是否超时
-    /// 返回 true 表示键鼠超时（可能空闲），需要进一步用截图哈希确认
-    pub fn is_input_idle(&self) -> bool {
-        let idle_secs = get_idle_seconds();
-        idle_secs >= self.idle_timeout_secs
+    pub fn new() -> Self {
+        Self
     }
 
     /// 第二阶段：用截图哈希判断屏幕是否长时间无变化。
@@ -93,7 +81,7 @@ impl IdleDetector {
 
 impl Default for IdleDetector {
     fn default() -> Self {
-        Self::new(3)
+        Self::new()
     }
 }
 
