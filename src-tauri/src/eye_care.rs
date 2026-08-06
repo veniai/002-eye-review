@@ -34,25 +34,20 @@ pub enum EyeCarePhase {
     WaitingReturn,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum EyeCareTimerReason {
     Disabled,
     Paused,
     Counting,
     ShortIdle,
+    #[default]
     InputUnavailable,
     Locked,
     SuspendedOrUnknown,
     NaturalRest,
     Resting,
     WaitingReturn,
-}
-
-impl Default for EyeCareTimerReason {
-    fn default() -> Self {
-        Self::InputUnavailable
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
