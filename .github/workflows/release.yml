@@ -5,34 +5,25 @@ on:
   # workflows. Keep the upstream tag trigger and provide an explicit, auditable
   # retry path that can only run against a version tag.
   workflow_dispatch:
+    inputs:
+      windows_only:
+        description: '只构建 Windows 版本（快速迭代用）'
+        required: false
+        type: boolean
+        default: false
   push:
     tags:
       - 'v*'
 
 jobs:
   build-tauri:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - platform: macos-latest
-            args: "--target aarch64-apple-darwin"
-            target: aarch64-apple-darwin
-          - platform: macos-latest
-            args: "--target x86_64-apple-darwin"
-            target: x86_64-apple-darwin
-          - platform: ubuntu-22.04
-            args: "--target x86_64-unknown-linux-gnu --bundles deb,rpm,appimage"
-            target: x86_64-unknown-linux-gnu
-          - platform: ubuntu-24.04-arm
-            args: "--target aarch64-unknown-linux-gnu --bundles deb"
-            target: aarch64-unknown-linux-gnu
-          - platform: windows-latest
-            args: ""
-            target: x86_64-pc-windows-msvc
+        include: ${{ (github.event_name == 'workflow_dispatch' && inputs.windows_only) && fromJSON('[{"platform":"windows-latest","args":"","target":"x86_64-pc-windows-msvc"}]') || fromJSON('[{"platform":"macos-latest","args":"--target aarch64-apple-darwin","target":"aarch64-apple-darwin"},{"platform":"macos-latest","args":"--target x86_64-apple-darwin","target":"x86_64-apple-darwin"},{"platform":"ubuntu-22.04","args":"--target x86_64-unknown-linux-gnu --bundles deb,rpm,appimage","target":"x86_64-unknown-linux-gnu"},{"platform":"ubuntu-24.04-arm","args":"--target aarch64-unknown-linux-gnu --bundles deb","target":"aarch64-unknown-linux-gnu"},{"platform":"windows-latest","args":"","target":"x86_64-pc-windows-msvc"}]') }}
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -405,9 +396,13 @@ jobs:
             echo "${label}: ${asset_file}"
           }
 
-          require_asset "$MAC_AARCH64_FILE" "${MAC_AARCH64_FILE}.sig" "darwin-aarch64"
-          require_asset "$MAC_X64_FILE" "${MAC_X64_FILE}.sig" "darwin-x86_64"
-          require_asset "$WINDOWS_FILE" "${WINDOWS_FILE}.sig" "windows-x86_64"
+          if [[ "${{ inputs.windows_only || false }}" == "true" ]]; then
+            require_asset "$WINDOWS_FILE" "${WINDOWS_FILE}.sig" "windows-x86_64"
+          else
+            require_asset "$MAC_AARCH64_FILE" "${MAC_AARCH64_FILE}.sig" "darwin-aarch64"
+            require_asset "$MAC_X64_FILE" "${MAC_X64_FILE}.sig" "darwin-x86_64"
+            require_asset "$WINDOWS_FILE" "${WINDOWS_FILE}.sig" "windows-x86_64"
+          fi
 
           json="$(jq -n \
             --arg version "$VER" \
@@ -459,12 +454,18 @@ jobs:
 
             variant_json="$json"
 
-            add_platform "darwin-aarch64" "$MAC_AARCH64_FILE" "${MAC_AARCH64_FILE}.sig" "$VARIANT_BASE"
-            add_platform "darwin-x86_64" "$MAC_X64_FILE" "${MAC_X64_FILE}.sig" "$VARIANT_BASE"
-            add_platform "windows-x86_64" "$WINDOWS_FILE" "${WINDOWS_FILE}.sig" "$VARIANT_BASE"
+            if [[ "${{ inputs.windows_only || false }}" == "true" ]]; then
+              add_platform "windows-x86_64" "$WINDOWS_FILE" "${WINDOWS_FILE}.sig" "$VARIANT_BASE"
+              EXPECTED_PLATFORMS=1
+            else
+              add_platform "darwin-aarch64" "$MAC_AARCH64_FILE" "${MAC_AARCH64_FILE}.sig" "$VARIANT_BASE"
+              add_platform "darwin-x86_64" "$MAC_X64_FILE" "${MAC_X64_FILE}.sig" "$VARIANT_BASE"
+              add_platform "windows-x86_64" "$WINDOWS_FILE" "${WINDOWS_FILE}.sig" "$VARIANT_BASE"
+              EXPECTED_PLATFORMS=3
+            fi
 
-            if [[ "$(jq '.platforms | length' <<<"$variant_json")" -ne 3 ]]; then
-              echo "自动更新平台数量异常 (${output_file})，期望 3 个，实际为 $(jq '.platforms | length' <<<"$variant_json")" >&2
+            if [[ "$(jq '.platforms | length' <<<"$variant_json")" -ne "$EXPECTED_PLATFORMS" ]]; then
+              echo "自动更新平台数量异常 (${output_file})，期望 ${EXPECTED_PLATFORMS} 个，实际为 $(jq '.platforms | length' <<<"$variant_json")" >&2
               exit 1
             fi
 

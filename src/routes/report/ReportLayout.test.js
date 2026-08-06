@@ -49,7 +49,7 @@ test('日报页纸面容器应复用统一 editorial surface，而不是额外�
   assert.match(appCssSource, /\.report-sheet-controls\s*\{[\s\S]*background:\s*var\(--editorial-surface-subtle\)/);
   assert.match(appCssSource, /\.report-article-card\s*\{[\s\S]*background:\s*var\(--editorial-surface-featured\)/);
   // 极简风：主卡片用统一 token 阴影，不再叠斜纹纹理伪元素
-  assert.match(appCssSource, /\.report-article-card\s*\{[\s\S]*box-shadow:\s*var\(--shadow-md\)/);
+  assert.match(appCssSource, /\.report-article-card\s*\{[\s\S]*box-shadow:\s*none/);
 });
 
 test('日报正文段落应提供稳定动作区、导语和表格阅读样式', async () => {

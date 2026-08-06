@@ -54,8 +54,9 @@ test('唯一语言的设计 token 锚点：Apple 亮/暗色系', async () => {
   assert.match(appCssSource, /--surface-border-subtle:\s*rgba\(255, 255, 255, 0\.07\)/);
   assert.match(appCssSource, /--surface-border-default:\s*rgba\(255, 255, 255, 0\.14\)/);
 
-  // 卡片圆角收敛到 22px 主规格
-  assert.match(appCssSource, /\.page-card \{[\s\S]*?rounded-\[22px\]/);
+  // 卡片为无描边无阴影的纯净表面（Apple 纪律）
+  assert.match(appCssSource, /\.page-card \{[\s\S]*?rounded-2xl/);
+  assert.match(appCssSource, /\.page-card \{[\s\S]*?box-shadow:\s*none/);
 
   // 旧 GitHub 暗色不再出现
   assert.doesNotMatch(appCssSource, /#0d1117|#161b22|#21262d|#30363d/);

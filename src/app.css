@@ -30,9 +30,10 @@
   --radius-sm: 8px;     /* 小元素：表格、blockquote、统计卡、输入框 */
   --radius-md: 12px;    /* 中元素：按钮、段落容器 */
   --radius-lg: 20px;    /* 大容器：主卡片 */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.06), 0 2px 10px rgba(15, 23, 42, 0.04);
+  /* Apple 纪律：普通表面无阴影，阴影只属于浮层（弹窗/菜单） */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.10);
   --space-section: 1.75rem;  /* 段落间距 */
   --space-block: 1rem;       /* 卡片内边距 */
 
@@ -115,12 +116,12 @@
 
 /* 卡片样式 */
 .card {
-  @apply bg-white dark:bg-[#2c2c2e] rounded-xl border border-slate-200/80 dark:border-[var(--surface-border-default)];
-  box-shadow: var(--shadow-sm);
+  @apply bg-white dark:bg-[#1c1c1e] rounded-xl;
+  box-shadow: none;
 }
 
 .dark .card {
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 /* 按钮样式 */
@@ -188,11 +189,9 @@
   padding: 0.2rem;
   border-radius: var(--app-shell-frame-radius);
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.34);
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 10px 24px rgba(15, 23, 42, 0.04);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .app-shell-sidebar {
@@ -345,11 +344,9 @@
 
 .dark .app-shell-sidebar-frame,
 .dark .app-shell-main-frame {
-  background: rgba(28, 28, 30, 0.55);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 12px 28px rgba(0, 0, 0, 0.35);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .dark .app-shell-sidebar {
@@ -426,7 +423,7 @@
 .report-hero-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1.25rem;
+  gap: 1.5rem;
   align-items: start;
 }
 
@@ -559,10 +556,8 @@
 }
 
 .page-title-badge {
-  @apply w-11 h-11 rounded-2xl border border-white/80 dark:border-[var(--surface-border-default)] shadow-[0_10px_30px_rgba(59,130,246,0.14)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.45)] flex items-center justify-center text-primary-600 dark:text-[#64d2ff];
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), rgba(239, 246, 255, 0.92)),
-    linear-gradient(135deg, rgba(219, 234, 254, 0.85), rgba(255, 255, 255, 0.9));
+  @apply w-11 h-11 rounded-2xl flex items-center justify-center text-primary-600 dark:text-[#64d2ff];
+  background: var(--editorial-surface-featured);
 }
 
 .page-title-badge svg {
@@ -570,9 +565,7 @@
 }
 
 .dark .page-title-badge {
-  background:
-    radial-gradient(circle at top left, rgba(10, 132, 255, 0.22), rgba(28, 28, 30, 0.92)),
-    linear-gradient(135deg, rgba(10, 132, 255, 0.28), rgba(0, 0, 0, 0.94));
+  background: var(--editorial-surface-featured);
 }
 
 .page-title-copy {
@@ -580,30 +573,28 @@
 }
 
 .page-title-copy h2 {
-  @apply text-[1.55rem] font-semibold text-slate-900 dark:text-[#f5f5f7];
+  @apply text-[22px] font-semibold tracking-[-0.02em] text-slate-900 dark:text-[#f5f5f7];
 }
 
 .page-title-copy p {
-  @apply text-[13px] text-slate-500 dark:text-[#86868b] mt-1 leading-5;
+  @apply text-[12px] text-slate-500 dark:text-[#86868b] mt-1 leading-5;
 }
 
 .page-card {
-  @apply rounded-[22px] border p-5 backdrop-blur-xl;
-  border-color: var(--surface-border-default);
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: var(--shadow-sm);
+  @apply rounded-2xl p-6;
+  background: var(--editorial-surface-featured);
+  box-shadow: none;
 }
 
 .page-card-soft {
-  @apply rounded-[22px] border p-5 text-center backdrop-blur-xl;
-  border-color: var(--surface-border-subtle);
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: var(--shadow-sm);
+  @apply rounded-2xl p-6 text-center;
+  background: var(--editorial-surface-featured);
+  box-shadow: none;
 }
 
 .dark .page-card,
 .dark .page-card-soft {
-  background: rgba(28, 28, 30, 0.72);
+  background: var(--editorial-surface-featured);
 }
 
 .page-toolbar {
@@ -769,12 +760,12 @@
 }
 
 .page-section-title {
-  @apply text-base font-semibold text-slate-700 dark:text-[#98989d] mb-3;
+  @apply text-[13px] font-semibold tracking-[0.01em] text-slate-500 dark:text-[#98989d] mb-3;
 }
 
 .page-banner {
-  @apply rounded-2xl border px-4 py-3.5 flex items-start justify-between gap-3 backdrop-blur-sm;
-  box-shadow: var(--shadow-sm);
+  @apply rounded-2xl border-0 px-4 py-3.5 flex items-start justify-between gap-3;
+  box-shadow: none;
 }
 
 .page-banner-error {
@@ -909,9 +900,7 @@
 }
 
 .settings-card {
-  @apply card p-4 rounded-2xl;
-  border-color: color-mix(in srgb, var(--surface-border-subtle) 68%, transparent);
-  box-shadow: 0 4px 14px rgb(15 23 42 / 0.025);
+  @apply card p-5 rounded-2xl;
 }
 
 .dark .settings-card {
@@ -930,7 +919,7 @@
 }
 
 .settings-section > .settings-block {
-  @apply py-3.5;
+  @apply py-4;
 }
 
 .settings-section > .settings-block:first-child {
@@ -1640,9 +1629,9 @@
 }
 
 .sidebar-nav-item-active {
-  background: var(--editorial-surface-featured);
-  border: 1px solid var(--surface-border-default);
-  box-shadow: var(--shadow-sm);
+  background: rgba(0, 0, 0, 0.055);
+  border: none;
+  box-shadow: none;
 }
 
 .sidebar-nav-item-idle {
@@ -1694,12 +1683,7 @@
 }
 
 .overview-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 34%);
-  pointer-events: none;
+  content: none;
 }
 
 .overview-panel-featured {
@@ -1880,8 +1864,8 @@
 
 .report-article-card {
   background: var(--editorial-surface-featured);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-md);
+  box-shadow: none;
 }
 
 .report-sheet-content {
@@ -1928,9 +1912,10 @@
   margin-bottom: 0.3rem;
 }
 .report-stat-value {
-  font-size: 1.55rem;
-  line-height: 1.2;
+  font-size: 1.625rem;
+  line-height: 1.15;
   font-weight: 650;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: #0f172a;
 }
@@ -4110,8 +4095,8 @@
 }
 
 .dark .sidebar-nav-item-active {
-  background: var(--editorial-surface-subtle);
-  border-color: var(--surface-border-default);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: transparent;
   box-shadow: none;
 }
 

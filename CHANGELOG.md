@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-08-06
+
+### 调整
+- **视觉精修**：普通表面全面去除阴影与描边（阴影只属于弹窗/菜单浮层）；页标题收紧并加负字距，KPI 大数字更突出；间距统一到 8pt 栅格。
+- **侧边栏选中态**：改为 macOS 系统设置式灰底，去掉描边与位移动效。
+
+### 工程
+- Release workflow 新增 `windows_only` 选项，支持仅构建 Windows 版本快速迭代。
+
 ## [1.2.0] - 2026-08-06
 
 ### 调整

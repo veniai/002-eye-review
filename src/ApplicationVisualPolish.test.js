@@ -76,11 +76,13 @@ test('深色模式边界 token 应使用低对比中性层级', async () => {
   assert.doesNotMatch(css, /rgba\(48,\s*54,\s*61/);
 });
 
-test('共享卡片应消费统一边界 token', async () => {
+test('共享卡片应为无描边无阴影的纯净表面（Apple 纪律）', async () => {
   const css = await readFile(cssUrl, 'utf8');
 
-  assert.match(readCssBlock(css, '.page-card'), /border-color:\s*var\(--surface-border-default\)/);
-  assert.match(readCssBlock(css, '.page-card-soft'), /border-color:\s*var\(--surface-border-subtle\)/);
+  const pageCard = readCssBlock(css, '.page-card');
+  assert.match(pageCard, /background:\s*var\(--editorial-surface-featured\)/);
+  assert.match(pageCard, /box-shadow:\s*none/);
+  assert.doesNotMatch(pageCard, /border-color:/);
 });
 
 test('概览 KPI 在窄屏应改为单列，避免标题与数值被挤成竖排', async () => {
@@ -133,8 +135,11 @@ test('全局根字号应为 16px、正文不得低于 10px，标题不得使用�
 
   assert.match(css, /:root\s*\{[^}]*font-size:\s*16px/);
   assert.deepEqual(undersized, []);
-  assert.doesNotMatch([css, ...sources].join('\n'), /letter-spacing:\s*-/);
-  assert.doesNotMatch([css, ...sources].join('\n'), /\btracking-(?:tight|tighter)\b/);
+  // Apple 大标题纪律：负字距允许但不得超过 -0.03em（正文/辅助文字禁止负字距，最小 12px 不适用）
+  const overlyTight = [...[css, ...sources].join('\n').matchAll(/letter-spacing:\s*(-[\d.]+)em/g)]
+    .map((m) => Number(m[1]))
+    .filter((v) => v < -0.03);
+  assert.deepEqual(overlyTight, []);
 });
 
 test('助手与关于页应将操作区接入操作轴，并让主体继续使用阅读轴', async () => {

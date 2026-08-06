@@ -27,16 +27,16 @@
 
   $: cardClass = embedded
     ? 'block min-h-[108px] rounded-[22px] bg-slate-50/88 px-4 py-4 dark:bg-[#1c1c1e]/30'
-    : 'block min-h-[116px] rounded-2xl border border-slate-200/80 bg-white p-5 dark:border-[var(--surface-border-default)]/60 dark:bg-[#2c2c2e]/80';
+    : 'block min-h-[116px] rounded-2xl bg-[var(--editorial-surface-featured)] p-5';
   $: iconClass = embedded
     ? `flex h-10 w-10 items-center justify-center rounded-2xl ${iconBgs[color]} ${iconColors[color]} shrink-0`
-    : `flex h-11 w-11 items-center justify-center rounded-2xl border border-white/80 shadow-sm dark:shadow-none dark:border-[var(--surface-border-default)] ${iconBgs[color]} ${iconColors[color]} shrink-0`;
+    : `flex h-11 w-11 items-center justify-center rounded-2xl ${iconBgs[color]} ${iconColors[color]} shrink-0`;
   $: valueClass = embedded
     ? 'mt-4 whitespace-nowrap text-[1.9rem] font-semibold leading-none text-slate-900 dark:text-[#f5f5f7]'
     : 'mt-6 whitespace-nowrap text-[2.15rem] font-semibold leading-none text-slate-900 dark:text-[#f5f5f7]';
   $: interactiveClass = embedded
-    ? 'transition-all duration-200 hover:bg-slate-100/90 hover:-translate-y-0.5 dark:hover:bg-slate-900/50'
-    : 'transition-all duration-200 hover:shadow-md dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 cursor-pointer group';
+    ? 'transition-colors duration-150 hover:bg-slate-100/90 dark:hover:bg-[rgba(255,255,255,0.06)]'
+    : 'transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-[rgba(255,255,255,0.04)] cursor-pointer group';
 </script>
 
 {#if href}

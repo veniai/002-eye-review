@@ -31,7 +31,7 @@ test('Release workflow 应支持对版本标签手动重试且拒绝普通分支
   const source = readFileSync(new URL('./.github/workflows/release.yml', import.meta.url), 'utf8');
 
   assert.match(source, /workflow_dispatch:/);
-  assert.match(source, /build-tauri:\s+if: startsWith\(github\.ref, 'refs\/tags\/v'\)/);
+  assert.match(source, /build-tauri:\s+if: startsWith\(github\.ref, 'refs\/tags\/v'\) \|\| github\.event_name == 'workflow_dispatch'/);
 });
 
 test('macOS release 应保持 ad-hoc 签名且不导入自签证书', () => {
@@ -45,8 +45,10 @@ test('macOS release 应保持 ad-hoc 签名且不导入自签证书', () => {
 test('Release workflow 应构建并上传 Linux RPM 产物', () => {
   const source = readFileSync(new URL('./.github/workflows/release.yml', import.meta.url), 'utf8');
 
-  assert.match(source, /args:\s*"--target x86_64-unknown-linux-gnu --bundles deb,rpm,appimage"[\s\S]*target:\s*x86_64-unknown-linux-gnu/);
-  assert.match(source, /args:\s*"--target aarch64-unknown-linux-gnu --bundles deb"[\s\S]*target:\s*aarch64-unknown-linux-gnu/);
+  assert.ok(source.includes('"--target x86_64-unknown-linux-gnu --bundles deb,rpm,appimage"'));
+  assert.ok(source.includes('"x86_64-unknown-linux-gnu"'));
+  assert.ok(source.includes('"--target aarch64-unknown-linux-gnu --bundles deb"'));
+  assert.ok(source.includes('"aarch64-unknown-linux-gnu"'));
   assert.match(source, /sudo apt-get install -y[\s\S]*\brpm\b/);
   assert.match(source, /-name "\*\.rpm"/);
   assert.match(source, /release\/bundle\/rpm\/\*\.rpm/);

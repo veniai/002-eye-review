@@ -88,7 +88,7 @@ test('设置页应使用居中的操作工作台并避免外壳套外壳', async
 test('设置页全部功能区应共享低对比卡片和分隔线', async () => {
   const css = await readFile(new URL('../../app.css', import.meta.url), 'utf8');
 
-  assert.match(css, /\.settings-card\s*\{[^}]*border-color:\s*color-mix\(in srgb, var\(--surface-border-subtle\) 68%, transparent\)[^}]*box-shadow:\s*0 4px 14px rgb\(15 23 42 \/ 0\.025\)/);
+  assert.match(css, /\.settings-card\s*\{[^}]*@apply card p-5 rounded-2xl;/);
   assert.match(css, /\.dark \.settings-card\s*\{[^}]*border-color:\s*color-mix\(in srgb, var\(--surface-border-subtle\) 64%, transparent\)[^}]*box-shadow:\s*none/);
   assert.match(css, /\.settings-section > \.settings-block \+ \.settings-block\s*\{[^}]*58%/);
 });
