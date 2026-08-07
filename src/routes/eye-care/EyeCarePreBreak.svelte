@@ -31,19 +31,21 @@
   });
 </script>
 
-<aside class="notice" aria-label={t('eyeCare.preBreakTitle')}>
-  <div class="icon" aria-hidden="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M2.5 12s3.4-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.4 5.5-9.5 5.5S2.5 12 2.5 12z" />
-      <circle cx="12" cy="12" r="2.6" />
-    </svg>
-  </div>
-  <div class="copy">
-    <strong>{t('eyeCare.preBreakTitle')}</strong>
-    <span>{t('eyeCare.preBreakDescription', { seconds: remainingSeconds })}</span>
-  </div>
-  <div class="seconds" aria-live="polite">{remainingSeconds}</div>
-</aside>
+<div class="notice-shell">
+  <aside class="notice" aria-label={t('eyeCare.preBreakTitle')}>
+    <div class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2.5 12s3.4-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.4 5.5-9.5 5.5S2.5 12 2.5 12z" />
+        <circle cx="12" cy="12" r="2.6" />
+      </svg>
+    </div>
+    <div class="copy">
+      <strong>{t('eyeCare.preBreakTitle')}</strong>
+      <span>{t('eyeCare.preBreakDescription', { seconds: remainingSeconds })}</span>
+    </div>
+    <div class="seconds" aria-live="polite">{remainingSeconds}</div>
+  </aside>
+</div>
 
 <style>
   :global(html), :global(body), :global(#app) {
@@ -54,10 +56,17 @@
     background: transparent;
   }
 
+  .notice-shell {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.35));
+  }
+
   .notice {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
+    position: relative;
     display: grid;
     grid-template-columns: 36px minmax(0, 1fr) auto;
     align-items: center;
@@ -65,10 +74,14 @@
     padding: 14px 16px;
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 20px;
+    overflow: hidden;
+    isolation: isolate;
+    clip-path: inset(0 round 20px);
+    -webkit-clip-path: inset(0 round 20px);
+    background-clip: padding-box;
     background: rgba(28, 28, 30, 0.78);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
     color: #f5f5f7;
     font-family: "SF Pro Display", "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
     -webkit-font-smoothing: antialiased;
