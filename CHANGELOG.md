@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - 2026-08-08
+
+### 修复
+- **休息遮罩全屏**：将 `set_fullscreen` 从仅 Windows 扩展到 Windows + Linux，修复 Linux GNOME 面板/顶栏在休息时未被覆盖的问题（macOS 不受影响，其 always_on_top 已能覆盖 Dock）。
+
+
 ## [1.3.6] - 2026-08-08
 
 ### 修复
