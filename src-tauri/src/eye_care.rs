@@ -775,6 +775,12 @@ pub fn sync_overlay_windows(app: &AppHandle, status: &EyeCareStatus) -> tauri::R
         let _ = window.show();
         let _ = window.unminimize();
         let _ = window.set_focus();
+        // Windows: 只有进入 fullscreen 模式才会触发任务栏自动隐藏。
+        // always_on_top 的 topmost 窗口仍会被任务栏遮挡。
+        #[cfg(target_os = "windows")]
+        {
+            let _ = window.set_fullscreen(true);
+        }
         let _ = app.emit_to(label.as_str(), STATUS_EVENT, status);
     }
     Ok(())
