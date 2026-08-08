@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6] - 2026-08-08
+
+### 修复
+- **预告弹窗圆角**：彻底修复 `backdrop-filter` 磨砂玻璃层的矩形外露——圆角内的半透明背景靠 `border-radius` 裁切，但 `backdrop-filter` 的模糊作用于整个矩形包围盒不受圆角约束，现在用 `clip-path: inset(0 round 20px)` 同时裁切两者，阴影移至外层 `filter: drop-shadow` 保证圆角外可见。
+
+
 ## [1.3.5] - 2026-08-08
 
 ### 修复
