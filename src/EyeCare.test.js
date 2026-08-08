@@ -137,11 +137,10 @@ test('预告非阻挡，休息层覆盖每块显示器且 watchdog 会恢复窗�
   assert.match(overlay, /ControlLeft[\s\S]*AltLeft[\s\S]*ShiftLeft/);
   assert.doesNotMatch(overlay, /skip|postpone|延后|跳过/i);
   assert.match(preBreak, /preBreakDescription/);
-  assert.match(preBreak, /class="notice-shell"/);
-  assert.match(preBreak, /filter:\s*drop-shadow\(0 12px 32px rgba\(0, 0, 0, 0\.35\)\)/);
+  assert.doesNotMatch(preBreak, /class="notice-shell"/);
+  assert.doesNotMatch(preBreak, /clip-path:/);
+  assert.match(preBreak, /box-shadow:\s*0 12px 32px rgba\(0, 0, 0, 0\.35\)/);
   assert.match(preBreak, /overflow:\s*hidden/);
-  assert.match(preBreak, /clip-path:\s*inset\(0 round 20px\)/);
-  assert.doesNotMatch(preBreak, /box-shadow:/);
   assert.match(capabilities, /eye-care-pre-break/);
   assert.match(capabilities, /eye-care-overlay-\*/);
 });

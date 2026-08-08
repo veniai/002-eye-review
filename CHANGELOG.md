@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - 2026-08-08
+
+### 修复
+- **休息前预告弹窗**：根因修复圆角外露的矩形角——移除 `<body>` 上多余的 Tailwind 背景色（它与透明窗口冲突），同时清理掉上一版不必要的 `clip-path` / `drop-shadow` hack，恢复干净的 `border-radius` + `overflow: hidden` 方案。
+
 ## [1.3.2] - 2026-08-07
 
 ### 修复
