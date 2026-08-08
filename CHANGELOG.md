@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.4] - 2026-08-08
+
+### 修复
+- **休息层紧急退出**：注册 OS 级全局热键 Ctrl+Alt+Shift+F12，即使 WebView 崩溃或失焦也能可靠退出全屏休息遮罩，不再仅依赖前端 JavaScript 键盘监听。
+- **预告弹窗圆角（v1.3.2 回归修复）**：移除 `<body>` 上多余的 Tailwind 背景色，根因修复圆角外露的矩形角。
+
+
 ## [1.3.3] - 2026-08-08
 
 ### 修复

@@ -3411,7 +3411,18 @@ async fn main() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_dialog::init());
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(
+            tauri_plugin_global_shortcut::Builder::new()
+                .with_handler(|app, _shortcut, event| {
+                    if event.state()
+                        == tauri_plugin_global_shortcut::ShortcutState::Pressed
+                    {
+                        eye_care::try_emergency_release(app);
+                    }
+                })
+                .build(),
+        );
     #[cfg(not(windows))]
     let builder = builder.plugin(tauri_plugin_autostart::init(
         tauri_plugin_autostart::MacosLauncher::LaunchAgent,
@@ -3483,6 +3494,25 @@ async fn main() {
         .setup(|app| {
             if let Err(e) = autostart::init_autostart(app.handle()) {
                 log::warn!("初始化开机自启功能失败: {e}");
+            }
+
+            // 注册系统级全局热键 Ctrl+Alt+Shift+F12 —— 休息层紧急退出。
+            // 即使 WebView 崩溃或失焦也能生效，保证用户不会被全屏遮罩锁死。
+            {
+                use tauri_plugin_global_shortcut::{
+                    Code, GlobalShortcutExt, Modifiers, Shortcut,
+                };
+                let emergency = Shortcut::new(
+                    Some(
+                        Modifiers::CONTROL | Modifiers::ALT | Modifiers::SHIFT,
+                    ),
+                    Code::F12,
+                );
+                if let Err(e) = app.global_shortcut().register(emergency) {
+                    log::warn!(
+                        "注册全局紧急退出热键失败（休息层紧急退出将仅依赖前端）: {e}"
+                    );
+                }
             }
 
             let window = app

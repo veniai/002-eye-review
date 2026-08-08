@@ -921,40 +921,51 @@ pub async fn dismiss_eye_care_recap(
     Ok(())
 }
 
-#[tauri::command]
-pub async fn eye_care_emergency_release(
-    app: AppHandle,
-    state: State<'_, Arc<Mutex<AppState>>>,
-) -> Result<bool, AppError> {
+/// 紧急退出休息层（不依赖 WebView 焦点）。
+///
+/// 可从两个入口调用：
+/// 1. Rust 全局热键 Ctrl+Alt+Shift+F12 —— OS 级，WebView 崩溃也能生效
+/// 2. Tauri command `eye_care_emergency_release` —— 前端 JS 长按 5 秒触发
+pub fn try_emergency_release(app: &AppHandle) -> bool {
+    let Some(state) = app.try_state::<Arc<Mutex<AppState>>>() else {
+        return false;
+    };
     let now = chrono::Utc::now().timestamp();
     let released = {
-        let mut state = state.lock().map_err(|e| AppError::Unknown(e.to_string()))?;
-        if state.eye_care.phase != EyeCarePhase::Resting {
-            false
-        } else {
-            state.eye_care.emergency_release(now);
-            let path = state.data_dir.join("eye-care-emergency.log");
-            let line = format!("{now}\temergency release invoked\n");
-            use std::io::Write;
-            if let Ok(mut file) = std::fs::OpenOptions::new()
-                .create(true)
-                .append(true)
-                .open(path)
-            {
-                let _ = file.write_all(line.as_bytes());
-            }
-            true
+        let mut guard = state.lock().unwrap_or_else(|error| error.into_inner());
+        if guard.eye_care.phase != EyeCarePhase::Resting {
+            return false;
         }
+        guard.eye_care.emergency_release(now);
+        let path = guard.data_dir.join("eye-care-emergency.log");
+        let line = format!("{now}\temergency release invoked\n");
+        use std::io::Write;
+        if let Ok(mut file) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&path)
+        {
+            let _ = file.write_all(line.as_bytes());
+        }
+        true
     };
     if released {
-        close_overlay_windows(&app);
+        close_overlay_windows(app);
         let status = {
-            let state = state.lock().map_err(|e| AppError::Unknown(e.to_string()))?;
-            state.eye_care.status((&state.config).into())
+            let guard = state.lock().unwrap_or_else(|error| error.into_inner());
+            guard.eye_care.status((&guard.config).into())
         };
         let _ = app.emit(STATUS_EVENT, status);
     }
-    Ok(released)
+    released
+}
+
+#[tauri::command]
+pub async fn eye_care_emergency_release(
+    app: AppHandle,
+    _state: State<'_, Arc<Mutex<AppState>>>,
+) -> Result<bool, AppError> {
+    Ok(try_emergency_release(&app))
 }
 
 #[cfg(test)]
