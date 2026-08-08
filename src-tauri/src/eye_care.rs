@@ -749,7 +749,7 @@ pub fn sync_overlay_windows(app: &AppHandle, status: &EyeCareStatus) -> tauri::R
                 .title("Eye Review Rest")
                 .inner_size(size.width as f64, size.height as f64)
                 .position(position.x as f64, position.y as f64)
-                .resizable(false)
+                .resizable(true)
                 .maximizable(false)
                 .minimizable(false)
                 .closable(false)
@@ -764,23 +764,32 @@ pub fn sync_overlay_windows(app: &AppHandle, status: &EyeCareStatus) -> tauri::R
                 .build()?
         };
 
-        let _ = window.set_position(Position::Physical(PhysicalPosition::new(
-            position.x, position.y,
-        )));
-        let _ = window.set_size(Size::Physical(PhysicalSize::new(size.width, size.height)));
-        let _ = window.set_always_on_top(true);
-        let _ = window.set_visible_on_all_workspaces(true);
-        let _ = window.set_skip_taskbar(true);
-        let _ = window.set_content_protected(true);
-        let _ = window.show();
-        let _ = window.unminimize();
-        let _ = window.set_focus();
-        // Windows 任务栏和 Linux GNOME 面板都是 topmost 窗口，
-        // 只有进入 fullscreen 模式才会触发系统面板自动隐藏。
-        // macOS 不需要：always_on_top + visible_on_all_workspaces 已能覆盖 Dock 和菜单栏。
-        #[cfg(not(target_os = "macos"))]
-        {
-            let _ = window.set_fullscreen(true);
+        // 已进入 fullscreen 的窗口不再重复设置 position/size/fullscreen，
+        // 否则 watchdog 每秒一次的 set_position/set_size 会把窗口踢出 fullscreen。
+        let already_fullscreen = window.is_fullscreen().unwrap_or(false);
+
+        if !already_fullscreen {
+            let _ = window.set_position(Position::Physical(PhysicalPosition::new(
+                position.x, position.y,
+            )));
+            let _ = window.set_size(Size::Physical(PhysicalSize::new(size.width, size.height)));
+            let _ = window.set_always_on_top(true);
+            let _ = window.set_visible_on_all_workspaces(true);
+            let _ = window.set_skip_taskbar(true);
+            let _ = window.set_content_protected(true);
+            let _ = window.show();
+            let _ = window.unminimize();
+            let _ = window.set_focus();
+            // Windows 任务栏和 Linux GNOME 面板都是 topmost 窗口，
+            // 只有进入 fullscreen 模式才会触发系统面板自动隐藏。
+            // macOS 不需要：always_on_top + visible_on_all_workspaces 已能覆盖 Dock 和菜单栏。
+            #[cfg(not(target_os = "macos"))]
+            {
+                let _ = window.set_fullscreen(true);
+            }
+        } else {
+            let _ = window.show();
+            let _ = window.set_focus();
         }
         let _ = app.emit_to(label.as_str(), STATUS_EVENT, status);
     }

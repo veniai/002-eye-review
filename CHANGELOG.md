@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.8] - 2026-08-08
+
+### 修复
+- **休息遮罩全屏**：修复两个导致 Windows 任务栏未被覆盖的根因——overlay 窗口 `resizable(false)` 阻止了 fullscreen 模式，且 watchdog 每秒重复 `set_position`/`set_size` 会将窗口踢出 fullscreen。现在窗口设为可调整大小，且已进入 fullscreen 后不再重复设置位置/尺寸。
+
+
 ## [1.3.7] - 2026-08-08
 
 ### 修复
